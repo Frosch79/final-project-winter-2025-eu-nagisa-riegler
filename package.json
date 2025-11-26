@@ -75,8 +75,6 @@
       "sharp"
     ]
   },
-  "engines": {
-    "node": "24.x"
-  },
+  "engines": { "node": "22.x" },
   "private": true
 }
