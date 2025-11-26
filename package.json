@@ -12,7 +12,7 @@
     "test": "jest --watchAll",
     "lint": "expo lint",
     "migrate": "ley --require tsx/cjs",
-    "build": "pnpm migrate up && expo export --platform web && sed -i "
+    "build": "pnpm migrate up && expo export --platform web && sed -i  build --output public"
   },
   "jest": {
     "preset": "jest-expo"
