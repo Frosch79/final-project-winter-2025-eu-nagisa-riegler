@@ -1,0 +1,33 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "extends": "base",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "extends": "base"
+    },
+    "production": {
+      "autoIncrement": true,
+      "extends": "base"
+    },
+    "base": {
+      "env": {
+        "NODE_ENV": "production",
+        "EXPO_USE_FAST_RESOLVER": "1"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
