@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm migrate up && expo export --platform web && sed -i 's/\"type\": \"module\"/\"type\": \"commonjs\"/' package.json",
+  "buildCommand": "pnpm migrate up && expo export --platform web  package.json",
   "outputDirectory": "dist/client",
   "functions": {
     "api/index.ts": {
