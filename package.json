@@ -11,7 +11,8 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "migrate": "ley --require tsx/cjs"
+    "migrate": "ley --require tsx/cjs",
+    "build": "[my-framework] build --output public"
   },
   "jest": {
     "preset": "jest-expo"
