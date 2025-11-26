@@ -75,5 +75,8 @@
       "sharp"
     ]
   },
+  "engines": {
+    "node": "24.x"
+  },
   "private": true
 }
