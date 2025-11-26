@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm migrate up && expo export --platform web  package.json",
+  "buildCommand": "expo export -p web",
   "outputDirectory": "dist/client",
   "functions": {
     "api/index.ts": {
