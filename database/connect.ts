@@ -1,4 +1,3 @@
-import 'server-only';
 import postgres, { type Sql } from 'postgres';
 import postgresConfig from '../ley.config';
 import { setEnvironmentVariables } from '../util/config';
