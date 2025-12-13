@@ -180,14 +180,8 @@ dependencies {
     }
 }
 
-android {
-    compileSdk = 34
-    defaultConfig {
-        applicationId = "com.example.myapp"
-        minSdk = 24
-        targetSdk = 34
-    }
-}
+
+
 secrets {
     // To add your Maps API key to this project:
     // 1. If the secrets.properties file does not exist, create it in the same folder as the local.properties file.
@@ -203,9 +197,4 @@ secrets {
     // "sdk.dir" is ignored by default.
     ignoreList.add("keyToIgnore") // Ignore the key "keyToIgnore"
     ignoreList.add("sdk.*")       // Ignore all keys matching the regexp "sdk.*"
-}
-
-plugins {
-    // ...
-    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
