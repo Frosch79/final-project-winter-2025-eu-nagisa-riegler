@@ -1,12 +1,12 @@
-import { getAlbumByUser } from '@/database/albums';
+import { getVisitUserAlbums, selectAlbumExists } from '@/database/albums';
 import { ExpoApiResponse } from '@/ExpoApiResponse';
-import { type AlbumByUser } from '@/migrations/00006-createTableAlbums';
+import type { FeedAlbum } from '@/migrations/00006-createTableAlbums';
 import { parse } from 'cookie';
 
-/* get user album */
-export type AlbumResponseBodyGet =
+/* get user albums */
+export type UserFeedResponseBodyGet =
   | {
-      album: AlbumByUser[];
+      album: FeedAlbum[];
     }
   | {
       error: string;
@@ -14,7 +14,7 @@ export type AlbumResponseBodyGet =
 export async function GET(
   request: Request,
   { feedId }: { feedId: string },
-): Promise<ExpoApiResponse<AlbumResponseBodyGet>> {
+): Promise<ExpoApiResponse<UserFeedResponseBodyGet>> {
   const cookies = parse(request.headers.get('cookie') || '');
   const token = cookies.sessionToken;
 
@@ -29,7 +29,7 @@ export async function GET(
     );
   }
 
-  if (!(await getAlbumByUser(token, Number(feedId)))) {
+  if (!(await selectAlbumExists(Number(feedId)))) {
     return ExpoApiResponse.json(
       {
         error: `No album with id ${feedId} found `,
@@ -39,7 +39,7 @@ export async function GET(
       },
     );
   }
-  const album = await getAlbumByUser(token, Number(feedId));
+  const album = await getVisitUserAlbums(token, Number(feedId));
 
   if (!album) {
     return ExpoApiResponse.json(

@@ -2,11 +2,8 @@ import type { Sql } from 'postgres';
 import { z } from 'zod';
 
 export const commentSchema = z.object({
-  id: z.number(),
   albumId: z.number(),
-  userId: z.number(),
   content: z.string(),
-  createdDate: z.date(),
 });
 
 export type Comment = {
@@ -23,7 +20,7 @@ id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 album_id integer NOT NULL REFERENCES albums (id) ON DELETE CASCADE,
 user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
 content TEXT NOT NULL,
-created_date DATE DEFAULT (DATE('now'))
+created_date timestamp NOT NULL DEFAULT now()
   )`;
 }
 

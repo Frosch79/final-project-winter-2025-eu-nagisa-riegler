@@ -2,11 +2,7 @@ import type { Sql } from 'postgres';
 import { z } from 'zod';
 
 export const likeSchema = z.object({
-  id: z.number(),
   albumId: z.number(),
-  userId: z.number(),
-  createdDate: z.date(),
-  userName: z.string(),
 });
 
 export type Like = {
@@ -14,7 +10,13 @@ export type Like = {
   albumId: number;
   userId: number;
   createdDate: Date;
-  userName: string;
+};
+export type LikeUsers = {
+  id: number;
+  albumId: number;
+  userId: number;
+  createdDate: Date;
+  name: string;
 };
 
 export async function up(sql: Sql) {
@@ -23,7 +25,7 @@ export async function up(sql: Sql) {
 id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 album_id integer NOT NULL REFERENCES albums (id) ON DELETE CASCADE,
 user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-created_date DATE DEFAULT (DATE('now'))
+created_date timestamp NOT NULL DEFAULT now()
   )`;
 }
 

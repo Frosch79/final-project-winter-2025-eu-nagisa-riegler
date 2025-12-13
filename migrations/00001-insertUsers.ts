@@ -5,7 +5,7 @@ const users = [
   {
     id: 1,
     name: 'Chihiro Ogino',
-    birthday: '1992-08-16',
+    birthday: new Date('1992-08-16'),
     country: 'Japan',
     accountDescription: 'welcome to my page',
     email: 'chihiro@example.com',
@@ -14,7 +14,7 @@ const users = [
   {
     id: 2,
     name: 'Haku',
-    birthday: '1988-03-01',
+    birthday: new Date('1988-03-01'),
     country: 'Spirit World',
     accountDescription: 'Dragon river spirit',
     email: 'haku@example.com',
@@ -23,7 +23,7 @@ const users = [
   {
     id: 3,
     name: 'Sheeta',
-    birthday: '1985-07-12',
+    birthday: new Date('1985-07-12'),
     country: 'Gondoa',
     accountDescription: 'Laputa descendent',
     email: 'sheeta@example.com',
@@ -32,7 +32,7 @@ const users = [
   {
     id: 4,
     name: 'Pazu',
-    birthday: '1984-04-24',
+    birthday: new Date('1984-04-24'),
     country: 'Slag Ravine',
     accountDescription: 'Engineer in training',
     email: 'pazu@example.com',
@@ -41,7 +41,7 @@ const users = [
   {
     id: 5,
     name: 'San',
-    birthday: '1990-05-03',
+    birthday: new Date('1990-05-03'),
     country: 'Forest',
     accountDescription: 'Princess of the wolves',
     email: 'san@example.com',
@@ -50,7 +50,7 @@ const users = [
   {
     id: 6,
     name: 'Ashitaka',
-    birthday: '1980-01-14',
+    birthday: new Date('1980-01-14'),
     country: 'Emishi',
     accountDescription: 'Traveling warrior',
     email: 'ashitaka@example.com',
@@ -59,7 +59,7 @@ const users = [
   {
     id: 7,
     name: 'Kiki',
-    birthday: '1998-10-01',
+    birthday: new Date('1998-10-01'),
     country: 'Koriko',
     accountDescription: 'Young witch in training',
     email: 'kiki@example.com',
@@ -68,7 +68,7 @@ const users = [
   {
     id: 8,
     name: 'Porco Rosso',
-    birthday: '1965-02-05',
+    birthday: new Date('1965-02-05'),
     country: 'Italy',
     accountDescription: 'I only lose to women and pigs',
     email: 'porco@example.com',
@@ -77,7 +77,7 @@ const users = [
   {
     id: 9,
     name: 'Howl Jenkins',
-    birthday: '1977-06-20',
+    birthday: new Date('1977-06-20'),
     country: 'Ingary',
     accountDescription: 'Wizard with a moving castle',
     email: 'howl@example.com',
@@ -86,7 +86,7 @@ const users = [
   {
     id: 10,
     name: 'Sophie Hatter',
-    birthday: '1982-12-02',
+    birthday: new Date('1982-12-02'),
     country: 'Ingary',
     accountDescription: 'Hat shop girl',
     email: 'sophie@example.com',

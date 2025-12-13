@@ -1,24 +1,23 @@
+import { User } from '@/migrations/00000-createTableUsers';
 import { Comment } from '@/migrations/00012-createTableComments';
 import { Session } from '@/migrations/00014-createTableSessions';
 import { sql } from './connect';
 
 export async function createComment(
   sessionToken: Session['token'],
-  userComment: Comment,
+  userComment: Pick<Comment, 'albumId' | 'content'>,
 ) {
   const newComment = await sql<Comment[]>`
   INSERT INTO
         comments(
         album_id,
         user_id,
-        content,
-        created_date
+        content
     )(
       SELECT
       ${userComment.albumId},
       users.id,
-      ${userComment.content},
-      ${userComment.createdDate}
+      ${userComment.content}
       FROM
       users
       INNER JOIN sessions ON (
@@ -26,7 +25,7 @@ export async function createComment(
           AND users.id= sessions.user_id
           AND sessions.expiry_timestamp > now()
         )
-        WHERE users.id = ${userComment.userId}
+
 
     )
     RETURNING
@@ -43,6 +42,7 @@ export async function deleteComment(
     DELETE FROM comments WHERE id = ${userCommentId} AND user_id IN (
       SELECT user_id
         FROM sessions
+         WHERE
          sessions.token = ${sessionToken}
           AND sessions.expiry_timestamp > now()
       )
@@ -52,14 +52,15 @@ export async function deleteComment(
   return deletedComment;
 }
 
+export type CommentWithUserName = Comment & { name: User['name'] };
 export async function getAllAlbumComments(commentAlbumId: Comment['albumId']) {
-  const allComments = await sql<Comment[]>`
-  SELECT comments.content,comments.created_date,users.name
+  const allComments = await sql<CommentWithUserName[]>`
+  SELECT comments.*,users.name
   FROM
   comments
-  INNER JOIN albums ON albums.id= comments.album_id
   INNER JOIN users ON users.id = comments.user_id
-  WHERE albums.id =${commentAlbumId}`;
+  WHERE album_id =${commentAlbumId}
+ `;
 
   return allComments;
 }

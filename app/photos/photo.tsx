@@ -1,0 +1,261 @@
+import { AlbumResponseBodyGet } from '@/app/api/albums/[albumId]+api';
+import { CreatePhotoResponseBodyPost } from '@/app/api/photos/index+api';
+import { components } from '@/constants/Components';
+import { typography } from '@/constants/Typography';
+import { type AlbumWithVisibilityName } from '@/migrations/00006-createTableAlbums';
+import * as ImagePicker from 'expo-image-picker';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
+import { Platform, SafeAreaView, ScrollView, View } from 'react-native';
+import { Button, Card, HelperText, Text, TextInput } from 'react-native-paper';
+import { UserResponseBodyGet } from '../api/user+api';
+
+export default function PostMyPhotos() {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState('');
+  const [cloudinaryPath, setCloudinaryPath] = useState(undefined);
+  const [isError, setIsError] = useState(false);
+  const [message, setMessage] = useState<string | null>('');
+  const [album, setAlbum] = useState<AlbumWithVisibilityName>();
+
+  const { albumId } = useLocalSearchParams();
+  const router = useRouter();
+
+  useFocusEffect(
+    useCallback(() => {
+      async function loadAlbum() {
+        /* fetch cloudinary */
+        /* create photo data */
+
+        const [userResponse, albumResponse]: [
+          UserResponseBodyGet,
+          AlbumResponseBodyGet,
+        ] = await Promise.all([
+          fetch('/api/user').then((response) => response.json()),
+          fetch(`/api/albums/${albumId}`).then((response) => response.json()),
+        ]);
+
+        if ('error' in userResponse) {
+          router.replace('/(auth)/login?returnTo=/photos/photo/');
+          return;
+        }
+        if ('error' in albumResponse) {
+          setMessage(albumResponse.error);
+          return;
+        }
+        if ('album' in albumResponse) {
+          setAlbum(albumResponse.album);
+        }
+        setMessage(null);
+      }
+
+      loadAlbum().catch((error) => {
+        console.error(error);
+      });
+    }, [albumId]),
+  );
+
+  const pickImageAsync = async () => {
+    /* add photo to cloudinary  */
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      quality: 1,
+    });
+
+    if (result.canceled) return;
+    const image = result.assets[0];
+
+    const file = {
+      uri: image.uri,
+      type: image.mimeType ?? 'image/jpeg',
+      name: 'upload.jpg',
+    };
+
+    // get sign
+    let sigRes;
+    if (Platform.OS === 'web') {
+      sigRes = await fetch('http://localhost:8081/api/cloudinary/sign'); //note: this port is only web test
+    } else {
+      sigRes = await fetch('http://192.168.0.226:8081/api/cloudinary/sign'); //note: this port is only test
+    }
+
+    const { timestamp, signature, cloudName, apiKey } = await sigRes.json();
+
+    // FormData sends to cloudinary
+    const formData = new FormData();
+    formData.append('file', file as any);
+    formData.append('api_key', apiKey);
+    formData.append('timestamp', timestamp.toString());
+    formData.append('signature', signature);
+    formData.append('folder', 'my_app');
+
+    const uploadRes = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      {
+        method: 'POST',
+        body: formData,
+      },
+    );
+
+    const data = await uploadRes.json();
+    setCloudinaryPath(data.secure_url);
+
+    console.log(cloudinaryPath);
+  };
+
+  return (
+    <SafeAreaView
+      style={{
+        flex: 1,
+      }}
+    >
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
+        <Card style={{ borderRadius: components.card.style.borderRadius }}>
+          {/* album title */}
+          <Card.Title
+            title={album?.title}
+            subtitle={album?.description}
+            titleStyle={{ fontSize: typography.title.fontSize }}
+          />
+          <Card.Content>
+            {/* image preview */}
+            <View
+              style={{
+                width: '100%',
+                height: 260,
+
+                borderRadius: components.card.style.borderRadius,
+                overflow: 'hidden',
+                marginBottom: 16,
+              }}
+            >
+              {cloudinaryPath ? (
+                <Card.Cover
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: 0,
+                  }}
+                  source={{ uri: cloudinaryPath }}
+                />
+              ) : (
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Text variant="bodyMedium">No Image Selected</Text>
+                </View>
+              )}
+            </View>
+
+            <Button
+              mode="contained"
+              onPress={pickImageAsync}
+              style={{
+                borderRadius: components.button.borderRadius,
+                marginBottom: 12,
+              }}
+            >
+              <Text>SELECT PHOTO</Text>
+            </Button>
+            {/* title */}
+            <TextInput
+              label="Photo Title"
+              value={title}
+              onChangeText={(text) => setTitle(text)}
+            />
+            {/* description */}
+            <TextInput
+              label="Description"
+              value={description}
+              onChangeText={(text) => setDescription(text)}
+              style={{ marginBottom: 12 }}
+            />
+            {/* location */}
+            <TextInput
+              label="Location"
+              value={location}
+              onChangeText={(text) => setLocation(text)}
+              style={{ marginBottom: 12 }}
+            />
+          </Card.Content>
+
+          <HelperText type="error" visible={isError}>
+            {message}
+          </HelperText>
+
+          <Card.Actions style={{ justifyContent: 'space-between' }}>
+            <Button
+              onPress={() =>
+                router.replace({
+                  pathname: '/album/[albumId]',
+                  params: { albumId: Number(albumId) },
+                })
+              }
+            >
+              <Text>Cancel</Text>
+            </Button>
+
+            <Button
+              mode="contained"
+              disabled={!cloudinaryPath}
+              onPress={async () => {
+                const response = await fetch(`/api/photos`, {
+                  method: 'POST',
+                  body: JSON.stringify({
+                    title: title,
+                    cloudinaryDataPath: cloudinaryPath,
+                    description: description,
+                    location: location,
+                    albumId: Number(albumId),
+                  }),
+                });
+
+                if (!response.ok) {
+                  let errorMessage = 'Error Create Photo';
+                  const photoResponse: CreatePhotoResponseBodyPost =
+                    await response.json();
+                  if ('error' in photoResponse) {
+                    errorMessage = photoResponse.error;
+                  }
+
+                  setIsError(true);
+                  setMessage(errorMessage);
+
+                  return;
+                }
+
+                const createdPhotoResponse: CreatePhotoResponseBodyPost =
+                  await response.json();
+                console.log('res', createdPhotoResponse);
+
+                if ('error' in createdPhotoResponse) {
+                  setIsError(true);
+                  setMessage(createdPhotoResponse.error);
+                  return;
+                }
+
+                setTitle('');
+                setDescription('');
+                setLocation('');
+                if (createdPhotoResponse.photo) {
+                  router.replace({
+                    pathname: '/album/[albumId]',
+                    params: { albumId: Number(albumId) },
+                  });
+                }
+              }}
+            >
+              <Text>Ok</Text>
+            </Button>
+          </Card.Actions>
+        </Card>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}

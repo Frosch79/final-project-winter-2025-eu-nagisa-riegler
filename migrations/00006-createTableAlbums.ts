@@ -2,13 +2,10 @@ import type { Sql } from 'postgres';
 import { z } from 'zod';
 
 export const albumSchema = z.object({
-  id: z.number(),
-  userId: z.number(),
+  location: z.string(),
+  visibilityName: z.string(),
   title: z.string(),
   description: z.string(),
-  location: z.string(),
-  createdDate: z.date(),
-  visibilityId: z.number(),
 });
 
 export type Album = {
@@ -20,6 +17,14 @@ export type Album = {
   createdDate: Date;
   visibilityId: number;
 };
+
+export type AlbumWithVisibilityName = {
+  title: string;
+  description: string | null;
+  location: string | null;
+  createdDate: Date;
+  visibilityName: string;
+};
 export type FeedAlbum = {
   id: number;
   userId: number;
@@ -28,20 +33,9 @@ export type FeedAlbum = {
   location: string | null;
   createdDate: Date;
   visibilityId: number;
-  userName: string;
-};
-
-export type AlbumByUser = {
-  id: number;
-  userId: number;
-  title: string;
-  description: string | null;
-  location: string | null;
-  createdDate: Date;
-  visibilityId: number;
-  userName: string;
-  likes_count: number;
-  comments_count: number;
+  name: string;
+  commentCount: number;
+  likeCount: number;
 };
 
 export async function up(sql: Sql) {
@@ -52,7 +46,7 @@ user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
 title varchar(30) NOT NULL,
 description TEXT,
 location TEXT,
-created_date DATE DEFAULT (DATE('now')),
+created_date timestamp NOT NULL DEFAULT now(),
 visibility_id integer NOT NULL REFERENCES visibilities (id) ON DELETE CASCADE
   )`;
 }

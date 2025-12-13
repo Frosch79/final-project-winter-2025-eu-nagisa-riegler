@@ -1,6 +1,7 @@
 import {
+  type AlbumByUser,
   deleteAlbum,
-  getAlbum,
+  getVisitUserAlbum,
   selectAlbumExists,
   updateAlbum,
 } from '@/database/albums';
@@ -11,7 +12,7 @@ import { parse } from 'cookie';
 /* get my album */
 export type AlbumResponseBodyGet =
   | {
-      album: Album;
+      album: AlbumByUser;
     }
   | {
       error: string;
@@ -44,7 +45,7 @@ export async function GET(
       },
     );
   }
-  const album = await getAlbum(token, Number(albumId));
+  const album = await getVisitUserAlbum(token, Number(albumId));
 
   if (!album) {
     return ExpoApiResponse.json(
@@ -111,7 +112,7 @@ export async function PUT(
       },
     );
   }
-  const album = await updateAlbum(token, result.data);
+  const album = await updateAlbum(token, result.data, Number(albumId));
 
   if (!album) {
     return ExpoApiResponse.json(

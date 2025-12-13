@@ -13,6 +13,7 @@ const config: ExpoConfig = {
     supportsTablet: true,
   },
   android: {
+    package: 'com.frosch79.expoexamplewinter2025eunagisariegler',
     adaptiveIcon: {
       foregroundImage: './assets/images/icon-shutter.png',
       backgroundColor: '#ffffff',
@@ -24,7 +25,13 @@ const config: ExpoConfig = {
     favicon: './assets/images/icon-shutter.png',
   },
   plugins: [
-    'expo-router',
+    [
+      'expo-router',
+      {
+        origin: 'https://evanbacon.dev/',
+      },
+    ],
+
     [
       'expo-splash-screen',
       {
@@ -34,10 +41,27 @@ const config: ExpoConfig = {
         backgroundColor: '#ffffff',
       },
     ],
+
+    [
+      'expo-build-properties',
+      {
+        android: {
+          usesCleartextTraffic: true,
+        },
+      },
+    ],
+    [
+      'expo-image-picker',
+      {
+        photosPermission:
+          'The app accesses your photos to let you share them with your friends.',
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,
   },
+
   extra: {
     router: {
       origin: false,

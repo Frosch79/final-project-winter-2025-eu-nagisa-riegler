@@ -16,8 +16,9 @@ export async function getUserInsecure(userEmail: User['email']) {
 }
 
 /* if already login */
+export type FullUser = User & { createdDate: Date };
 export async function getUser(sessionToken: Session['token']) {
-  const [user] = await sql<User[]>`
+  const [user] = await sql<FullUser[]>`
     SELECT
       users.id,
       users.name,
@@ -37,6 +38,21 @@ export async function getUser(sessionToken: Session['token']) {
   return user;
 }
 
+export async function getUserPageInsecure(userId: User['id']) {
+  const [user] = await sql<FullUser[]>`
+        SELECT  users.id,
+                users.name,
+                users.birthday,
+                users.country,
+                users.account_description,
+                users.email,
+                users.created_date
+        FROM    users
+        WHERE users.id =${userId}
+`;
+  return user;
+}
+
 export async function createUserInsecure(
   userData: Omit<User, 'id'>,
   passwordHash: UserWithPasswordHash['passwordHash'],
@@ -47,7 +63,7 @@ export async function createUserInsecure(
   VALUES
   (
     ${userData.name},
-    ${userData.birthday},
+    ${new Date(userData.birthday)},
     ${userData.country},
     ${userData.accountDescription || 'welcome to my page'},
     ${userData.email.toLowerCase()},
@@ -70,4 +86,20 @@ export async function getUserWithPasswordHashInsecure(email: User['email']) {
       email = ${email.toLowerCase()}
   `;
   return user;
+}
+
+export async function selectUserExists(userId: User['id']) {
+  const [record] = await sql<{ exists: boolean }[]>`
+    SELECT
+      EXISTS (
+        SELECT
+          TRUE
+        FROM
+          likes
+        WHERE
+          id = ${userId}
+      )
+  `;
+
+  return Boolean(record?.exists);
 }

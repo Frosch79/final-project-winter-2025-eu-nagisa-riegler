@@ -2,13 +2,11 @@ import type { Sql } from 'postgres';
 import { z } from 'zod';
 
 export const photoSchema = z.object({
-  id: z.number(),
-  albumId: z.number(),
   title: z.string(),
   cloudinaryDataPath: z.string(),
-  description: z.string(),
-  location: z.string(),
-  createdDate: z.date(),
+  description: z.string() || null,
+  location: z.string() || null,
+  albumId: z.number(),
 });
 
 export type Photo = {
@@ -30,7 +28,7 @@ title varchar(30),
 cloudinary_data_path TEXT NOT NULL,
 description TEXT,
 location TEXT,
-created_date DATE DEFAULT (DATE('now'))
+created_date timestamp NOT NULL DEFAULT now()
   )`;
 }
 

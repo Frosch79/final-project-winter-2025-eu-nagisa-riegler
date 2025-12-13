@@ -36,7 +36,7 @@ export async function POST(
   if (user) {
     return ExpoApiResponse.json(
       {
-        error: 'Username already taken',
+        error: 'Email already taken',
       },
       {
         status: 401,

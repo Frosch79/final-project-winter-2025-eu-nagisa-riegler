@@ -2,7 +2,10 @@ import crypto from 'node:crypto';
 import { createSessionInsecure } from '@/database/sessions';
 import { getUserWithPasswordHashInsecure } from '@/database/users';
 import { ExpoApiResponse } from '@/ExpoApiResponse';
-import { type User, userSchema } from '@/migrations/00000-createTableUsers';
+import {
+  type User,
+  userLoginSchema,
+} from '@/migrations/00000-createTableUsers';
 import { createSerializedRegisterSessionTokenCookie } from '@/util/cookies';
 import bcryptJs from 'bcryptjs';
 
@@ -18,8 +21,9 @@ export type LoginResponseBodyPost =
 export async function POST(
   request: Request,
 ): Promise<ExpoApiResponse<LoginResponseBodyPost>> {
-  const requestBody = request.json();
-  const result = userSchema.safeParse(requestBody);
+  const requestBody = await request.json();
+
+  const result = userLoginSchema.safeParse(requestBody);
 
   if (!result.success) {
     return ExpoApiResponse.json(
@@ -47,6 +51,7 @@ export async function POST(
       },
     );
   }
+
   const passwordHash = await bcryptJs.compare(
     result.data.password,
     userWithPasswordHash.passwordHash,
@@ -81,6 +86,7 @@ export async function POST(
   const serializedCookie = createSerializedRegisterSessionTokenCookie(
     session.token,
   );
+
   return ExpoApiResponse.json(
     {
       user: {

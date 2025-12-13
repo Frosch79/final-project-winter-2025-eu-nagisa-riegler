@@ -4,11 +4,10 @@ import { Session } from '@/migrations/00014-createTableSessions';
 import { sql } from './connect';
 
 export async function createPhotoInAlbum(
-  photoData: Photo,
-  albumId: Album['id'],
   sessionToken: Session['token'],
+  photoData: Omit<Photo, 'id' | 'createdDate'>,
 ) {
-  const createdPhoto = await sql<Photo[]>`
+  const [createdPhoto] = await sql<Photo[]>`
 
       INSERT INTO
         photos(
@@ -16,8 +15,7 @@ export async function createPhotoInAlbum(
         title,
         cloudinary_data_path,
         description,
-        location,
-        created_date
+        location
     )
 
         (
@@ -26,18 +24,16 @@ export async function createPhotoInAlbum(
             ${photoData.title},
             ${photoData.cloudinaryDataPath},
             ${photoData.description},
-            ${photoData.location},
-            ${photoData.createdDate}
+            ${photoData.location}
 
             FROM
              albums
              INNER JOIN sessions ON (
               sessions.token = ${sessionToken}
-              AND sessions.user_id = albums.user_id
               AND sessions.expiry_timestamp > now()
              )
             WHERE
-              albums.id = ${albumId}
+              albums.id = ${photoData.albumId}
         )
         RETURNING
         photos.*
@@ -45,10 +41,36 @@ export async function createPhotoInAlbum(
   return createdPhoto;
 }
 
-export async function updatePhoto(
-  photoData: Photo,
-  albumId: Album['id'],
+export async function getAlbumPhotos(
   sessionToken: Session['token'],
+  albumId: Album['id'],
+) {
+  const albumPhotos = await sql<Photo[]>`
+  SELECT photos.*
+  FROM photos
+  INNER JOIN albums ON albums.id = photos.album_id
+  INNER JOIN sessions ON  (sessions.token = ${sessionToken}
+              AND sessions.expiry_timestamp > now()
+             )
+
+    WHERE photos.album_id =${albumId}
+             `;
+  return albumPhotos;
+}
+
+export async function getPhoto(photoId: Photo['id']) {
+  const [photo] = await sql<Photo[]>`
+  SELECT photos.* FROM photos
+  INNER JOIN albums ON albums.id =photos.album_id
+  WHERE photos.id = ${photoId}
+  `;
+
+  return photo;
+}
+export async function updatePhoto(
+  sessionToken: Session['token'],
+  photoData: Omit<Photo, 'id' | 'createdDate'>,
+  photoId: Photo['id'],
 ) {
   const updatedPhoto = await sql<Photo[]>`
     UPDATE photos
@@ -56,10 +78,9 @@ export async function updatePhoto(
       title = ${photoData.title},
       cloudinary_data_path = ${photoData.cloudinaryDataPath},
       description = ${photoData.description},
-      location = ${photoData.location},
-      createdDate =${photoData.createdDate}
+      location = ${photoData.location}
     WHERE
-      id=${photoData.id} AND album_id IN (
+      photos.id=${photoId} AND photos.album_id IN (
         SELECT albums.id
         FROM albums
         INNER JOIN sessions ON (
@@ -67,7 +88,7 @@ export async function updatePhoto(
           AND sessions.token = ${sessionToken}
           AND sessions.expiry_timestamp > now()
         )
-        WHERE albums.id = ${albumId}
+        WHERE albums.id =${photoData.albumId}
       )
       RETURNING
       photos.* `;
@@ -76,9 +97,9 @@ export async function updatePhoto(
 }
 
 export async function deletePhoto(
+  sessionToken: Session['token'],
   photoId: Photo['id'],
   albumId: Album['id'],
-  sessionToken: Session['token'],
 ) {
   const deletedPhoto = await sql<Photo[]>`
     DELETE FROM photos WHERE id = ${photoId} AND album_id IN (
@@ -95,23 +116,6 @@ export async function deletePhoto(
       photos.*
     `;
   return deletedPhoto;
-}
-
-export async function getAllPhotosInAlbum(
-  albumId: Album['id'],
-  sessionToken: Session['token'],
-) {
-  const albumPhotos = await sql<Photo[]>`
-    SELECT photos.*
-    FROM photos
-    INNER JOIN albums ON albums.id= photos.album_id
-    INNER JOIN sessions ON (
-          sessions.user_id= albums.user_id
-          AND sessions.token = ${sessionToken}
-          AND sessions.expiry_timestamp > now()
-        )
-        WHERE albums.id = ${albumId}`;
-  return albumPhotos;
 }
 
 export async function selectPhotoExists(photoId: Photo['id']) {

@@ -129,15 +129,13 @@ export async function up(sql: Sql) {
         comments(
         album_id,
         user_id,
-        content,
-        created_date
+        content
     )
       VALUES
         (
           ${comment.albumId},
           ${comment.userId},
-          ${comment.content},
-          ${comment.createdDate}
+          ${comment.content}
 
 
         )

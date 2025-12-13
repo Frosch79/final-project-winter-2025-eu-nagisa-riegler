@@ -1,13 +1,17 @@
 import type { Sql } from 'postgres';
 import { z } from 'zod';
 
+export const userLoginSchema = z.object({
+  email: z.email(),
+  password: z.string().min(8),
+});
+
 export const userSchema = z.object({
   name: z.string().min(3),
-  birthday: z.date(),
+  birthday: z.coerce.date(),
   country: z.string(),
-  accountDescription: z.string(),
+  accountDescription: z.string() || null,
   email: z.email(),
-  createdDate: z.date(),
   password: z.string().min(8),
 });
 
@@ -18,7 +22,6 @@ export type User = {
   country: string;
   accountDescription: string | null;
   email: string;
-  createdDate: Date;
 };
 
 export async function up(sql: Sql) {
@@ -30,7 +33,8 @@ export async function up(sql: Sql) {
     country varchar(30) NOT NULL,
     account_description text,
     email varchar(50) NOT NULL UNIQUE,
-    password_hash text NOT NULL
+    password_hash text NOT NULL,
+    created_date timestamp NOT NULL DEFAULT now()
 
   )`;
 }

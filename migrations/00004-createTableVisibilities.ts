@@ -2,8 +2,7 @@ import type { Sql } from 'postgres';
 import { z } from 'zod';
 
 export const visibilitySchema = z.object({
-  id: z.number(),
-  name: z.string(),
+  visibility: z.string(),
 });
 
 export type Visibility = {

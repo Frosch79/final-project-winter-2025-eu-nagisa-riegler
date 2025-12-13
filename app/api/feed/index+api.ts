@@ -1,10 +1,9 @@
-import { getAlbumsInFeedWithVisibility } from '@/database/albums';
+import { getAlbumsSwitchWithVisibility } from '@/database/albums';
 import { ExpoApiResponse } from '@/ExpoApiResponse';
-import { visibilitySchema } from '@/migrations/00004-createTableVisibilities';
 import { type FeedAlbum } from '@/migrations/00006-createTableAlbums';
 import { parse } from 'cookie';
 
-export type FeedResponseBodyPost =
+export type FeedResponseBodyGet =
   | {
       feedAlbum: FeedAlbum[];
     }
@@ -15,21 +14,9 @@ export type FeedResponseBodyPost =
 
 export async function GET(
   request: Request,
-): Promise<ExpoApiResponse<FeedResponseBodyPost>> {
-  const requestBody = await request.json();
-  const result = visibilitySchema.safeParse(requestBody);
-
-  if (!result.success) {
-    return ExpoApiResponse.json(
-      {
-        error: 'Request does not contain album object',
-        errorIssues: result.error.issues,
-      },
-      {
-        status: 400,
-      },
-    );
-  }
+): Promise<ExpoApiResponse<FeedResponseBodyGet>> {
+  const { searchParams } = new URL(request.url);
+  const visibility = searchParams.get('visibility') ?? 'public';
   const cookies = parse(request.headers.get('cookie') || '');
   const token = cookies.sessionToken;
 
@@ -40,7 +27,7 @@ export async function GET(
   }
 
   const feed =
-    token && (await getAlbumsInFeedWithVisibility(token, result.data.name));
+    token && (await getAlbumsSwitchWithVisibility(token, visibility));
 
   if (!feed) {
     return ExpoApiResponse.json(
@@ -52,5 +39,5 @@ export async function GET(
       },
     );
   }
-  return ExpoApiResponse.json({ feedAlbum: [feed] });
+  return ExpoApiResponse.json({ feedAlbum: feed });
 }

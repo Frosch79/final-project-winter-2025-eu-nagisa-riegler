@@ -1,4 +1,8 @@
-import { createComment, getAllAlbumComments } from '@/database/comments';
+import {
+  CommentWithUserName,
+  createComment,
+  getAllAlbumComments,
+} from '@/database/comments';
 import { ExpoApiResponse } from '@/ExpoApiResponse';
 import {
   type Comment,
@@ -8,7 +12,7 @@ import { parse } from 'cookie';
 
 export type AlbumCommentsResponseBodyGet =
   | {
-      comment: Comment[];
+      comment: CommentWithUserName[];
     }
   | {
       error: string;
@@ -18,22 +22,10 @@ export type AlbumCommentsResponseBodyGet =
 export async function GET(
   request: Request,
 ): Promise<ExpoApiResponse<AlbumCommentsResponseBodyGet>> {
-  const requestBody = await request.json();
-  const result = commentSchema.safeParse(requestBody);
+  const { searchParams } = new URL(request.url);
+  const albumId = searchParams.get('album');
 
-  if (!result.success) {
-    return ExpoApiResponse.json(
-      {
-        error: 'Request does not contain album object',
-        errorIssues: result.error.issues,
-      },
-      {
-        status: 400,
-      },
-    );
-  }
-
-  const allComments = await getAllAlbumComments(result.data.id);
+  const allComments = await getAllAlbumComments(Number(albumId));
 
   if (!allComments) {
     return ExpoApiResponse.json(
@@ -81,8 +73,8 @@ export async function POST(
       error: 'No session token found',
     });
   }
-
-  const newComment = token && (await createComment(token, result.data));
+  const content = result.data;
+  const newComment = token && (await createComment(token, content));
 
   if (!newComment) {
     return ExpoApiResponse.json(

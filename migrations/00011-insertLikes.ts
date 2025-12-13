@@ -26,15 +26,12 @@ export async function up(sql: Sql) {
       INSERT INTO
         likes(
         album_id,
-        user_id,
-        created_date
+        user_id
     )
       VALUES
         (
           ${like.albumId},
-          ${like.userId},
-          ${like.createdDate}
-
+          ${like.userId}
 
         )
     `;

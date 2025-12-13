@@ -2,96 +2,59 @@ import type { User } from '@/migrations/00000-createTableUsers';
 import type { Visibility } from '@/migrations/00004-createTableVisibilities';
 import type {
   Album,
-  AlbumByUser,
+  AlbumWithVisibilityName,
   FeedAlbum,
 } from '@/migrations/00006-createTableAlbums';
+import { Photo } from '@/migrations/00008-createTablePhotos';
 import { Session } from '@/migrations/00014-createTableSessions';
 import { sql } from './connect';
-
-export async function getAlbums(sessionToken: Session['token']) {
-  const [albums] = await sql<Album[]>`
-  SELECT albums.*
-  from
-  albums
-  INNER JOIN session ON(
-    session.token =${sessionToken}
-    AND sessions.user_id = albums.user_id
-    AND expiry_timestamp > now()
-  )
-
-  `;
-  return albums;
-}
 
 export async function getAlbum(
   sessionToken: Session['token'],
   albumId: Album['id'],
 ) {
-  const [albums] = await sql<Album[]>`
-  SELECT albums.*
-  from
+  const [album] = await sql<AlbumWithVisibilityName[]>`
+  SELECT
+  albums.title,
+  albums.description,
+  albums.location,
+  albums.created_date,
+  visibilities.name AS visibility_name
+  FROM
   albums
-
-  INNER JOIN session ON(
-    session.token =${sessionToken}
+  INNER JOIN visibilities ON visibilities.id =albums.visibility_id
+  INNER JOIN sessions ON(
+    sessions.token =${sessionToken}
     AND sessions.user_id = albums.user_id
     AND expiry_timestamp > now()
 
   )
   WHERE
   albums.id = ${albumId}`;
-  return albums;
-}
-
-export async function getAlbumByUser(
-  sessionToken: Session['token'],
-  albumId: Album['id'],
-) {
-  const album = await sql<AlbumByUser[]>`
-    SELECT DISTINCT albums.*,
-    users.name ,
-    SUM(likes.id) AS likes_count,
-    SUM(comments.id) AS comments_count
-    FROM albums
-    INNER JOIN users ON users.id = albums.user_id
-    INNER JOIN visibilities ON visibilities.id = albums.visibility_id
-    LEFT JOIN comments ON comments.album_id = albums.id
-    LEFT JOIN likes ON likes.album_id= albums.id
-    LEFT JOIN follows ON follows.follower_user_id = albums.user_id
-    LEFT JOIN sessions ON (
-      sessions.token = ${sessionToken}
-    AND sessions.user_id = follows.followed_user_id
-    AND expiry_timestamp > now()
-    )
-    WHERE
-    CASE visibilities
-    WHEN  visibilities.id = 2 THEN follows.followed_user_id = sessions.user_id AND albums.id = ${albumId}
-    WHEN visibilities.id = 1 THEN albums.id = ${albumId}
-    ELSE FALSE
-    END
-    ORDER BY albums.created_date
-    `;
   return album;
 }
 
 export async function createAlbum(
   sessionToken: Session['token'],
-  newAlbum: Album,
+  newAlbum: Omit<AlbumWithVisibilityName, 'createdDate'>,
 ) {
-  const createdAlbum = await sql<Album[]>`
+  const [createdAlbum] = await sql<Album[]>`
   INSERT INTO
         albums(
-        user_id,title,description,location,created_date,visibility_id
-    ) (
+        user_id,title,description,location,visibility_id
+    )
+     (
       SELECT
-          user_id,
+          sessions.user_id,
           ${newAlbum.title},
           ${newAlbum.description},
           ${newAlbum.location},
-          ${newAlbum.createdDate},
-          ${newAlbum.visibilityId}
+          visibilities.id
         FROM
           sessions
+          JOIN visibilities
+            ON visibilities.name = ${newAlbum.visibilityName}
+
         WHERE
           token =${sessionToken}
         AND sessions.expiry_timestamp > now()
@@ -105,7 +68,8 @@ export async function createAlbum(
 
 export async function updateAlbum(
   sessionToken: Session['token'],
-  albums: Omit<Album, 'user_id'>,
+  albums: Omit<AlbumWithVisibilityName, 'createdDate'>,
+  albumId: number,
 ) {
   const updateAlbum = await sql<Album[]>`
   UPDATE albums
@@ -113,10 +77,11 @@ export async function updateAlbum(
     title =${albums.title},
     description = ${albums.description},
     location=${albums.location},
-    created_date=${albums.createdDate},
-    visibility_id=${albums.visibilityId}
-  WHERE
-    id = ${albums.id} AND user_id IN (
+    visibility_id=(SELECT visibilities.id
+    FROM visibilities
+    WHERE visibilities.name= ${albums.visibilityName})
+
+   WHERE albums.id = ${albumId} AND user_id IN (
       SELECT
       user_id
       FROM
@@ -151,72 +116,161 @@ export async function deleteAlbum(
   return deletedAlbum;
 }
 
-export async function getAlbumsInFeedWithVisibility(
+export async function getAlbumsSwitchWithVisibility(
   sessionToken: Session['token'],
   visibility: Visibility['name'],
 ) {
-  let feedAlbums;
-  if (visibility === 'public') {
-    [feedAlbums] = await sql<FeedAlbum[]>`
-    SELECT DISTINCT albums.*, users.name FROM albums
-    INNER JOIN users ON users.id = albums.user_id
-    INNER JOIN visibilities ON visibilities.id = albums.visibility_id
-    WHERE visibilities.name = 'public'
-    ORDER BY albums.created_date
+  /* all visibility level control */
+  const feedAlbums = await sql<FeedAlbum[]>`
+
+  WITH safe_user AS (
+    SELECT user_id
+    FROM sessions
+    WHERE token = ${sessionToken}
+      AND expiry_timestamp > now()
+    LIMIT 1
+)
+
+SELECT
+  albums.*,
+  users.name,
+  COUNT(DISTINCT comments.id)::integer AS comment_count,
+  COUNT(DISTINCT likes.id)::integer AS like_count
+
+FROM albums
+INNER JOIN users ON users.id = albums.user_id
+INNER JOIN visibilities ON visibilities.id = albums.visibility_id
+LEFT JOIN photos ON photos.album_id =albums.id
+LEFT JOIN comments ON comments.album_id = albums.id
+LEFT JOIN likes ON likes.album_id = albums.id
+LEFT JOIN follows ON follows.followed_user_id = albums.user_id
+CROSS JOIN safe_user
+
+WHERE
+photos.id IS NOT NULL AND
+ ( (
+    ${visibility} = 'public'
+    AND albums.visibility_id = 1
+  )
+  OR (
+   ${visibility} = 'followersOnly'
+    AND (  albums.visibility_id <= 2 AND follows.follower_user_id = safe_user.user_id
+         OR albums.user_id = safe_user.user_id)
+  ))
+  OR (
+    ${visibility}= 'private'
+    AND albums.user_id = safe_user.user_id
+  )
+
+GROUP BY albums.id, users.name
+ORDER BY albums.created_date DESC;
+
     `;
-  } else if (visibility === 'followerOnly') {
-    [feedAlbums] = await sql<FeedAlbum[]>`
-    SELECT DISTINCT albums.*, users.name FROM albums
-    INNER JOIN users ON users.id = albums.user_id
-    INNER JOIN visibilities ON visibilities.id = albums.visibility_id
-    LEFT JOIN follows ON follows.followed_user_id = albums.user_id
-    LEFT JOIN sessions ON (
-      sessions.token = ${sessionToken}
-    AND sessions.user_id = follows.follower_user_id
-    AND expiry_timestamp > now()
-    )
-    WHERE visibilities.id <= 2 AND follows.follower_user_id = sessions.user_id
-    ORDER BY albums.created_date
-    `;
-  }
   return feedAlbums;
 }
 
-export async function getMyAlbums(
+export async function getVisitUserAlbums(
   sessionToken: Session['token'],
-  visibility: Visibility['name'] | undefined,
+  userId: User['id'],
 ) {
-  let myAlbums;
-  if (visibility) {
-    [myAlbums] = await sql<Album[] & User['name'] & Visibility['name']>`
-    SELECT DISTINCT albums.*, users.name,visibilities.name
-    FROM albums
-      INNER JOIN users ON users.id = albums.user_id
-      INNER JOIN visibilities ON visibilities.id = albums.visibility_id
-      INNER JOIN sessions ON (
-        sessions.token = ${sessionToken}
-        AND sessions.user_id = albums.user_id
-        AND expiry_timestamp > now()
-        )
-    WHERE visibilities.name = ${visibility}
-    ORDER BY albums.created_date
-    `;
-  } else if (!visibility) {
-    [myAlbums] = await sql<Album[] & User['name'] & Visibility['name']>`
-    SELECT DISTINCT albums.*, users.name,visibilities.name
-    FROM albums
-      INNER JOIN users ON users.id = albums.user_id
-      INNER JOIN visibilities ON visibilities.id = albums.visibility_id
-      INNER JOIN sessions ON (
-        sessions.token = ${sessionToken}
-        AND sessions.user_id = albums.user_id
-        AND expiry_timestamp > now()
-        )
-    ORDER BY albums.created_date
-    `;
-  }
+  /* if user visits other user albums page */
+  const visitUserAlbums = await sql<FeedAlbum[]>`
+      WITH safe_user AS (
+    SELECT user_id
+    FROM sessions
+    WHERE token = ${sessionToken}
+      AND expiry_timestamp > now()
+    LIMIT 1
+)
+  SELECT DISTINCT
+  albums.*,
+  users.name,
+  COUNT(DISTINCT comments.id)::integer AS comment_count,
+  COUNT(DISTINCT likes.id)::integer AS like_count
+  FROM users
+  LEFT JOIN albums ON users.id = albums.user_id
+  LEFT JOIN  follows ON follower_user_id = albums.user_id
+  LEFT JOIN comments ON comments.album_id = albums.id
+  LEFT JOIN likes ON likes.album_id = albums.id
+  CROSS JOIN safe_user
 
-  return myAlbums;
+ WHERE users.id =${userId}
+ AND((safe_user.user_id = follows.followed_user_id AND  albums.visibility_id <=2)
+ OR(safe_user.user_id = albums.user_id AND albums.visibility_id <=3)
+ OR albums.visibility_id = 1 )
+  GROUP BY
+albums.id,users.name
+ORDER BY albums.created_date DESC
+  `;
+  return visitUserAlbums;
+}
+
+export type AlbumByUser = Album & { userName: User['name'] } & {
+  visibilityName: Visibility['name'];
+} & { photos: Photo[] };
+export async function getVisitUserAlbum(
+  sessionToken: Session['token'],
+  albumId: Album['id'],
+) {
+  /* if user visits other user album */
+  const [visitAlbum] = await sql<AlbumByUser[]>`
+
+    WITH safe_user AS (
+    SELECT user_id
+    FROM sessions
+    WHERE token = ${sessionToken}
+      AND expiry_timestamp > now()
+    LIMIT 1
+)
+  SELECT DISTINCT
+   albums.* ,
+   users.name AS user_name,
+   visibilities.name AS visibilityName,
+   COALESCE(
+    jsonb_agg(
+      DISTINCT jsonb_build_object(
+        'id', photos.id,
+  'albumId', photos.album_id,
+  'photoTitle', photos.title,
+  'cloudinaryDataPath', photos.cloudinary_data_path,
+  'Description', photos.description,
+  'Location', photos.location,
+  'CreatedDate',photos.created_date
+      )
+    ) FILTER (WHERE photos.id IS NOT NULL),
+  '[]'::jsonb) AS photos
+  FROM albums
+  INNER JOIN visibilities ON visibilities.id = albums.visibility_id
+  LEFT JOIN photos ON photos.album_id =  albums.id
+  INNER JOIN users ON users.id = albums.user_id
+  LEFT JOIN  follows ON followed_user_id = albums.user_id
+  CROSS JOIN safe_user
+
+ WHERE
+  albums.id = ${albumId}
+  AND (
+      -- public
+      albums.visibility_id = 1
+
+      -- followsOnly
+      OR (
+        albums.visibility_id = 2 AND (
+             albums.user_id = safe_user.user_id          -- my album
+          OR follows.follower_user_id = safe_user.user_id -- follow album
+        )
+      )
+
+      -- private
+      OR (
+        albums.visibility_id = 3
+        AND albums.user_id = safe_user.user_id
+      )
+  )
+  GROUP BY
+albums.id,users.name,visibilities.name
+  `;
+
+  return visitAlbum;
 }
 
 export async function selectAlbumExists(albumId: Album['id']) {
