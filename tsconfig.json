@@ -1,10 +1,21 @@
 {
-  "extends": "expo/tsconfig.base",
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "eslint-config-upleveled/tsconfig.base.json",
   "compilerOptions": {
-    "strict": true,
-    "paths": {
-      "@/*": ["./*"]
-    }
+    // Based on expo/tsconfig.base.json
+    // https://github.com/expo/expo/blob/main/packages/expo/tsconfig.base.json
+    "jsx": "react-native",
+    "target": "ESNext"
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.cjs",
+    "**/*.mjs",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ],
+  "exclude": ["node_modules"]
 }
