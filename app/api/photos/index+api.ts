@@ -1,7 +1,10 @@
-import { createPhotoInAlbum, getAlbumPhotos } from '@/database/photos';
-import { ExpoApiResponse } from '@/ExpoApiResponse';
-import { Photo, photoSchema } from '@/migrations/00008-createTablePhotos';
 import { parse } from 'cookie';
+import { createPhotoInAlbum, getAlbumPhotos } from '../../../database/photos';
+import { ExpoApiResponse } from '../../../ExpoApiResponse';
+import {
+  type Photo,
+  photoSchema,
+} from '../../../migrations/00008-createTablePhotos';
 
 /* get my photos in album */
 export type PhotoResponseBodyGet =

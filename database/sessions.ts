@@ -1,5 +1,5 @@
-import { User } from '@/migrations/00000-createTableUsers';
-import { Session } from '@/migrations/00014-createTableSessions';
+import type { User } from '../migrations/00000-createTableUsers';
+import type { Session } from '../migrations/00014-createTableSessions';
 import { sql } from './connect';
 
 export async function getValidSession(sessionToken: Session['token']) {

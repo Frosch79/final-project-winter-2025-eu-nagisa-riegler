@@ -1,11 +1,11 @@
-import UserPhotoCard from '@/components/UserPhotoCard';
-import type { Photo } from '@/migrations/00008-createTablePhotos';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { SafeAreaView, ScrollView } from 'react-native';
 import { HelperText } from 'react-native-paper';
-import { PhotoResponseBodyGet } from '../api/photos/[photoId]+api';
-import { UserResponseBodyGet } from '../api/user+api';
+import UserPhotoCard from '../../components/UserPhotoCard';
+import type { Photo } from '../../migrations/00008-createTablePhotos';
+import type { PhotoResponseBodyGet } from '../api/photos/[photoId]+api';
+import type { UserResponseBodyGet } from '../api/user+api';
 
 export default function Photo() {
   const [photoData, setPhotoData] = useState<Photo>();

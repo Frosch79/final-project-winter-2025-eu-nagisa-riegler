@@ -1,12 +1,12 @@
-import { CreateAlbumResponseBodyPost } from '@/app/api/albums/index+api';
-import { UserResponseBodyGet } from '@/app/api/user+api';
-import VisibilitySelector from '@/components/RadioGroup';
-import { spacing } from '@/constants/Spacing';
-import { typography } from '@/constants/Typography';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { SafeAreaView, View } from 'react-native';
 import { Button, Card, HelperText, Text, TextInput } from 'react-native-paper';
+import VisibilitySelector from '../../components/RadioGroup';
+import { spacing } from '../../constants/Spacing';
+import { typography } from '../../constants/Typography';
+import type { CreateAlbumResponseBodyPost } from '../api/albums/index+api';
+import type { UserResponseBodyGet } from '../api/user+api';
 
 export default function PostMyAlbum() {
   const [title, setTitle] = useState('');
@@ -108,7 +108,6 @@ export default function PostMyAlbum() {
                 setMessage(responseBody.error);
                 return;
               }
-
               const newAlbumId = responseBody.album.id;
               console.log(responseBody.album.id);
               setTitle('');

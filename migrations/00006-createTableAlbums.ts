@@ -40,15 +40,16 @@ export type FeedAlbum = {
 
 export async function up(sql: Sql) {
   await sql`
-  CREATE TABLE albums(
-id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-title varchar(30) NOT NULL,
-description TEXT,
-location TEXT,
-created_date timestamp NOT NULL DEFAULT now(),
-visibility_id integer NOT NULL REFERENCES visibilities (id) ON DELETE CASCADE
-  )`;
+    CREATE TABLE albums (
+      id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+      user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+      title varchar(30) NOT NULL,
+      description text,
+      location text,
+      created_date timestamp NOT NULL DEFAULT now(),
+      visibility_id integer NOT NULL REFERENCES visibilities (id) ON DELETE CASCADE
+    )
+  `;
 }
 
 export async function down(sql: Sql) {

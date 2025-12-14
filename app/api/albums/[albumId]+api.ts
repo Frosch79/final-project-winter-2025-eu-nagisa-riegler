@@ -1,13 +1,16 @@
+import { parse } from 'cookie';
 import {
   type AlbumByUser,
   deleteAlbum,
   getVisitUserAlbum,
   selectAlbumExists,
   updateAlbum,
-} from '@/database/albums';
-import { ExpoApiResponse } from '@/ExpoApiResponse';
-import { type Album, albumSchema } from '@/migrations/00006-createTableAlbums';
-import { parse } from 'cookie';
+} from '../../../database/albums';
+import { ExpoApiResponse } from '../../../ExpoApiResponse';
+import {
+  type Album,
+  albumSchema,
+} from '../../../migrations/00006-createTableAlbums';
 
 /* get my album */
 export type AlbumResponseBodyGet =
@@ -64,7 +67,7 @@ export async function GET(
 
 export type AlbumResponseBodyPut =
   | {
-      album: Album[];
+      album: Album;
     }
   | {
       error: string;

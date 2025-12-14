@@ -1,5 +1,5 @@
-import cloudinary from '@/cloudinary.config';
-import { ExpoApiResponse } from '@/ExpoApiResponse';
+import cloudinary from '../../../cloudinary.config';
+import { ExpoApiResponse } from '../../../ExpoApiResponse';
 
 export async function GET() {
   const timestamp = Math.round(Date.now() / 1000);

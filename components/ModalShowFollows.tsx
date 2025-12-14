@@ -1,11 +1,11 @@
-import { colors } from '@/constants/Colors';
-import { spacing } from '@/constants/Spacing';
-import { typography } from '@/constants/Typography';
-import { FollowUser } from '@/database/followers';
-import { User } from '@/migrations/00000-createTableUsers';
 import { useRouter } from 'expo-router';
 import { FlatList, View } from 'react-native';
 import { Button, Modal, Text } from 'react-native-paper';
+import { colors } from '../constants/Colors';
+import { spacing } from '../constants/Spacing';
+import { typography } from '../constants/Typography';
+import type { FollowUser } from '../database/followers';
+import type { User } from '../migrations/00000-createTableUsers';
 
 type Props = {
   visible: boolean;

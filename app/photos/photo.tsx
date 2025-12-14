@@ -1,14 +1,13 @@
-import { AlbumResponseBodyGet } from '@/app/api/albums/[albumId]+api';
-import { CreatePhotoResponseBodyPost } from '@/app/api/photos/index+api';
-import { components } from '@/constants/Components';
-import { typography } from '@/constants/Typography';
-import { type AlbumWithVisibilityName } from '@/migrations/00006-createTableAlbums';
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Platform, SafeAreaView, ScrollView, View } from 'react-native';
 import { Button, Card, HelperText, Text, TextInput } from 'react-native-paper';
-import { UserResponseBodyGet } from '../api/user+api';
+import { components } from '../../constants/Components';
+import type { AlbumByUser } from '../../database/albums';
+import type { AlbumResponseBodyGet } from '../api/albums/[albumId]+api';
+import type { CreatePhotoResponseBodyPost } from '../api/photos/index+api';
+import type { UserResponseBodyGet } from '../api/user+api';
 
 export default function PostMyPhotos() {
   const [title, setTitle] = useState('');
@@ -17,7 +16,7 @@ export default function PostMyPhotos() {
   const [cloudinaryPath, setCloudinaryPath] = useState(undefined);
   const [isError, setIsError] = useState(false);
   const [message, setMessage] = useState<string | null>('');
-  const [album, setAlbum] = useState<AlbumWithVisibilityName>();
+  const [album, setAlbum] = useState<AlbumByUser>();
 
   const { albumId } = useLocalSearchParams();
   const router = useRouter();
@@ -68,8 +67,8 @@ export default function PostMyPhotos() {
     const image = result.assets[0];
 
     const file = {
-      uri: image.uri,
-      type: image.mimeType ?? 'image/jpeg',
+      uri: image?.uri,
+      type: image?.mimeType ?? 'image/jpeg',
       name: 'upload.jpg',
     };
 
@@ -114,11 +113,7 @@ export default function PostMyPhotos() {
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         <Card style={{ borderRadius: components.card.style.borderRadius }}>
           {/* album title */}
-          <Card.Title
-            title={album?.title}
-            subtitle={album?.description}
-            titleStyle={{ fontSize: typography.title.fontSize }}
-          />
+          <Card.Title title={album?.title} subtitle={album?.description} />
           <Card.Content>
             {/* image preview */}
             <View
@@ -189,71 +184,72 @@ export default function PostMyPhotos() {
             {message}
           </HelperText>
 
-          <Card.Actions style={{ justifyContent: 'space-between' }}>
-            <Button
-              onPress={() =>
-                router.replace({
-                  pathname: '/album/[albumId]',
-                  params: { albumId: Number(albumId) },
-                })
-              }
-            >
-              <Text>Cancel</Text>
-            </Button>
-
-            <Button
-              mode="contained"
-              disabled={!cloudinaryPath}
-              onPress={async () => {
-                const response = await fetch(`/api/photos`, {
-                  method: 'POST',
-                  body: JSON.stringify({
-                    title: title,
-                    cloudinaryDataPath: cloudinaryPath,
-                    description: description,
-                    location: location,
-                    albumId: Number(albumId),
-                  }),
-                });
-
-                if (!response.ok) {
-                  let errorMessage = 'Error Create Photo';
-                  const photoResponse: CreatePhotoResponseBodyPost =
-                    await response.json();
-                  if ('error' in photoResponse) {
-                    errorMessage = photoResponse.error;
-                  }
-
-                  setIsError(true);
-                  setMessage(errorMessage);
-
-                  return;
-                }
-
-                const createdPhotoResponse: CreatePhotoResponseBodyPost =
-                  await response.json();
-                console.log('res', createdPhotoResponse);
-
-                if ('error' in createdPhotoResponse) {
-                  setIsError(true);
-                  setMessage(createdPhotoResponse.error);
-                  return;
-                }
-
-                setTitle('');
-                setDescription('');
-                setLocation('');
-                if (createdPhotoResponse.photo) {
+          {album ? (
+            <Card.Actions style={{ justifyContent: 'space-between' }}>
+              <Button
+                onPress={() =>
                   router.replace({
                     pathname: '/album/[albumId]',
-                    params: { albumId: Number(albumId) },
-                  });
+                    params: { albumId: album.id.toString() },
+                  })
                 }
-              }}
-            >
-              <Text>Ok</Text>
-            </Button>
-          </Card.Actions>
+              >
+                <Text>Cancel</Text>
+              </Button>
+              <Button
+                mode="contained"
+                disabled={!cloudinaryPath}
+                onPress={async () => {
+                  const response = await fetch(`/api/photos`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                      title: title,
+                      cloudinaryDataPath: cloudinaryPath,
+                      description: description,
+                      location: location,
+                      albumId: Number(albumId),
+                    }),
+                  });
+
+                  if (!response.ok) {
+                    let errorMessage = 'Error Create Photo';
+                    const photoResponse: CreatePhotoResponseBodyPost =
+                      await response.json();
+                    if ('error' in photoResponse) {
+                      errorMessage = photoResponse.error;
+                    }
+
+                    setIsError(true);
+                    setMessage(errorMessage);
+
+                    return;
+                  }
+
+                  const createdPhotoResponse: CreatePhotoResponseBodyPost =
+                    await response.json();
+                  console.log('res', createdPhotoResponse);
+
+                  if ('error' in createdPhotoResponse) {
+                    setIsError(true);
+                    setMessage(createdPhotoResponse.error);
+                    return;
+                  }
+
+                  setTitle('');
+                  setDescription('');
+                  setLocation('');
+                  if (createdPhotoResponse.photo) {
+                    router.replace({
+                      pathname: '/album/[albumId]',
+                      params: { albumId: album.id.toString() },
+                    });
+                  }
+                }}
+              >
+                <Text>Ok</Text>
+              </Button>
+            </Card.Actions>
+          ) : null}
         </Card>
       </ScrollView>
     </SafeAreaView>

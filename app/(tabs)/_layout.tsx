@@ -1,7 +1,7 @@
-import AnimatedTabIcon from '@/components/AnimatedTabIcon';
-import { colors } from '@/constants/Colors';
-import { tabPressHaptic } from '@/util/haptics';
 import { Tabs } from 'expo-router';
+import AnimatedTabIcon from '../../components/AnimatedTabIcon';
+import { colors } from '../../constants/Colors';
+import { tabPressHaptic } from '../../util/haptics';
 
 export default function TabLayout() {
   return (

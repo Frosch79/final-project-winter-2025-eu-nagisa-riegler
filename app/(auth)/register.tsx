@@ -1,7 +1,6 @@
-import { spacing } from '@/constants/Spacing';
 import dayjs from 'dayjs';
 import {
-  Href,
+  type Href,
   router,
   useFocusEffect,
   useLocalSearchParams,
@@ -9,7 +8,8 @@ import {
 import { useCallback, useState } from 'react';
 import { SafeAreaView } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
-import { RegisterResponseBodyPost } from './api/register+api';
+import { spacing } from '../../constants/Spacing';
+import { type RegisterResponseBodyPost } from './api/register+api';
 
 export default function Register() {
   const [isFocused, setIsFocused] = useState<string | undefined>();

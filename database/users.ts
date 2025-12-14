@@ -1,5 +1,5 @@
-import type { User } from '@/migrations/00000-createTableUsers';
-import type { Session } from '@/migrations/00014-createTableSessions';
+import type { User } from '../migrations/00000-createTableUsers';
+import type { Session } from '../migrations/00014-createTableSessions';
 import { sql } from './connect';
 
 type UserWithPasswordHash = User & { passwordHash: string };
@@ -7,10 +7,13 @@ type UserWithPasswordHash = User & { passwordHash: string };
 export async function getUserInsecure(userEmail: User['email']) {
   const [user] = await sql<User[]>`
     SELECT
-      users.id, users.name, users.email
+      users.id,
+      users.name,
+      users.email
     FROM
       users
-      WHERE email= ${userEmail.toLowerCase()}
+    WHERE
+      email = ${userEmail.toLowerCase()}
   `;
   return user;
 }
@@ -40,16 +43,19 @@ export async function getUser(sessionToken: Session['token']) {
 
 export async function getUserPageInsecure(userId: User['id']) {
   const [user] = await sql<FullUser[]>`
-        SELECT  users.id,
-                users.name,
-                users.birthday,
-                users.country,
-                users.account_description,
-                users.email,
-                users.created_date
-        FROM    users
-        WHERE users.id =${userId}
-`;
+    SELECT
+      users.id,
+      users.name,
+      users.birthday,
+      users.country,
+      users.account_description,
+      users.email,
+      users.created_date
+    FROM
+      users
+    WHERE
+      users.id = ${userId}
+  `;
   return user;
 }
 
@@ -58,21 +64,27 @@ export async function createUserInsecure(
   passwordHash: UserWithPasswordHash['passwordHash'],
 ) {
   const [user] = await sql<User[]>`
-  INSERT INTO
-    users(name,birthday,country,account_description,email,password_hash)
-  VALUES
-  (
-    ${userData.name},
-    ${new Date(userData.birthday)},
-    ${userData.country},
-    ${userData.accountDescription || 'welcome to my page'},
-    ${userData.email.toLowerCase()},
-    ${passwordHash}
-  )
-  RETURNING
-  users.*
-
-    `;
+    INSERT INTO
+      users (
+        name,
+        birthday,
+        country,
+        account_description,
+        email,
+        password_hash
+      )
+    VALUES
+      (
+        ${userData.name},
+        ${new Date(userData.birthday)},
+        ${userData.country},
+        ${userData.accountDescription || 'welcome to my page'},
+        ${userData.email.toLowerCase()},
+        ${passwordHash}
+      )
+    RETURNING
+      users.*
+  `;
   return user;
 }
 

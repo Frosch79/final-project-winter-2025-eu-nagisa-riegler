@@ -1,8 +1,8 @@
-import { components } from '@/constants/Components';
-import { spacing } from '@/constants/Spacing';
-import { typography } from '@/constants/Typography';
 import dayjs from 'dayjs';
 import { Card, Text } from 'react-native-paper';
+import { components } from '../constants/Components';
+import { spacing } from '../constants/Spacing';
+import { typography } from '../constants/Typography';
 
 type Props = {
   photoTitle: string;

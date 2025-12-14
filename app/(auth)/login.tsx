@@ -1,6 +1,5 @@
-import { spacing } from '@/constants/Spacing';
 import {
-  Href,
+  type Href,
   router,
   useFocusEffect,
   useLocalSearchParams,
@@ -8,8 +7,9 @@ import {
 import { useCallback, useState } from 'react';
 import { SafeAreaView, View } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
-import { UserResponseBodyGet } from '../api/user+api';
-import { LoginResponseBodyPost } from './api/login+api';
+import { spacing } from '../../constants/Spacing';
+import type { UserResponseBodyGet } from '../api/user+api';
+import type { LoginResponseBodyPost } from './api/login+api';
 
 export default function Login() {
   const [isFocused, setIsFocused] = useState<string | undefined>();

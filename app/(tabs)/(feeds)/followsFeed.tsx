@@ -1,10 +1,10 @@
-import { UserResponseBodyGet } from '@/app/api/user+api';
-import UserFeed from '@/components/UserFeed';
-import { type FeedAlbum } from '@/migrations/00006-createTableAlbums';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { FlatList, SafeAreaView, Text } from 'react-native';
-import { FeedResponseBodyGet } from '../../api/feed/index+api';
+import UserFeed from '../../../components/UserFeed';
+import type { FeedAlbum } from '../../../migrations/00006-createTableAlbums';
+import { type FeedResponseBodyGet } from '../../api/feed/index+api';
+import type { UserResponseBodyGet } from '../../api/user+api';
 
 export default function Feed() {
   const [followFeed, setFollowFeed] = useState<FeedAlbum[]>([]);

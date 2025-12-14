@@ -1,10 +1,13 @@
 import crypto from 'node:crypto';
-import { createSessionInsecure } from '@/database/sessions';
-import { createUserInsecure, getUserInsecure } from '@/database/users';
-import { ExpoApiResponse } from '@/ExpoApiResponse';
-import { type User, userSchema } from '@/migrations/00000-createTableUsers';
-import { createSerializedRegisterSessionTokenCookie } from '@/util/cookies';
 import bcryptJs from 'bcryptjs';
+import { createSessionInsecure } from '../../../database/sessions';
+import { createUserInsecure, getUserInsecure } from '../../../database/users';
+import { ExpoApiResponse } from '../../../ExpoApiResponse';
+import {
+  type User,
+  userSchema,
+} from '../../../migrations/00000-createTableUsers';
+import { createSerializedRegisterSessionTokenCookie } from '../../../util/cookies';
 
 export type RegisterResponseBodyPost =
   | {

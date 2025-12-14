@@ -1,6 +1,6 @@
-import { ExpoApiResponse } from '@/ExpoApiResponse';
-import { deleteSerializedRegisterSessionTokenCookie } from '@/util/cookies';
 import { parse } from 'cookie';
+import { ExpoApiResponse } from '../../../ExpoApiResponse';
+import { deleteSerializedRegisterSessionTokenCookie } from '../../../util/cookies';
 
 export type LogoutResponseBodyGet =
   | {

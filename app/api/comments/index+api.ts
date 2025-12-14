@@ -1,14 +1,14 @@
+import { parse } from 'cookie';
 import {
-  CommentWithUserName,
+  type CommentWithUserName,
   createComment,
   getAllAlbumComments,
-} from '@/database/comments';
-import { ExpoApiResponse } from '@/ExpoApiResponse';
+} from '../../../database/comments';
+import { ExpoApiResponse } from '../../../ExpoApiResponse';
 import {
   type Comment,
   commentSchema,
-} from '@/migrations/00012-createTableComments';
-import { parse } from 'cookie';
+} from '../../../migrations/00012-createTableComments';
 
 export type AlbumCommentsResponseBodyGet =
   | {
@@ -79,7 +79,7 @@ export async function POST(
   if (!newComment) {
     return ExpoApiResponse.json(
       {
-        error: 'Album not created or access denied creating note',
+        error: 'Comment not created or access denied creating Comment ',
       },
       {
         status: 500,

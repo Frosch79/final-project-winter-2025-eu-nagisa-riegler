@@ -1,13 +1,16 @@
+import { parse } from 'cookie';
 import {
   createFollow,
   deleteFollow,
-  FollowUser,
+  type FollowUser,
   getIsFollowed,
   getUserAllFollowedInsecure,
-} from '@/database/followers';
-import { ExpoApiResponse } from '@/ExpoApiResponse';
-import { Follow, followSchema } from '@/migrations/00002-createTableFollows';
-import { parse } from 'cookie';
+} from '../../../database/followers';
+import { ExpoApiResponse } from '../../../ExpoApiResponse';
+import {
+  type Follow,
+  followSchema,
+} from '../../../migrations/00002-createTableFollows';
 
 export type FollowedUserResponseBodyGet =
   | {

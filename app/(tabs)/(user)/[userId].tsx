@@ -1,20 +1,20 @@
-import { LogoutResponseBodyGet } from '@/app/(auth)/api/logout+api';
-import { UserFeedResponseBodyGet } from '@/app/api/feed/[feedId]+api';
-import { IsFollowedResponseBodyGet } from '@/app/api/followed/[userId]+api';
-import { FollowedUserResponseBodyGet } from '@/app/api/followed/index+api';
-import { FollowerUserResponseBodyGet } from '@/app/api/follower/index+api';
-import { UserResponseBodyGet } from '@/app/api/user+api';
-import { UserPageResponseBodyGet } from '@/app/api/users/[userId]+api';
-import UserCard from '@/components/UserCard';
-import UserFeed from '@/components/UserFeed';
-import { theme } from '@/constants/Theme';
-import { FollowUser } from '@/database/followers';
-import { FullUser } from '@/database/users';
-import { type FeedAlbum } from '@/migrations/00006-createTableAlbums';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Alert, FlatList, SafeAreaView, View } from 'react-native';
 import { Button, HelperText, Provider, Text } from 'react-native-paper';
+import type { LogoutResponseBodyGet } from '../../(auth)/api/logout+api';
+import UserCard from '../../../components/UserCard';
+import UserFeed from '../../../components/UserFeed';
+import { theme } from '../../../constants/Theme';
+import type { FollowUser } from '../../../database/followers';
+import type { FullUser } from '../../../database/users';
+import type { FeedAlbum } from '../../../migrations/00006-createTableAlbums';
+import type { UserFeedResponseBodyGet } from '../../api/feed/[feedId]+api';
+import type { IsFollowedResponseBodyGet } from '../../api/followed/[userId]+api';
+import type { FollowedUserResponseBodyGet } from '../../api/followed/index+api';
+import type { FollowerUserResponseBodyGet } from '../../api/follower/index+api';
+import type { UserResponseBodyGet } from '../../api/user+api';
+import type { UserPageResponseBodyGet } from '../../api/users/[userId]+api';
 
 export default function UserPage() {
   const [isMyPage, setIsMyPage] = useState<boolean>(false);

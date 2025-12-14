@@ -1,7 +1,7 @@
-import { deleteComment } from '@/database/comments';
-import { ExpoApiResponse } from '@/ExpoApiResponse';
-import { type Comment } from '@/migrations/00012-createTableComments';
 import { parse } from 'cookie';
+import { deleteComment } from '../../../database/comments';
+import { ExpoApiResponse } from '../../../ExpoApiResponse';
+import type { Comment } from '../../../migrations/00012-createTableComments';
 
 /* delete comment from an album */
 export type AlbumCommentResponseBodyDelete =

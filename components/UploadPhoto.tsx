@@ -1,25 +1,31 @@
 import * as ImagePicker from 'expo-image-picker';
-import { Button } from 'react-native-paper';
+import { Platform } from 'react-native';
 
 export default function UploadPhoto() {
   const pickImageAsync = async () => {
     /* add photo to cloudinary  */
+
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       quality: 1,
     });
 
     if (result.canceled) return;
-
     const image = result.assets[0];
+
     const file = {
-      uri: image.uri,
-      type: image.mimeType ?? 'image/jpeg',
+      uri: image?.uri,
+      type: image?.mimeType ?? 'image/jpeg',
       name: 'upload.jpg',
     };
 
     // get sign
-    const sigRes = await fetch('http://192.168.0.226:8081/api/cloudinary/sign'); //note: this port is only test
+    let sigRes;
+    if (Platform.OS === 'web') {
+      sigRes = await fetch('http://localhost:8081/api/cloudinary/sign'); //note: this port is only web test
+    } else {
+      sigRes = await fetch('http://192.168.0.226:8081/api/cloudinary/sign'); //note: this port is only test
+    }
 
     const { timestamp, signature, cloudName, apiKey } = await sigRes.json();
 
@@ -40,9 +46,6 @@ export default function UploadPhoto() {
     );
 
     const data = await uploadRes.json();
-    setCloudinaryPath(data.secure_url);
-    setIsLoading(false);
+    return data.secure_url;
   };
-
-  return <Button onPress={pickImageAsync}>SELECT PHOTO</Button>;
 }

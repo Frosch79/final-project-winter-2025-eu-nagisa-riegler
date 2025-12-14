@@ -1,7 +1,10 @@
-import { createAlbum, getVisitUserAlbums } from '@/database/albums';
-import { ExpoApiResponse } from '@/ExpoApiResponse';
-import { type Album, albumSchema } from '@/migrations/00006-createTableAlbums';
 import { parse } from 'cookie';
+import { createAlbum } from '../../../database/albums';
+import { ExpoApiResponse } from '../../../ExpoApiResponse';
+import {
+  type Album,
+  albumSchema,
+} from '../../../migrations/00006-createTableAlbums';
 
 export type CreateAlbumResponseBodyPost =
   | {

@@ -1,17 +1,16 @@
-import {
-  AlbumResponseBodyGet,
-  AlbumResponseBodyPut,
-} from '@/app/api/albums/[albumId]+api';
-import { UserResponseBodyGet } from '@/app/api/user+api';
-import VisibilitySelector from '@/components/RadioGroup';
-import { spacing } from '@/constants/Spacing';
-import { typography } from '@/constants/Typography';
-import dayjs from 'dayjs';
 import { useFocusEffect } from 'expo-router';
 import { useLocalSearchParams, useRouter } from 'expo-router/build/hooks';
 import { useCallback, useState } from 'react';
 import { SafeAreaView, View } from 'react-native';
 import { Button, Card, HelperText, TextInput } from 'react-native-paper';
+import VisibilitySelector from '../../../components/RadioGroup';
+import { spacing } from '../../../constants/Spacing';
+import { typography } from '../../../constants/Typography';
+import type {
+  AlbumResponseBodyGet,
+  AlbumResponseBodyPut,
+} from '../../api/albums/[albumId]+api';
+import type { UserResponseBodyGet } from '../../api/user+api';
 
 export default function EditAlbum() {
   const [title, setTitle] = useState('');
@@ -131,14 +130,14 @@ export default function EditAlbum() {
                 setMessage(responseBody.error);
                 return;
               }
-
+              const albumId = responseBody.album.id;
               setTitle('');
               setDescription('');
               setLocation('');
               setVisibility('');
               router.replace({
                 pathname: '/album/[albumId]',
-                params: { albumId: editId.toString() },
+                params: { albumId: albumId.toString() },
               });
             }}
           >

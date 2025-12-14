@@ -1,5 +1,8 @@
-import { FollowUser, getUserAllFollowersInsecure } from '@/database/followers';
-import { ExpoApiResponse } from '@/ExpoApiResponse';
+import {
+  type FollowUser,
+  getUserAllFollowersInsecure,
+} from '../../../database/followers';
+import { ExpoApiResponse } from '../../../ExpoApiResponse';
 
 export type FollowerUserResponseBodyGet =
   | {

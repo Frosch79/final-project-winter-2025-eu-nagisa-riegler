@@ -1,10 +1,5 @@
-import { components } from '@/constants/Components';
-import { spacing } from '@/constants/Spacing';
-import { typography } from '@/constants/Typography';
-import { FollowUser } from '@/database/followers';
-import { FullUser } from '@/database/users';
 import { useState } from 'react';
-import { GestureResponderEvent, SafeAreaView, View } from 'react-native';
+import { type GestureResponderEvent, SafeAreaView, View } from 'react-native';
 import {
   Avatar,
   Button,
@@ -13,6 +8,11 @@ import {
   Portal,
   Text,
 } from 'react-native-paper';
+import { components } from '../constants/Components';
+import { spacing } from '../constants/Spacing';
+import { typography } from '../constants/Typography';
+import type { FollowUser } from '../database/followers';
+import type { FullUser } from '../database/users';
 import ModalShowFollows from './ModalShowFollows';
 
 type Props = {

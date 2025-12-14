@@ -1,6 +1,6 @@
-import { getIsFollowed } from '@/database/followers';
-import { ExpoApiResponse } from '@/ExpoApiResponse';
 import { parse } from 'cookie';
+import { getIsFollowed } from '../../../database/followers';
+import { ExpoApiResponse } from '../../../ExpoApiResponse';
 
 export type IsFollowedResponseBodyGet =
   | {

@@ -1,15 +1,3 @@
-import { UserResponseBodyGet } from '@/app/api/user+api';
-import UserAlbumCard from '@/components/UserAlbumCard';
-import { components } from '@/constants/Components';
-import { layout } from '@/constants/Layout';
-import { spacing } from '@/constants/Spacing';
-import { theme } from '@/constants/Theme';
-import { typography } from '@/constants/Typography';
-import { type AlbumByUser } from '@/database/albums';
-import { type CommentWithUserName } from '@/database/comments';
-import { type FullUser } from '@/database/users';
-import { type Photo } from '@/migrations/00008-createTablePhotos';
-import { type LikeUsers } from '@/migrations/00010-createTableLikes';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Dimensions, FlatList, Image, SafeAreaView, View } from 'react-native';
@@ -20,9 +8,21 @@ import {
   Provider,
   Text,
 } from 'react-native-paper';
-import { AlbumResponseBodyGet } from '../api/albums/[albumId]+api';
-import { AlbumCommentsResponseBodyGet } from '../api/comments/index+api';
-import { AlbumLikesResponseBodyGet } from '../api/likes/index+api';
+import UserAlbumCard from '../../components/UserAlbumCard';
+import { components } from '../../constants/Components';
+import { layout } from '../../constants/Layout';
+import { spacing } from '../../constants/Spacing';
+import { theme } from '../../constants/Theme';
+import { typography } from '../../constants/Typography';
+import type { AlbumByUser } from '../../database/albums';
+import type { CommentWithUserName } from '../../database/comments';
+import type { FullUser } from '../../database/users';
+import type { Photo } from '../../migrations/00008-createTablePhotos';
+import type { LikeUsers } from '../../migrations/00010-createTableLikes';
+import { type AlbumResponseBodyGet } from '../api/albums/[albumId]+api';
+import { type AlbumCommentsResponseBodyGet } from '../api/comments/index+api';
+import { type AlbumLikesResponseBodyGet } from '../api/likes/index+api';
+import type { UserResponseBodyGet } from '../api/user+api';
 
 //styling
 const screenWidth = Dimensions.get('window').width;
@@ -204,7 +204,7 @@ export default function UserAlbum() {
                 onPress={() =>
                   router.replace({
                     pathname: '/album/editAlbum/[editId]',
-                    params: { editId: Number(albumId) },
+                    params: { editId: album.id },
                   })
                 }
               />

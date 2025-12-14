@@ -1,6 +1,6 @@
-import { type FullUser, getUser } from '@/database/users';
-import { ExpoApiResponse } from '@/ExpoApiResponse';
 import { parse } from 'cookie';
+import { type FullUser, getUser } from '../../database/users';
+import { ExpoApiResponse } from '../../ExpoApiResponse';
 
 export type UserResponseBodyGet =
   | {

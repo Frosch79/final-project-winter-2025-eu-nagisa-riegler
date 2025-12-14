@@ -1,16 +1,16 @@
+import { parse } from 'cookie';
 import {
   createLike,
   deleteLike,
   getAllAlbumLikesInsecure,
   selectLikeExists,
-} from '@/database/likes';
-import { ExpoApiResponse } from '@/ExpoApiResponse';
+} from '../../../database/likes';
+import { ExpoApiResponse } from '../../../ExpoApiResponse';
 import {
   type Like,
   likeSchema,
-  LikeUsers,
-} from '@/migrations/00010-createTableLikes';
-import { parse } from 'cookie';
+  type LikeUsers,
+} from '../../../migrations/00010-createTableLikes';
 
 export type AlbumLikesResponseBodyGet =
   | {

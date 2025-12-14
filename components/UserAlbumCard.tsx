@@ -1,14 +1,14 @@
-import { colors } from '@/constants/Colors';
-import { spacing } from '@/constants/Spacing';
-import { typography } from '@/constants/Typography';
-import { AlbumByUser } from '@/database/albums';
-import { type CommentWithUserName } from '@/database/comments';
-import { type LikeUsers } from '@/migrations/00010-createTableLikes';
 import dayjs from 'dayjs';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { View } from 'react-native';
 import { Button, Card, IconButton, Portal, Text } from 'react-native-paper';
+import { colors } from '../constants/Colors';
+import { spacing } from '../constants/Spacing';
+import { typography } from '../constants/Typography';
+import type { AlbumByUser } from '../database/albums';
+import type { CommentWithUserName } from '../database/comments';
+import type { LikeUsers } from '../migrations/00010-createTableLikes';
 import ModalComment from './ModalComment';
 import ModalLike from './ModalLike';
 

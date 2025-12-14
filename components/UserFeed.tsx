@@ -1,10 +1,10 @@
-import { components } from '@/constants/Components';
-import { spacing } from '@/constants/Spacing';
-import { typography } from '@/constants/Typography';
 import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 import { Avatar, Button, Card, IconButton, Text } from 'react-native-paper';
+import { components } from '../constants/Components';
+import { spacing } from '../constants/Spacing';
+import { typography } from '../constants/Typography';
 
 type Props = {
   albumTitle: string;
@@ -53,7 +53,7 @@ export default function UserFeed(props: Props) {
         onPress={() =>
           router.navigate({
             pathname: '/album/[albumId]',
-            params: { albumId: albumId },
+            params: { albumId: albumId.toString() },
           })
         }
         style={{ padding: 0 }}

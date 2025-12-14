@@ -1,7 +1,7 @@
-import HeaderBackButton from '@/components/HeaderBackButton';
-import { theme } from '@/constants/Theme';
 import { Stack } from 'expo-router';
 import { Provider as PaperProvider } from 'react-native-paper';
+import HeaderBackButton from '../components/HeaderBackButton';
+import { theme } from '../constants/Theme';
 
 export default function RootLayout() {
   return (

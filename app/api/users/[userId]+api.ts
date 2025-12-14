@@ -2,8 +2,8 @@ import {
   type FullUser,
   getUserPageInsecure,
   selectUserExists,
-} from '@/database/users';
-import { ExpoApiResponse } from '@/ExpoApiResponse';
+} from '../../../database/users';
+import { ExpoApiResponse } from '../../../ExpoApiResponse';
 
 export type UserPageResponseBodyGet =
   | {

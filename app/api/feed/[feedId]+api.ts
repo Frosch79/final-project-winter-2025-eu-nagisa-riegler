@@ -1,7 +1,10 @@
-import { getVisitUserAlbums, selectAlbumExists } from '@/database/albums';
-import { ExpoApiResponse } from '@/ExpoApiResponse';
-import type { FeedAlbum } from '@/migrations/00006-createTableAlbums';
 import { parse } from 'cookie';
+import {
+  getVisitUserAlbums,
+  selectAlbumExists,
+} from '../../../database/albums';
+import { ExpoApiResponse } from '../../../ExpoApiResponse';
+import type { FeedAlbum } from '../../../migrations/00006-createTableAlbums';
 
 /* get user albums */
 export type UserFeedResponseBodyGet =

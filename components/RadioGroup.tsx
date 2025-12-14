@@ -1,6 +1,6 @@
-import { spacing } from '@/constants/Spacing';
 import { View } from 'react-native';
 import { RadioButton, Text } from 'react-native-paper';
+import { spacing } from '../constants/Spacing';
 
 export default function VisibilitySelector({
   value,

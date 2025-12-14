@@ -1,13 +1,13 @@
-import { colors } from '@/constants/Colors';
-import { spacing } from '@/constants/Spacing';
-import { typography } from '@/constants/Typography';
-import { CommentWithUserName } from '@/database/comments';
-import { User } from '@/migrations/00000-createTableUsers';
 import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { FlatList, StyleSheet, TextStyle, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { Button, HelperText, Modal, Text, TextInput } from 'react-native-paper';
+import { colors } from '../constants/Colors';
+import { spacing } from '../constants/Spacing';
+import { typography } from '../constants/Typography';
+import type { CommentWithUserName } from '../database/comments';
+import type { User } from '../migrations/00000-createTableUsers';
 
 type Props = {
   visible: boolean;
@@ -109,9 +109,7 @@ export default function ModalComment({
         backgroundColor: colors.background,
       }}
     >
-      <Text
-        style={{ ...(typography.title as TextStyle), marginBottom: spacing.sm }}
-      >
+      <Text style={{ ...typography.title, marginBottom: spacing.sm }}>
         Comments
       </Text>
       {comments.length > 0 ? (

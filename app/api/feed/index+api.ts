@@ -1,7 +1,7 @@
-import { getAlbumsSwitchWithVisibility } from '@/database/albums';
-import { ExpoApiResponse } from '@/ExpoApiResponse';
-import { type FeedAlbum } from '@/migrations/00006-createTableAlbums';
 import { parse } from 'cookie';
+import { getAlbumsSwitchWithVisibility } from '../../../database/albums';
+import { ExpoApiResponse } from '../../../ExpoApiResponse';
+import type { FeedAlbum } from '../../../migrations/00006-createTableAlbums';
 
 export type FeedResponseBodyGet =
   | {
