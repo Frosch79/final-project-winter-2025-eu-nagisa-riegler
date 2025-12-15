@@ -2,7 +2,7 @@
   "name": "final-project-winter-2025-eu-nagisa-riegler",
   "main": "expo-router/entry",
   "version": "1.0.0",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
