@@ -94,7 +94,7 @@ export default function UserAlbum() {
       };
 
       getAlbum().catch((error) => console.log(error));
-    }, [albumId, router]),
+    }, [albumId]),
   );
 
   const [userComments, setUserComments] = useState<CommentWithUserName[]>([]);

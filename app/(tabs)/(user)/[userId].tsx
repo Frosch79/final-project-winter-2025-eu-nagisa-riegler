@@ -107,7 +107,7 @@ export default function UserPage() {
       }
 
       getUser().catch(console.error);
-    }, [router, userId]),
+    }, [userId]),
   );
 
   // album render

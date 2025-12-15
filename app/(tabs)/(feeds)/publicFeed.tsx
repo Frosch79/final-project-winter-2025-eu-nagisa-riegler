@@ -53,7 +53,7 @@ export default function Feed() {
       };
 
       getUserFeed().catch((error) => console.log(error));
-    }, [isLoading, router]),
+    }, [router]),
   );
 
   return (
