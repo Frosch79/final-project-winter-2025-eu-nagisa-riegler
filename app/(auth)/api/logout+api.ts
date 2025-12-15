@@ -1,4 +1,5 @@
 import { parse } from 'cookie';
+import { deleteSession } from '../../../database/sessions';
 import { ExpoApiResponse } from '../../../ExpoApiResponse';
 import { deleteSerializedRegisterSessionTokenCookie } from '../../../util/cookies';
 
@@ -29,6 +30,18 @@ export async function GET(
     );
   }
 
+  const session = await deleteSession(token);
+
+  if (!session) {
+    return ExpoApiResponse.json(
+      {
+        error: 'Session not found',
+      },
+      {
+        status: 404,
+      },
+    );
+  }
   const sessionDeleted = deleteSerializedRegisterSessionTokenCookie();
 
   return ExpoApiResponse.json(
