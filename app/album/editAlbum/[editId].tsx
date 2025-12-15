@@ -49,9 +49,9 @@ export default function EditAlbum() {
         }
       };
       getUser().catch((error) => console.log(error));
-    }, [router]),
+    }, []),
   );
-  console.log('test', visibility);
+
   return (
     <SafeAreaView style={{ flex: 1, padding: spacing.md }}>
       <Card mode="outlined">

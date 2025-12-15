@@ -1,5 +1,5 @@
 import * as Haptics from 'expo-haptics';
 
-export const tabPressHaptic = () => {
-  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+export const tabPressHaptic = async () => {
+  await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 };
