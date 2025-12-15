@@ -4,19 +4,10 @@
   "devCommand": "expo",
   "cleanUrls": true,
   "framework": null,
-  "functions": {
-    "api/*.js": {
-      "runtime": "@vercel/node"
-    }
-  },
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    },
-    {
       "source": "/:path*",
-      "destination": "/index.html"
+      "destination": "/"
     }
   ]
 }
