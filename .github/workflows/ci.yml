@@ -9,9 +9,9 @@ jobs:
     # TODO: Update environment variables with your own database credentials
     env:
       PGHOST: localhost
-      PGDATABASE: expo_example_winter_2025
-      PGUSERNAME: expo_example_winter_2025
-      PGPASSWORD: expo_example_winter_2025
+      PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
+      PGUSERNAME: final_project_eu_nagisa_riegler_winter_2025
+      PGPASSWORD: final_project_eu_nagisa_riegler_winter_2025
     steps:
       - name: Start preinstalled PostgreSQL on Ubuntu
         run: |
