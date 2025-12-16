@@ -12,10 +12,9 @@ import type { UserResponseBodyGet } from '../api/user+api';
 import type { LoginResponseBodyPost } from './api/login+api';
 
 export default function Login() {
-  const [isFocused, setIsFocused] = useState<string | undefined>();
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
   const { returnTo } = useLocalSearchParams<{ returnTo: string }>();
 
@@ -49,8 +48,6 @@ export default function Login() {
           value={userEmail}
           style={{ marginBottom: spacing.md }}
           onChangeText={(value) => setUserEmail(value)}
-          onFocus={() => setIsFocused('email')}
-          onBlur={() => setIsFocused(undefined)}
           placeholder="example@sample.com"
           right={<TextInput.Affix text="/100" />}
           keyboardType="email-address"
@@ -61,13 +58,11 @@ export default function Login() {
           mode="outlined"
           secureTextEntry
           style={{ marginBottom: spacing.md }}
-          onFocus={() => setIsFocused('password')}
-          onBlur={() => setIsFocused(undefined)}
           onChangeText={(value) => setUserPassword(value)}
           right={<TextInput.Icon icon="eye" />}
         />
         <HelperText type="error" visible={isError}>
-          {errorMessage}
+          {message}
         </HelperText>
       </View>
 
@@ -86,7 +81,7 @@ export default function Login() {
               errorMessage = responseBody.error;
             }
             setIsError(true);
-            setErrorMessage(errorMessage);
+            setMessage(errorMessage);
 
             return;
           }
@@ -95,7 +90,7 @@ export default function Login() {
 
           if ('error' in responseBody) {
             setIsError(true);
-            setErrorMessage('Email or password not valid');
+            setMessage('Email or password not valid');
             return;
           }
 

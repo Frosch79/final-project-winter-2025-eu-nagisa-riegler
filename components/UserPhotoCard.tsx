@@ -5,7 +5,7 @@ import { spacing } from '../constants/Spacing';
 import { typography } from '../constants/Typography';
 
 type Props = {
-  photoTitle: string;
+  photoTitle: string | null;
   photoDescription: string | null;
   photoLocation: string | null;
   photoUri: string;
@@ -33,9 +33,11 @@ export default function UserPhotoCard(props: Props) {
       />
       {/* Title and description */}
       <Card.Content style={{ paddingTop: spacing.md }}>
-        <Text style={{ ...typography.title, marginBottom: spacing.xs }}>
-          {photoTitle}
-        </Text>
+        {photoTitle && (
+          <Text style={{ ...typography.title, marginBottom: spacing.xs }}>
+            {photoTitle}
+          </Text>
+        )}
         {photoDescription && (
           <Text
             style={{

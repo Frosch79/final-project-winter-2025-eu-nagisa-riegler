@@ -159,22 +159,20 @@ export async function up(sql: Sql) {
   for (const photo of photos) {
     await sql`
       INSERT INTO
-        photos(
-        album_id,
-        title,
-        cloudinary_data_path,
-        description,
-        location,
-        created_date
-    )
+        photos (
+          album_id,
+          title,
+          cloudinary_data_path,
+          description,
+          location
+        )
       VALUES
         (
           ${photo.albumId},
           ${photo.title},
           ${photo.cloudinaryDataPath},
           ${photo.description},
-          ${photo.location},
-          ${photo.createdDate}
+          ${photo.location}
         )
     `;
   }

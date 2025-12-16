@@ -5,7 +5,7 @@ export default function UploadPhoto() {
   const pickImageAsync = async () => {
     /* add photo to cloudinary  */
 
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       quality: 1,
     });
@@ -22,9 +22,9 @@ export default function UploadPhoto() {
     // get sign
     let sigRes;
     if (Platform.OS === 'web') {
-      sigRes = await fetch('http://localhost:8081/api/cloudinary/sign'); //note: this port is only web test
+      sigRes = await fetch('http://localhost:8081/api/cloudinary/sign'); // note: this port is only web test
     } else {
-      sigRes = await fetch('http://192.168.0.226:8081/api/cloudinary/sign'); //note: this port is only test
+      sigRes = await fetch('http://192.168.0.226:8081/api/cloudinary/sign'); // note: this port is only test
     }
 
     const { timestamp, signature, cloudName, apiKey } = await sigRes.json();
@@ -33,7 +33,7 @@ export default function UploadPhoto() {
     const formData = new FormData();
     formData.append('file', file as any);
     formData.append('api_key', apiKey);
-    formData.append('timestamp', timestamp.toString());
+    formData.append('timestamp', timestamp);
     formData.append('signature', signature);
     formData.append('folder', 'my_app');
 
@@ -48,4 +48,5 @@ export default function UploadPhoto() {
     const data = await uploadRes.json();
     return data.secure_url;
   };
+  return pickImageAsync;
 }

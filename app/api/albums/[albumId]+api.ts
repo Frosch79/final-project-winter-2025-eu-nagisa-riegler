@@ -134,7 +134,7 @@ export async function PUT(
 
 export type AlbumResponseBodyDelete =
   | {
-      album: Album[];
+      album: Pick<Album, 'title'>[];
     }
   | {
       error: string;
@@ -169,15 +169,5 @@ export async function DELETE(
   }
   const album = await deleteAlbum(token, Number(albumId));
 
-  if (!album) {
-    return ExpoApiResponse.json(
-      {
-        error: `Access denied to album with id ${albumId}`,
-      },
-      {
-        status: 403,
-      },
-    );
-  }
   return ExpoApiResponse.json({ album: album });
 }

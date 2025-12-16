@@ -9,7 +9,7 @@ import {
 /* get my photos in album */
 export type PhotoResponseBodyGet =
   | {
-      photo: Photo[];
+      photo: Photo;
     }
   | {
       error: string;

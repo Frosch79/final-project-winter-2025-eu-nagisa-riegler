@@ -29,7 +29,7 @@ export async function GET(
 
   const followed = await getUserAllFollowedInsecure(Number(userId));
 
-  if (!followed) {
+  if (typeof followed === 'undefined') {
     return ExpoApiResponse.json(
       {
         error: 'Album still does not created',

@@ -136,14 +136,14 @@ export async function up(sql: Sql) {
   for (const follow of follows) {
     await sql`
       INSERT INTO
-        follows(follower_user_id,followed_user_id,created_date
-    )
+        follows (
+          follower_user_id,
+          followed_user_id
+        )
       VALUES
         (
           ${follow.followerId},
-          ${follow.followedId},
-          ${follow.createdDate}
-
+          ${follow.followedId}
         )
     `;
   }

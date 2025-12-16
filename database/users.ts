@@ -5,7 +5,7 @@ import { sql } from './connect';
 type UserWithPasswordHash = User & { passwordHash: string };
 
 export async function getUserInsecure(userEmail: User['email']) {
-  const [user] = await sql<User[]>`
+  const [user] = await sql<{ id: number; name: string; email: string }[]>`
     SELECT
       users.id,
       users.name,
@@ -83,7 +83,12 @@ export async function createUserInsecure(
         ${passwordHash}
       )
     RETURNING
-      users.*
+      id,
+      name,
+      birthday,
+      country,
+      account_description,
+      email
   `;
   return user;
 }
@@ -91,7 +96,13 @@ export async function createUserInsecure(
 export async function getUserWithPasswordHashInsecure(email: User['email']) {
   const [user] = await sql<UserWithPasswordHash[]>`
     SELECT
-      *
+      id,
+      name,
+      birthday,
+      country,
+      account_description,
+      email,
+      password_hash
     FROM
       users
     WHERE

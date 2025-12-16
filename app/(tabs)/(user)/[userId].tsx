@@ -27,8 +27,7 @@ export default function UserPage() {
   const [message, setMessage] = useState('');
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
-  const { userId } = useLocalSearchParams();
-  console.log('userid', userId);
+  const { userId } = useLocalSearchParams<{ userId: string }>();
 
   useFocusEffect(
     useCallback(() => {
@@ -105,9 +104,8 @@ export default function UserPage() {
         setFollowed(followedResponse.user);
         setIsLoading(false);
       }
-
-      getUser().catch(console.error);
-    }, [userId]),
+      getUser().catch((error) => console.log(error));
+    }, [router, userId]),
   );
 
   // album render
@@ -119,7 +117,7 @@ export default function UserPage() {
         albumDescription={item.description}
         albumLocation={item.location}
         createdDate={item.createdDate}
-        albumCover={''}
+        albumCover=""
         albumComment={item.commentCount}
         albumLike={item.likeCount}
         albumId={item.id}
@@ -127,27 +125,22 @@ export default function UserPage() {
     );
   };
 
-  //switch follow unfollow
+  // switch follow unfollow
   const userFollowHandel = async () => {
-    try {
-      const method = isFollowed ? 'DELETE' : 'POST';
-      const response = await fetch('/api/followed', {
-        method,
-        body: JSON.stringify({ followedId: Number(userId) }),
-      });
-      const data = await response.json();
+    const method = isFollowed ? 'DELETE' : 'POST';
+    const response = await fetch('/api/followed', {
+      method,
+      body: JSON.stringify({ followedId: Number(userId) }),
+    });
+    const data = await response.json();
 
-      if (!response.ok || 'error' in data) {
-        setIsError(true);
-        setMessage(data.error ?? 'Error updating follow');
-        return;
-      }
-
-      setIsFollowed(!isFollowed);
-    } catch (error) {
+    if (!response.ok || 'error' in data) {
       setIsError(true);
-      setMessage('Network error');
+      setMessage(data ?? 'Error updating follow');
+      return;
     }
+
+    setIsFollowed(!isFollowed);
   };
 
   return (
@@ -166,9 +159,8 @@ export default function UserPage() {
                 followerUsersItem={follower}
                 followedUsersItem={followed}
               />
-            ) : (
-              <HelperText type="error"> Account not found</HelperText>
-            )}
+            ) : null}
+            {isError ? <HelperText type="error"> {message} </HelperText> : null}
             {albums.length > 0 ? (
               <FlatList
                 data={albums}

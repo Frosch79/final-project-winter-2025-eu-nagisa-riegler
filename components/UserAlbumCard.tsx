@@ -39,36 +39,29 @@ export default function UserAlbumCard(props: Props) {
       setLikeCount(albumLikes.length);
       const liked = albumLikes.some((obj) => obj.userId === userId);
       setIsLiked(liked);
-    }, [albumComments, albumLikes, isLiked, router]),
+    }, [albumComments.length, albumLikes, userId]),
   );
 
   const likeHandel = async () => {
-    {
-      try {
-        const method = isLiked ? 'DELETE' : 'POST';
-        const response = await fetch('/api/likes', {
-          method,
-          body: JSON.stringify({ albumId }),
-        });
-        const data = await response.json();
+    const method = isLiked ? 'DELETE' : 'POST';
+    const response = await fetch('/api/likes', {
+      method,
+      body: JSON.stringify({ albumId: album.id }),
+    });
+    const data = await response.json();
 
-        if (!response.ok || 'error' in data) {
-          setIsError(true);
-          setMessage(data.error ?? 'Error updating like');
-          return;
-        }
-
-        setIsLiked(!isLiked);
-        setLikeCount((prev) => prev + (isLiked ? -1 : 1));
-
-        props.onUpdateLike();
-      } catch (error) {
-        setIsError(true);
-        setMessage('Network error');
-      }
+    if (!response.ok || 'error' in data) {
+      setIsError(true);
+      setMessage(data ?? 'Error updating like');
+      return;
     }
+
+    setIsLiked(!isLiked);
+    setLikeCount((prev) => prev + (isLiked ? -1 : 1));
+
+    props.onUpdateLike();
   };
-  const albumId = album.id;
+
   return (
     <View style={{ marginBottom: spacing.md }}>
       <Card style={{ borderRadius: 6, overflow: 'hidden' }}>
@@ -119,7 +112,7 @@ export default function UserAlbumCard(props: Props) {
             <IconButton
               icon="heart"
               iconColor={isLiked ? colors.like : colors.textSecondary}
-              onPress={async () => likeHandel()}
+              onPress={async () => await likeHandel()}
             />
 
             <Text style={{ ...typography.body }}>{likeCount} </Text>

@@ -1,5 +1,5 @@
 import { parse } from 'cookie';
-import { deleteComment } from '../../../database/comments';
+import { deleteComment, selectCommentExists } from '../../../database/comments';
 import { ExpoApiResponse } from '../../../ExpoApiResponse';
 import type { Comment } from '../../../migrations/00012-createTableComments';
 
@@ -29,7 +29,7 @@ export async function DELETE(
     );
   }
 
-  if (!(await deleteComment(token, Number(commentId)))) {
+  if (!(await selectCommentExists(Number(commentId)))) {
     return ExpoApiResponse.json(
       {
         error: `No album with id ${commentId} found `,
@@ -41,15 +41,5 @@ export async function DELETE(
   }
   const comment = await deleteComment(token, Number(commentId));
 
-  if (!comment) {
-    return ExpoApiResponse.json(
-      {
-        error: `Access denied to album with id ${commentId}`,
-      },
-      {
-        status: 403,
-      },
-    );
-  }
   return ExpoApiResponse.json({ comment: comment });
 }

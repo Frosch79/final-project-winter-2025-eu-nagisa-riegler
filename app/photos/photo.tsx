@@ -13,12 +13,14 @@ export default function PostMyPhotos() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
-  const [cloudinaryPath, setCloudinaryPath] = useState(undefined);
+  const [cloudinaryPath, setCloudinaryPath] = useState<string | undefined>(
+    undefined,
+  );
   const [isError, setIsError] = useState(false);
   const [message, setMessage] = useState<string | null>('');
   const [album, setAlbum] = useState<AlbumByUser>();
 
-  const { albumId } = useLocalSearchParams();
+  const { albumId } = useLocalSearchParams<{ albumId: string }>();
   const router = useRouter();
 
   useFocusEffect(
@@ -52,13 +54,13 @@ export default function PostMyPhotos() {
       loadAlbum().catch((error) => {
         console.error(error);
       });
-    }, [albumId]),
+    }, [albumId, router]),
   );
 
   const pickImageAsync = async () => {
     /* add photo to cloudinary  */
 
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       quality: 1,
     });
@@ -75,9 +77,9 @@ export default function PostMyPhotos() {
     // get sign
     let sigRes;
     if (Platform.OS === 'web') {
-      sigRes = await fetch('http://localhost:8081/api/cloudinary/sign'); //note: this port is only web test
+      sigRes = await fetch('http://localhost:8081/api/cloudinary/sign'); // note: this port is only web test
     } else {
-      sigRes = await fetch('http://192.168.0.226:8081/api/cloudinary/sign'); //note: this port is only test
+      sigRes = await fetch('http://192.168.0.226:8081/api/cloudinary/sign'); // note: this port is only test
     }
 
     const { timestamp, signature, cloudName, apiKey } = await sigRes.json();
@@ -86,7 +88,7 @@ export default function PostMyPhotos() {
     const formData = new FormData();
     formData.append('file', file as any);
     formData.append('api_key', apiKey);
-    formData.append('timestamp', timestamp.toString());
+    formData.append('timestamp', timestamp);
     formData.append('signature', signature);
     formData.append('folder', 'my_app');
 
@@ -99,7 +101,9 @@ export default function PostMyPhotos() {
     );
 
     const data = await uploadRes.json();
-    setCloudinaryPath(data.secure_url);
+    if ('secure_url' in data) {
+      setCloudinaryPath(data.secure_url);
+    }
 
     console.log(cloudinaryPath);
   };
@@ -238,7 +242,7 @@ export default function PostMyPhotos() {
                   setTitle('');
                   setDescription('');
                   setLocation('');
-                  if (createdPhotoResponse.photo) {
+                  if ('photo' in createdPhotoResponse) {
                     router.replace({
                       pathname: '/album/[albumId]',
                       params: { albumId: album.id.toString() },

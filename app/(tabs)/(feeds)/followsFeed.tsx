@@ -18,7 +18,7 @@ export default function Feed() {
         albumDescription={item.description}
         albumLocation={item.location}
         createdDate={item.createdDate}
-        albumCover={''}
+        albumCover=""
         albumComment={item.commentCount}
         albumLike={item.likeCount}
         albumId={item.id}
@@ -29,6 +29,7 @@ export default function Feed() {
   useFocusEffect(
     useCallback(() => {
       const getUserFeed = async () => {
+        setIsLoading(false);
         const [userResponse, userFollowsFeedResponse]: [
           UserResponseBodyGet,
           FeedResponseBodyGet,
@@ -38,7 +39,7 @@ export default function Feed() {
             response.json(),
           ),
         ]);
-        setIsLoading(false);
+
         if ('error' in userResponse) {
           router.replace('/(auth)/login?returnTo=/(tabs)/(feeds)followsFeed');
           return;
@@ -46,19 +47,21 @@ export default function Feed() {
 
         if ('error' in userFollowsFeedResponse) {
           setFollowFeed([]);
+          setIsLoading(true);
         }
 
         if ('feedAlbum' in userFollowsFeedResponse) {
           setFollowFeed(userFollowsFeedResponse.feedAlbum);
+          setIsLoading(true);
         }
       };
       getUserFeed().catch((error) => console.log(error));
-    }, [router]),
+    }, []),
   );
 
   return (
     <SafeAreaView>
-      {followFeed.length > 0 ? (
+      {followFeed.length > 0 && isLoading ? (
         <FlatList
           data={followFeed}
           renderItem={renderAlbumFeed}

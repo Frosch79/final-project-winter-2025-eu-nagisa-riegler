@@ -1,7 +1,6 @@
 import { Tabs } from 'expo-router';
-import AnimatedTabIcon from '../../../components/AnimatedTabIcon';
+import { TabBarIcon } from '../../../components/TabBarIcons';
 import { colors } from '../../../constants/Colors';
-import { tabPressHaptic } from '../../../util/haptics';
 
 export default function TabLayout() {
   return (
@@ -16,36 +15,24 @@ export default function TabLayout() {
         },
       }}
     >
-      {/* profile */}
+      {/* follows */}
       <Tabs.Screen
         name="followsFeed"
         options={{
           title: 'follow',
-          tabBarIcon: ({ color, focused }) => (
-            <AnimatedTabIcon name="star" color={color} focused={focused} />
-          ),
+          tabBarIcon: ({ color }) => <TabBarIcon name="star" color={color} />,
         }}
-        listeners={{
-          tabPress: () => {
-            tabPressHaptic();
-          },
-        }}
+        listeners={{}}
       />
 
-      {/* map */}
+      {/* public */}
       <Tabs.Screen
         name="publicFeed"
         options={{
           title: 'public',
-          tabBarIcon: ({ color, focused }) => (
-            <AnimatedTabIcon name="search" color={color} focused={focused} />
-          ),
+          tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
         }}
-        listeners={{
-          tabPress: () => {
-            tabPressHaptic();
-          },
-        }}
+        listeners={{}}
       />
     </Tabs>
   );

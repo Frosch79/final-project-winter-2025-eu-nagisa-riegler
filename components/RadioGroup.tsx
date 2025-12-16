@@ -17,7 +17,7 @@ export default function VisibilitySelector({
         { key: 'private', label: 'Private' },
       ].map((item) => (
         <View
-          key={item.key}
+          key={`key-${item.key}`}
           style={{
             flexDirection: 'row',
             alignItems: 'center',

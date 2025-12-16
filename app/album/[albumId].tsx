@@ -24,7 +24,7 @@ import { type AlbumCommentsResponseBodyGet } from '../api/comments/index+api';
 import { type AlbumLikesResponseBodyGet } from '../api/likes/index+api';
 import type { UserResponseBodyGet } from '../api/user+api';
 
-//styling
+// styling
 const screenWidth = Dimensions.get('window').width;
 const numColumns = 3;
 const gridSpacing = spacing.sm * (numColumns + 1);
@@ -34,39 +34,10 @@ export default function UserAlbum() {
   const [message, setMessage] = useState('');
   const [user, setUser] = useState<FullUser>();
   const [album, setAlbum] = useState<AlbumByUser>();
-  const { albumId } = useLocalSearchParams();
+  const [photos, setPhotos] = useState<Photo[]>([]);
+  const { albumId } = useLocalSearchParams<{ albumId: string }>();
   const router = useRouter();
 
-  //photo render
-  const renderUserPhotos = ({ item }: { item: Photo }) => {
-    return (
-      <Button
-        style={{ padding: spacing.xs }}
-        onPress={() =>
-          router.navigate({
-            pathname: '/photos/[photoId]',
-            params: { photoId: item.id },
-          })
-        }
-      >
-        <View
-          style={{
-            width: cardSize,
-            height: cardSize,
-            borderRadius: components.card.image.borderRadius,
-            overflow: 'hidden',
-          }}
-        >
-          <Image
-            style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
-            source={{
-              uri: item.cloudinaryDataPath,
-            }}
-          />
-        </View>
-      </Button>
-    );
-  };
   useFocusEffect(
     useCallback(() => {
       const getAlbum = async () => {
@@ -90,11 +61,16 @@ export default function UserAlbum() {
         }
         if ('album' in albumResponse) {
           setAlbum(albumResponse.album);
+          if ('photos' in albumResponse.album) {
+            setPhotos(albumResponse.album.photos as Photo[]);
+          } else {
+            setPhotos([]);
+          }
         }
       };
 
       getAlbum().catch((error) => console.log(error));
-    }, [albumId]),
+    }, [albumId, router]),
   );
 
   const [userComments, setUserComments] = useState<CommentWithUserName[]>([]);
@@ -137,6 +113,36 @@ export default function UserAlbum() {
     }, [albumId]),
   );
 
+  // photo render
+  const renderUserPhotos = ({ item }: { item: Photo }) => {
+    return (
+      <Button
+        style={{ padding: spacing.xs }}
+        onPress={() =>
+          router.navigate({
+            pathname: '/photos/[photoId]',
+            params: { photoId: Number(item.id) },
+          })
+        }
+      >
+        <View
+          style={{
+            width: cardSize,
+            height: cardSize,
+            borderRadius: components.card.image.borderRadius,
+            overflow: 'hidden',
+          }}
+        >
+          <Image
+            style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
+            source={{
+              uri: item.cloudinaryDataPath,
+            }}
+          />
+        </View>
+      </Button>
+    );
+  };
   // reload Likes / Comments
   const reloadComments = async () => {
     const commentResponse: AlbumCommentsResponseBodyGet = await fetch(
@@ -190,14 +196,14 @@ export default function UserAlbum() {
               }}
             >
               <IconButton
-                //close album page
+                // close album page
                 mode="contained-tonal"
                 icon="close-thick"
                 size={30}
                 onPress={() => router.replace('/(tabs)/(user)/user')}
               />
               <IconButton
-                //to edit page
+                // to edit page
                 mode="contained-tonal"
                 icon="file-edit"
                 size={30}
@@ -209,7 +215,7 @@ export default function UserAlbum() {
                 }
               />
               <IconButton
-                //add new photo
+                // add new photo
                 mode="contained-tonal"
                 icon="camera"
                 size={30}
@@ -224,11 +230,10 @@ export default function UserAlbum() {
           ) : null}
         </View>
 
-        {album && album.photos.length > 0 ? (
+        {photos.length > 0 ? (
           <FlatList
-            data={album.photos}
+            data={photos}
             renderItem={renderUserPhotos}
-            keyExtractor={(item: Photo) => String(item.id)}
             numColumns={numColumns}
           />
         ) : (

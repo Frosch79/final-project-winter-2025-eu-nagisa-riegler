@@ -31,16 +31,15 @@ export default function ModalComment({
   const [content, setContent] = useState('');
   const router = useRouter();
   const pressHandle = async (id: CommentWithUserName['id']) => {
-    try {
-      const response = await fetch(`/api/comments/${id}`, { method: 'DELETE' });
-      const data = await response.json();
-      console.log(response);
-      if (!response.ok || 'error' in data) {
-        setIsError(true);
-        setMessage(data.error ?? 'Error delete comment');
-        return;
-      }
-    } catch (error) {
+    const response = await fetch(`/api/comments/${id}`, { method: 'DELETE' });
+    const data = await response.json();
+    console.log(response);
+    if (!response.ok || 'error' in data) {
+      setIsError(true);
+      setMessage(data ?? 'Error delete comment');
+      return;
+    }
+    if ('error' in data) {
       setIsError(true);
       setMessage('Network error');
     }
@@ -76,22 +75,21 @@ export default function ModalComment({
   };
 
   const commentHandle = async () => {
-    try {
-      const response = await fetch('/api/comments', {
-        method: 'POST',
-        body: JSON.stringify({
-          albumId: albumId,
-          content: content,
-        }),
-      });
-      const data = await response.json();
+    const response = await fetch('/api/comments', {
+      method: 'POST',
+      body: JSON.stringify({
+        albumId: albumId,
+        content: content,
+      }),
+    });
+    const data = await response.json();
 
-      if (!response.ok || 'error' in data) {
-        setIsError(true);
-        setMessage(data.error ?? 'Error updating comment');
-        return;
-      }
-    } catch (error) {
+    if (!response.ok || 'error' in data) {
+      setIsError(true);
+      setMessage(data ?? 'Error delete comment');
+      return;
+    }
+    if ('error' in data) {
       setIsError(true);
       setMessage('Network error');
     }
@@ -119,15 +117,15 @@ export default function ModalComment({
       )}
 
       <TextInput
-        label={''}
-        placeholder={'comment here'}
+        label=""
+        placeholder="comment here"
         value={content}
         onChangeText={(text) => setContent(text)}
       />
-      <Button mode="contained" onPress={async () => commentHandle()}>
+      <Button mode="contained" onPress={async () => await commentHandle()}>
         <Text> send comment</Text>
       </Button>
-      {isError ? <HelperText type={'error'}>{message}</HelperText> : null}
+      {isError ? <HelperText type="error">{message}</HelperText> : null}
 
       <Button onPress={onDismiss} style={{ marginTop: spacing.sm }}>
         <Text>Close</Text>

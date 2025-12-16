@@ -125,19 +125,20 @@ export async function up(sql: Sql) {
   for (const album of albums) {
     await sql`
       INSERT INTO
-        albums(
-        user_id,title,description,location,created_date,visibility_id
-    )
+        albums (
+          user_id,
+          title,
+          description,
+          location,
+          visibility_id
+        )
       VALUES
         (
           ${album.userId},
           ${album.title},
           ${album.description},
           ${album.location},
-          ${album.createdDate},
           ${album.visibilityId}
-
-
         )
     `;
   }

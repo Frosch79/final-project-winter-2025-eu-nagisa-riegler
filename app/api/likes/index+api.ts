@@ -29,7 +29,7 @@ export async function GET(
 
   const allLikes = await getAllAlbumLikesInsecure(Number(albumId));
 
-  if (!allLikes) {
+  if (typeof allLikes === 'undefined') {
     return ExpoApiResponse.json(
       {
         error: 'Album still does not created',
@@ -143,7 +143,7 @@ export async function DELETE(
   }
   const albumId = result.data.albumId;
 
-  if (!(await deleteLike(token, Number(albumId)))) {
+  if (!(await selectLikeExists(token, Number(albumId)))) {
     return ExpoApiResponse.json(
       {
         error: `No album with id ${albumId} found `,
@@ -155,7 +155,7 @@ export async function DELETE(
   }
   const like = await deleteLike(token, Number(albumId));
 
-  if (!like) {
+  if (typeof like === 'undefined') {
     return ExpoApiResponse.json(
       {
         error: `Access denied to album with id ${albumId}`,

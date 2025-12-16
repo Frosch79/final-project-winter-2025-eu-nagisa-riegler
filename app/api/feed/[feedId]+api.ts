@@ -44,15 +44,5 @@ export async function GET(
   }
   const album = await getVisitUserAlbums(token, Number(feedId));
 
-  if (!album) {
-    return ExpoApiResponse.json(
-      {
-        error: `Access denied to album with id ${feedId}`,
-      },
-      {
-        status: 403,
-      },
-    );
-  }
   return ExpoApiResponse.json({ album: album });
 }

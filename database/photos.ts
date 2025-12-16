@@ -7,7 +7,17 @@ export async function createPhotoInAlbum(
   sessionToken: Session['token'],
   photoData: Omit<Photo, 'id' | 'createdDate'>,
 ) {
-  const [createdPhoto] = await sql<Photo[]>`
+  const [createdPhoto] = await sql<
+    {
+      id: number;
+      albumId: number;
+      title: string | null;
+      cloudinaryDataPath: string;
+      description: string | null;
+      location: string | null;
+      createdDate: Date;
+    }[]
+  >`
     INSERT INTO
       photos (
         album_id,
@@ -41,7 +51,7 @@ export async function getAlbumPhotos(
   sessionToken: Session['token'],
   albumId: Album['id'],
 ) {
-  const albumPhotos = await sql<Photo[]>`
+  const [albumPhotos] = await sql<Photo[]>`
     SELECT
       photos.*
     FROM
@@ -58,7 +68,17 @@ export async function getAlbumPhotos(
 }
 
 export async function getPhoto(photoId: Photo['id']) {
-  const [photo] = await sql<Photo[]>`
+  const [photo] = await sql<
+    {
+      id: number;
+      albumId: number;
+      title: string | null;
+      cloudinaryDataPath: string;
+      description: string | null;
+      location: string | null;
+      createdDate: Date;
+    }[]
+  >`
     SELECT
       photos.*
     FROM
@@ -75,7 +95,17 @@ export async function updatePhoto(
   photoData: Omit<Photo, 'id' | 'createdDate'>,
   photoId: Photo['id'],
 ) {
-  const updatedPhoto = await sql<Photo[]>`
+  const updatedPhoto = await sql<
+    {
+      id: number;
+      albumId: number;
+      title: string | null;
+      cloudinaryDataPath: string;
+      description: string | null;
+      location: string | null;
+      createdDate: Date;
+    }[]
+  >`
     UPDATE photos
     SET
       title = ${photoData.title},
@@ -109,7 +139,17 @@ export async function deletePhoto(
   photoId: Photo['id'],
   albumId: Album['id'],
 ) {
-  const deletedPhoto = await sql<Photo[]>`
+  const deletedPhoto = await sql<
+    {
+      id: number;
+      albumId: number;
+      title: string | null;
+      cloudinaryDataPath: string;
+      description: string | null;
+      location: string | null;
+      createdDate: Date;
+    }[]
+  >`
     DELETE FROM photos
     WHERE
       id = ${photoId}

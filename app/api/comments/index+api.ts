@@ -27,16 +27,6 @@ export async function GET(
 
   const allComments = await getAllAlbumComments(Number(albumId));
 
-  if (!allComments) {
-    return ExpoApiResponse.json(
-      {
-        error: 'Album still does not created',
-      },
-      {
-        status: 500,
-      },
-    );
-  }
   return ExpoApiResponse.json({ comment: allComments });
 }
 

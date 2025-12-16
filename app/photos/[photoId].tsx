@@ -7,10 +7,10 @@ import type { Photo } from '../../migrations/00008-createTablePhotos';
 import type { PhotoResponseBodyGet } from '../api/photos/[photoId]+api';
 import type { UserResponseBodyGet } from '../api/user+api';
 
-export default function Photo() {
+export default function UserPhoto() {
   const [photoData, setPhotoData] = useState<Photo>();
   const [isLoading, setIsLoading] = useState(false);
-  const { photoId } = useLocalSearchParams();
+  const { photoId } = useLocalSearchParams<{ photoId: string }>();
 
   const router = useRouter();
 
@@ -39,9 +39,9 @@ export default function Photo() {
         }
       };
       getUserPhoto().catch((error) => console.log(error));
-    }, [photoId]),
+    }, [photoId, router]),
   );
-  if (photoData)
+  if (photoData) {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView>
@@ -59,4 +59,5 @@ export default function Photo() {
         </ScrollView>
       </SafeAreaView>
     );
+  }
 }

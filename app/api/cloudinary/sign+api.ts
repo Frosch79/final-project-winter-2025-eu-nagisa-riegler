@@ -1,7 +1,12 @@
 import cloudinary from '../../../cloudinary.config';
 import { ExpoApiResponse } from '../../../ExpoApiResponse';
 
-export async function GET() {
+export function GET(): ExpoApiResponse<{
+  timestamp: number;
+  signature: string;
+  cloudName: string | undefined;
+  apiKey: string | undefined;
+}> {
   const timestamp = Math.round(Date.now() / 1000);
 
   const signature = cloudinary.utils.api_sign_request(

@@ -5,7 +5,6 @@ import type {
   AlbumWithVisibilityName,
   FeedAlbum,
 } from '../migrations/00006-createTableAlbums';
-import type { Photo } from '../migrations/00008-createTablePhotos';
 import type { Session } from '../migrations/00014-createTableSessions';
 import { sql } from './connect';
 
@@ -72,7 +71,7 @@ export async function updateAlbum(
   albums: Omit<AlbumWithVisibilityName, 'createdDate'>,
   albumId: number,
 ) {
-  const [updateAlbum] = await sql<Album[]>`
+  const [updatedAlbum] = await sql<Album[]>`
     UPDATE albums
     SET
       title = ${albums.title},
@@ -100,14 +99,14 @@ export async function updateAlbum(
     RETURNING
       albums.*
   `;
-  return updateAlbum;
+  return updatedAlbum;
 }
 
 export async function deleteAlbum(
   sessionToken: Session['token'],
   albumId: Album['id'],
 ) {
-  const deletedAlbum = await sql<Album[]>`
+  const deletedAlbum = await sql<Pick<Album, 'title'>[]>`
     DELETE FROM albums
     WHERE
       id = ${albumId}
@@ -212,7 +211,7 @@ export async function getVisitUserAlbums(
       count(DISTINCT likes.id)::integer AS like_count
     FROM
       users
-      LEFT JOIN albums ON users.id = albums.user_id
+      INNER JOIN albums ON users.id = albums.user_id
       LEFT JOIN follows ON follower_user_id = albums.user_id
       LEFT JOIN comments ON comments.album_id = albums.id
       LEFT JOIN likes ON likes.album_id = albums.id
@@ -239,9 +238,26 @@ export async function getVisitUserAlbums(
   return visitUserAlbums;
 }
 
-export type AlbumByUser = Album & { userName: User['name'] } & {
-  visibilityName: Visibility['name'];
-} & { photos: Photo[] };
+export type AlbumByUser = {
+  id: number;
+  userId: number;
+  title: string;
+  description: string | null;
+  location: string | null;
+  createdDate: Date;
+  visibilityId: number;
+  userName: string;
+  visibilityName: string;
+  photos: {
+    id: number | null;
+    albumId: number | null;
+    title: string | null;
+    cloudinaryDataPath: string | null;
+    description: string | null;
+    location: string | null;
+    createdDate: Date | null;
+  }[];
+};
 export async function getVisitUserAlbum(
   sessionToken: Session['token'],
   albumId: Album['id'],
@@ -263,7 +279,7 @@ export async function getVisitUserAlbum(
     SELECT DISTINCT
       albums.*,
       users.name AS user_name,
-      visibilities.name AS visibilityname,
+      visibilities.name AS visibility_name,
       coalesce(
         jsonb_agg(
           DISTINCT jsonb_build_object(
@@ -271,15 +287,15 @@ export async function getVisitUserAlbum(
             photos.id,
             'albumId',
             photos.album_id,
-            'photoTitle',
+            'title',
             photos.title,
             'cloudinaryDataPath',
             photos.cloudinary_data_path,
-            'Description',
+            'description',
             photos.description,
-            'Location',
+            'location',
             photos.location,
-            'CreatedDate',
+            'createdDate',
             photos.created_date
           )
         ) FILTER (

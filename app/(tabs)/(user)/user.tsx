@@ -33,7 +33,7 @@ export default function UserPage() {
         albumDescription={item.description}
         albumLocation={item.location}
         createdDate={item.createdDate}
-        albumCover={''}
+        albumCover=""
         albumComment={item.commentCount}
         albumLike={item.likeCount}
         albumId={item.id}
@@ -124,9 +124,9 @@ export default function UserPage() {
                 followerUsersItem={follower}
               />
             ) : (
-              <HelperText type="error"> Account not found</HelperText>
+              null
             )}
-
+            {isError?<HelperText type="error"> {message}</HelperText>:null}
             {albums.length > 0 ? (
               <FlatList
                 data={albums}

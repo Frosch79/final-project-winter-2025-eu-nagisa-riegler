@@ -14,7 +14,7 @@ type Props = {
   idSwitch: string;
   userId: User['id'];
 };
-export default function namModalShowFollows({
+export default function ModalShowFollows({
   visible,
   onDismiss,
   items,

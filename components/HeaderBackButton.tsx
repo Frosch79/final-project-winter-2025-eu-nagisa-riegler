@@ -1,5 +1,4 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
 import { colors } from '../constants/Colors';
@@ -10,7 +9,6 @@ export default function HeaderBackButton() {
   return (
     <Pressable
       onPress={() => {
-        Haptics.selectionAsync();
         router.back();
       }}
       style={{ paddingHorizontal: 12 }}

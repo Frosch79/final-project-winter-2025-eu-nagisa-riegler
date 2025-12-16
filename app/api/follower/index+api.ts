@@ -21,7 +21,7 @@ export async function GET(
 
   const follower = await getUserAllFollowersInsecure(Number(userId));
 
-  if (!follower) {
+  if (typeof follower === 'undefined') {
     return ExpoApiResponse.json(
       {
         error: 'Follower still does not created',

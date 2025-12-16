@@ -19,18 +19,18 @@ type Props = {
   userData: FullUser;
   editOnPress:
     | (((event: GestureResponderEvent) => void) &
-        ((e: GestureResponderEvent) => void) &
-        ((e: GestureResponderEvent) => void))
+        ((e: GestureResponderEvent) => void) 
+        )
     | undefined;
   homeOnPress:
     | (((event: GestureResponderEvent) => void) &
-        ((e: GestureResponderEvent) => void) &
-        ((e: GestureResponderEvent) => void))
+        ((e: GestureResponderEvent) => void) 
+        )
     | undefined;
   followOnPress:
     | (((event: GestureResponderEvent) => void) &
-        ((e: GestureResponderEvent) => void) &
-        ((e: GestureResponderEvent) => void))
+        ((e: GestureResponderEvent) => void) 
+        )
     | undefined;
   onSwitch: boolean;
   isFollow: boolean;
@@ -170,7 +170,7 @@ export default function UserCard(props: Props) {
       {/* Modal */}
       <Portal>
         <ModalShowFollows
-          //follower
+          // follower
           visible={isFollowerModalVisible}
           onDismiss={() => setIsFollowerModalVisible(false)}
           items={followerUsersItem}
@@ -180,7 +180,7 @@ export default function UserCard(props: Props) {
       </Portal>
       <Portal>
         <ModalShowFollows
-          //followed
+          // followed
           visible={isFollowedModalVisible}
           onDismiss={() => setIsFollowedModalVisible(false)}
           items={followedUsersItem}

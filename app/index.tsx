@@ -7,19 +7,14 @@ export default function Index() {
 
   useFocusEffect(() => {
     const checkAuth = async () => {
-      try {
-        const response = await fetch('/api/user');
-        const data = await response.json();
-        if (!('error' in data)) {
-          setIsLoggedIn(true);
-        }
-      } catch (error) {
-        setIsLoggedIn(false);
-      } finally {
-        setIsLoading(false);
+      const response = await fetch('/api/user');
+      const data = await response.json();
+      if (!('error' in data)) {
+        setIsLoggedIn(true);
       }
+      setIsLoading(false);
     };
-    checkAuth();
+    checkAuth().catch((error) => console.log(error));
   });
 
   if (isLoading) return null;

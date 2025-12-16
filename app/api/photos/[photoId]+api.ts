@@ -104,16 +104,6 @@ export async function PUT(
   const photoData = { ...result.data, albumId: Number(albumId) };
   const photo = await updatePhoto(token, photoData, Number(photoId));
 
-  if (!photo) {
-    return ExpoApiResponse.json(
-      {
-        error: `Access denied to photo with id ${photoId}`,
-      },
-      {
-        status: 403,
-      },
-    );
-  }
   return ExpoApiResponse.json({ photo: photo });
 }
 
@@ -157,15 +147,5 @@ export async function DELETE(
   }
   const photo = await deletePhoto(token, Number(photoId), Number(albumId));
 
-  if (!photo) {
-    return ExpoApiResponse.json(
-      {
-        error: `Access denied to photo with id ${photoId}`,
-      },
-      {
-        status: 403,
-      },
-    );
-  }
   return ExpoApiResponse.json({ photo: photo });
 }

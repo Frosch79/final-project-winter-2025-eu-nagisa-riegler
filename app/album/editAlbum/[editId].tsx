@@ -19,7 +19,7 @@ export default function EditAlbum() {
   const [visibility, setVisibility] = useState('');
   const [isError, setIsError] = useState(false);
   const [message, setMessage] = useState('');
-  const { editId } = useLocalSearchParams();
+  const { editId } = useLocalSearchParams<{ editId: string }>();
 
   const router = useRouter();
   useFocusEffect(
@@ -42,14 +42,15 @@ export default function EditAlbum() {
         }
         if ('album' in albumResponse) {
           const albumData = albumResponse.album;
-          (setTitle(albumData.title), setLocation(albumData.location || ''));
+          setTitle(albumData.title);
+          setLocation(albumData.location || '');
           setDescription(albumData.description || '');
           setVisibility(albumData.visibilityName);
           console.log(albumData.visibilityName);
         }
       };
       getUser().catch((error) => console.log(error));
-    }, []),
+    }, [editId, router]),
   );
 
   return (

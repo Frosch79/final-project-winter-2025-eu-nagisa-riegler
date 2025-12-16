@@ -1,7 +1,6 @@
 import { Tabs } from 'expo-router';
-import AnimatedTabIcon from '../../components/AnimatedTabIcon';
+import { TabBarIcon } from '../../components/TabBarIcons';
 import { colors } from '../../constants/Colors';
-import { tabPressHaptic } from '../../util/haptics';
 
 export default function TabLayout() {
   return (
@@ -21,14 +20,7 @@ export default function TabLayout() {
         name="(user)/user"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color, focused }) => (
-            <AnimatedTabIcon name="user" color={color} focused={focused} />
-          ),
-        }}
-        listeners={{
-          tabPress: () => {
-            tabPressHaptic();
-          },
+          tabBarIcon: ({ color }) => <TabBarIcon name="man" color={color} />,
         }}
       />
 
@@ -37,14 +29,7 @@ export default function TabLayout() {
         name="(feeds)"
         options={{
           title: 'Feed',
-          tabBarIcon: ({ color, focused }) => (
-            <AnimatedTabIcon name="th-large" color={color} focused={focused} />
-          ),
-        }}
-        listeners={{
-          tabPress: () => {
-            tabPressHaptic();
-          },
+          tabBarIcon: ({ color }) => <TabBarIcon name="albums" color={color} />,
         }}
       />
 
