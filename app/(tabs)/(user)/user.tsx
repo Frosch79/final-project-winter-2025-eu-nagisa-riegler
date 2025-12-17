@@ -123,10 +123,8 @@ export default function UserPage() {
                 followedUsersItem={followed}
                 followerUsersItem={follower}
               />
-            ) : (
-              null
-            )}
-            {isError?<HelperText type="error"> {message}</HelperText>:null}
+            ) : null}
+            {isError ? <HelperText type="error"> {message}</HelperText> : null}
             {albums.length > 0 ? (
               <FlatList
                 data={albums}
