@@ -3,8 +3,8 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { SafeAreaView } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
-import { spacing } from '../../constants/Spacing.js';
-import { type RegisterResponseBodyPost } from './api/register+api.js';
+import { spacing } from '../../constants/Spacing';
+import { type RegisterResponseBodyPost } from './api/register+api';
 
 export default function Register() {
   const [userName, setUserName] = useState('');

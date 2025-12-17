@@ -1,6 +1,6 @@
-import type { User } from '../migrations/00000-createTableUsers.js';
-import type { Session } from '../migrations/00014-createTableSessions.js';
-import { sql } from './connect.js';
+import type { User } from '../migrations/00000-createTableUsers';
+import type { Session } from '../migrations/00014-createTableSessions';
+import { sql } from './connect';
 
 type UserWithPasswordHash = User & { passwordHash: string };
 
