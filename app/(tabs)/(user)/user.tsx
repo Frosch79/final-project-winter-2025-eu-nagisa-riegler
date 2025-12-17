@@ -69,8 +69,6 @@ export default function UserPage() {
           return;
         }
 
-        console.log('res', userAlbumsResponse);
-
         setAlbums(userAlbumsResponse.album);
 
         const [followerResponse, followedResponse]: [
@@ -105,7 +103,6 @@ export default function UserPage() {
       getUser().catch(console.error);
     }, [router]),
   );
-  console.log(isMyPage, user, albums);
 
   return (
     <Provider theme={theme}>

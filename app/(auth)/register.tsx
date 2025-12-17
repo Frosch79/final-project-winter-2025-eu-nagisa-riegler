@@ -27,7 +27,6 @@ export default function Register() {
         if ('user' in responseBody) {
           router.replace('/(tabs)/(user)/user');
         }
-        console.log('user', responseBody);
       }
       getUser().catch((error) => console.error(error));
     }, []),
@@ -132,7 +131,7 @@ export default function Register() {
               password: userPasswordConfirm,
             }),
           });
-          console.log('register', response);
+
           if (!response.ok) {
             let errorMessage = 'Error Register';
             const responseBody: RegisterResponseBodyPost =
@@ -161,12 +160,12 @@ export default function Register() {
           router.replace('/(tabs)/(user)/user');
         }}
       >
-        register
+        <Text>register</Text>
       </Button>
 
       <Text>if you already have an account</Text>
       <Button mode="outlined" onPress={() => router.replace('/(auth)/login')}>
-        login
+        <Text>login</Text>
       </Button>
     </SafeAreaView>
   );

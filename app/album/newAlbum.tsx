@@ -109,7 +109,7 @@ export default function PostMyAlbum() {
                 return;
               }
               const newAlbumId = responseBody.album.id;
-              console.log(responseBody.album.id);
+
               setTitle('');
               setDescription('');
               setLocation('');

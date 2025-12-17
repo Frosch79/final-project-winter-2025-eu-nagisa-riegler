@@ -35,7 +35,6 @@ export default function UserPhoto() {
         if ('photo' in photoResponse) {
           setPhotoData(photoResponse.photo);
           setIsLoading(true);
-          console.log('res', photoResponse.photo);
         }
       };
       getUserPhoto().catch((error) => console.log(error));

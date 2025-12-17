@@ -33,7 +33,7 @@ export default function ModalComment({
   const pressHandle = async (id: CommentWithUserName['id']) => {
     const response = await fetch(`/api/comments/${id}`, { method: 'DELETE' });
     const data = await response.json();
-    console.log(response);
+
     if (!response.ok || 'error' in data) {
       setIsError(true);
       setMessage(data ?? 'Error delete comment');

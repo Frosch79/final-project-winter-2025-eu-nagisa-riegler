@@ -27,11 +27,6 @@ export default function ModalShowFollows({
     const targetUserId =
       idSwitch === 'follower' ? item.followerUserId : item.followedUserId;
     const isMyPage = userId === targetUserId;
-    console.log(
-      userId === item.followedUserId
-        ? '/(tabs)/(user)/user'
-        : '/(tabs)/(user)/[userId]',
-    );
 
     return (
       <View style={{ marginBottom: spacing.xs }}>
@@ -50,7 +45,7 @@ export default function ModalShowFollows({
       </View>
     );
   };
-  console.log('items', items, 'switch', idSwitch);
+
   return (
     <Modal
       visible={visible}

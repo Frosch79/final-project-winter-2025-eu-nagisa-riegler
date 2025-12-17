@@ -9,6 +9,36 @@ import type { AlbumResponseBodyGet } from '../api/albums/[albumId]+api';
 import type { CreatePhotoResponseBodyPost } from '../api/photos/index+api';
 import type { UserResponseBodyGet } from '../api/user+api';
 
+type CloudinaryUploadResponse = {
+  secure_url: string;
+  public_id: string;
+  width: number;
+  height: number;
+  format: string;
+};
+
+// Compress image before upload (web only)
+async function compressBlob(blob: Blob): Promise<Blob> {
+  const img = new Image();
+  img.src = URL.createObjectURL(blob);
+  await new Promise((r) => {
+    img.onload = r;
+  });
+
+  const maxWidth = 1600;
+  const scale = Math.min(1, maxWidth / img.width);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = img.width * scale;
+  canvas.height = img.height * scale;
+
+  canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  return await new Promise((resolve) => {
+    canvas.toBlob((b) => resolve(b!), 'image/jpeg', 0.7);
+  });
+}
+
 export default function PostMyPhotos() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -67,17 +97,22 @@ export default function PostMyPhotos() {
 
     if (result.canceled) return;
     const image = result.assets[0];
+    if (!image) return;
+
+    const blob = await fetch(image.uri).then((response) => response.blob());
+
+    const uploadBlob = Platform.OS === 'web' ? await compressBlob(blob) : blob;
 
     const file = {
-      uri: image?.uri,
-      type: image?.mimeType ?? 'image/jpeg',
+      uri: image.uri,
+      type: image.mimeType ?? 'image/jpeg',
       name: 'upload.jpg',
     };
 
     // get sign
     let sigRes;
     if (Platform.OS === 'web') {
-      sigRes = await fetch('http://localhost:8081/api/cloudinary/sign'); // note: this port is only web test
+      sigRes = await fetch('/api/cloudinary/sign'); // note: this port is only web test
     } else {
       sigRes = await fetch('http://192.168.0.226:8081/api/cloudinary/sign'); // note: this port is only test
     }
@@ -86,7 +121,11 @@ export default function PostMyPhotos() {
 
     // FormData sends to cloudinary
     const formData = new FormData();
-    formData.append('file', file as any);
+    formData.append(
+      'file',
+      Platform.OS === 'web' ? uploadBlob : (file as any),
+      'upload.jpg',
+    );
     formData.append('api_key', apiKey);
     formData.append('timestamp', timestamp);
     formData.append('signature', signature);
@@ -100,12 +139,9 @@ export default function PostMyPhotos() {
       },
     );
 
-    const data = await uploadRes.json();
-    if ('secure_url' in data) {
-      setCloudinaryPath(data /* .secure_url */);
-    }
+    const data: CloudinaryUploadResponse = await uploadRes.json();
 
-    console.log(cloudinaryPath);
+    setCloudinaryPath(data.secure_url);
   };
 
   return (
@@ -231,7 +267,6 @@ export default function PostMyPhotos() {
 
                   const createdPhotoResponse: CreatePhotoResponseBodyPost =
                     await response.json();
-                  console.log('res', createdPhotoResponse);
 
                   if ('error' in createdPhotoResponse) {
                     setIsError(true);

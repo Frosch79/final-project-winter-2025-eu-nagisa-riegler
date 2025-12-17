@@ -57,7 +57,6 @@ export default function UserPage() {
         setIsMyPage(Number(userId) === Number(userResponse.user.id));
 
         if ('error' in userPageResponse) {
-          console.log('data', userPageResponse.error);
           setIsLoading(false);
           return;
         }
@@ -74,7 +73,7 @@ export default function UserPage() {
         if ('error' in isFollowResponse) {
           return;
         }
-        console.log('res', isFollowResponse.result.valueOf());
+
         setIsFollowed(isFollowResponse.result.valueOf());
 
         const [followerResponse, followedResponse]: [
@@ -190,7 +189,7 @@ export default function UserPage() {
                 router.push('/(auth)/login');
               }}
             >
-              logout
+              <Text>logout</Text>
             </Button>
           </View>
         ) : (

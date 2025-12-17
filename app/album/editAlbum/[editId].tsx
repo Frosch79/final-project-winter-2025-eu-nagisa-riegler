@@ -46,7 +46,6 @@ export default function EditAlbum() {
           setLocation(albumData.location || '');
           setDescription(albumData.description || '');
           setVisibility(albumData.visibilityName);
-          console.log(albumData.visibilityName);
         }
       };
       getUser().catch((error) => console.log(error));
@@ -119,7 +118,6 @@ export default function EditAlbum() {
 
                 setIsError(true);
                 setMessage(errorMessage);
-                console.log('pass');
 
                 return;
               }
