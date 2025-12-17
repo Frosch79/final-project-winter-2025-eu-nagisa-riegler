@@ -6,7 +6,7 @@ import { ExpoApiResponse } from '../../../ExpoApiResponse';
 import {
   type User,
   userSchema,
-} from '../../../migrations/00000-createTableUsers.js';
+} from '../../../migrations/00000-createTableUsers';
 import { createSerializedRegisterSessionTokenCookie } from '../../../util/cookies';
 
 export type RegisterResponseBodyPost =
