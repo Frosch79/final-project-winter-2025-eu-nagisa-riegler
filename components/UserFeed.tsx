@@ -87,6 +87,10 @@ export default function UserFeed(props: Props) {
           marginTop: spacing.sm,
         }}
       >
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <IconButton icon="heart-outline" size={20} />
+          <Text>{albumLike}</Text>
+        </View>
         <View
           style={{
             flexDirection: 'row',
@@ -96,11 +100,6 @@ export default function UserFeed(props: Props) {
         >
           <IconButton icon="comment-outline" size={20} />
           <Text>{albumComment}</Text>
-        </View>
-
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <IconButton icon="heart-outline" size={20} />
-          <Text>{albumLike}</Text>
         </View>
       </Card.Content>
     </Card>
