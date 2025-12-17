@@ -1,6 +1,6 @@
 import postgres, { type Sql } from 'postgres';
-import postgresConfig from '../ley.config';
-import { setEnvironmentVariables } from '../util/config';
+import postgresConfig from '../ley.config.js';
+import { setEnvironmentVariables } from '../util/config.js';
 
 setEnvironmentVariables();
 

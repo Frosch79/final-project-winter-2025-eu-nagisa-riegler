@@ -5,7 +5,9 @@
     // Based on expo/tsconfig.base.json
     // https://github.com/expo/expo/blob/main/packages/expo/tsconfig.base.json
     "jsx": "react-native",
-    "target": "ESNext"
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
   "include": [
     "**/*.ts",

@@ -1,11 +1,11 @@
-import type { User } from '../migrations/00000-createTableUsers';
-import type { Session } from '../migrations/00014-createTableSessions';
-import { sql } from './connect';
+import type { User } from '../migrations/00000-createTableUsers.js';
+import type { Session } from '../migrations/00014-createTableSessions.js';
+import { sql } from './connect.js';
 
 type UserWithPasswordHash = User & { passwordHash: string };
 
 export async function getUserInsecure(userEmail: User['email']) {
-  const [user] = await sql<{ id: number; name: string; email: string }[]>`
+  const [user] = await sql<Pick<User, 'id' | 'name' | 'email'>[]>`
     SELECT
       users.id,
       users.name,

@@ -1,15 +1,10 @@
 import dayjs from 'dayjs';
-import {
-  type Href,
-  router,
-  useFocusEffect,
-  useLocalSearchParams,
-} from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { SafeAreaView } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
-import { spacing } from '../../constants/Spacing';
-import { type RegisterResponseBodyPost } from './api/register+api';
+import { spacing } from '../../constants/Spacing.js';
+import { type RegisterResponseBodyPost } from './api/register+api.js';
 
 export default function Register() {
   const [userName, setUserName] = useState('');
@@ -22,8 +17,6 @@ export default function Register() {
   const [isError, setIsError] = useState(false);
   const [userPasswordConfirm, setUserPasswordConfirm] = useState('');
 
-  const { returnTo } = useLocalSearchParams<{ returnTo: string }>();
-
   useFocusEffect(
     useCallback(() => {
       async function getUser() {
@@ -32,17 +25,12 @@ export default function Register() {
         const responseBody: RegisterResponseBodyPost = await response.json();
 
         if ('user' in responseBody) {
-          if (returnTo && typeof returnTo === 'string') {
-            router.replace(returnTo as Href);
-          }
           router.replace('/(tabs)/(user)/user');
         }
+        console.log('user', responseBody);
       }
-
-      getUser().catch((error) => {
-        console.error(error);
-      });
-    }, [returnTo]),
+      getUser().catch((error) => console.error(error));
+    }, []),
   );
 
   const inputMaxLength = {
@@ -144,6 +132,7 @@ export default function Register() {
               password: userPasswordConfirm,
             }),
           });
+          console.log('register', response);
           if (!response.ok) {
             let errorMessage = 'Error Register';
             const responseBody: RegisterResponseBodyPost =
@@ -162,16 +151,14 @@ export default function Register() {
           if ('error' in responseBody) {
             setIsError(true);
             setMessage(responseBody.error);
+
             return;
           }
 
           setUserEmail('');
           setUserPassword('');
-          if (returnTo && typeof returnTo === 'string') {
-            router.replace(returnTo as Href);
-          } else {
-            router.replace('/(tabs)/(user)/user');
-          }
+
+          router.replace('/(tabs)/(user)/user');
         }}
       >
         register

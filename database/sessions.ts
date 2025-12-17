@@ -29,9 +29,9 @@ export async function createSessionInsecure(
         ${userId}
       )
     RETURNING
-      id,
-      user_id,
-      token
+      sessions.id,
+      sessions.token,
+      sessions.user_id
   `;
 
   await sql`

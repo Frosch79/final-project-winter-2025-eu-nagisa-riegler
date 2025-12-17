@@ -1,13 +1,16 @@
 import crypto from 'node:crypto';
 import bcryptJs from 'bcryptjs';
-import { createSessionInsecure } from '../../../database/sessions';
-import { createUserInsecure, getUserInsecure } from '../../../database/users';
-import { ExpoApiResponse } from '../../../ExpoApiResponse';
+import { createSessionInsecure } from '../../../database/sessions.js';
+import {
+  createUserInsecure,
+  getUserInsecure,
+} from '../../../database/users.js';
+import { ExpoApiResponse } from '../../../ExpoApiResponse.js';
 import {
   type User,
   userSchema,
-} from '../../../migrations/00000-createTableUsers';
-import { createSerializedRegisterSessionTokenCookie } from '../../../util/cookies';
+} from '../../../migrations/00000-createTableUsers.js';
+import { createSerializedRegisterSessionTokenCookie } from '../../../util/cookies.js';
 
 export type RegisterResponseBodyPost =
   | {
@@ -47,8 +50,15 @@ export async function POST(
     );
   }
   const passwordHash = await bcryptJs.hash(result.data.password, 12);
+  const userData = {
+    name: result.data.name,
+    birthday: result.data.birthday,
+    country: result.data.country,
+    accountDescription: result.data.accountDescription,
+    email: result.data.email,
+  };
 
-  const newUser = await createUserInsecure(result.data, passwordHash);
+  const newUser = await createUserInsecure(userData, passwordHash);
 
   if (!newUser) {
     return ExpoApiResponse.json(
