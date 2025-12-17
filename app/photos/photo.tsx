@@ -102,7 +102,7 @@ export default function PostMyPhotos() {
 
     const data = await uploadRes.json();
     if ('secure_url' in data) {
-      setCloudinaryPath(data.secure_url);
+      setCloudinaryPath(data /* .secure_url */);
     }
 
     console.log(cloudinaryPath);

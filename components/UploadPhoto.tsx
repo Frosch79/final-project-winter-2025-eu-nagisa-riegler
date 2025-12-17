@@ -1,9 +1,9 @@
-import * as ImagePicker from 'expo-image-picker';
-import { Platform } from 'react-native';
+/* import * as ImagePicker from 'expo-image-picker';
+import { Platform } from 'react-native'; */
 
 export default function UploadPhoto() {
-  const pickImageAsync = async () => {
-    /* add photo to cloudinary  */
+  /*  const pickImageAsync = async () => {
+    //add photo to cloudinary
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
@@ -48,5 +48,5 @@ export default function UploadPhoto() {
     const data = await uploadRes.json();
     return data.secure_url;
   };
-  return pickImageAsync;
+  return pickImageAsync; */
 }
