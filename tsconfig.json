@@ -17,5 +17,6 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
   ],
+  "module": "ESNext",
   "exclude": ["node_modules"]
 }
