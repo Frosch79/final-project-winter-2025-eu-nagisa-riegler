@@ -72,9 +72,6 @@ export default function RootLayout() {
   );
 }
  */
-
-import { Text } from 'react-native-paper';
-
-export default function Page() {
-  return <Text>HELLO</Text>;
+export default function RootLayout() {
+  return null; // ← 極端でOK
 }
