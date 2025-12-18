@@ -1,6 +1,6 @@
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { FlatList, SafeAreaView, Text } from 'react-native';
+import { FlatList, SafeAreaView, Text, View } from 'react-native';
 import UserFeed from '../../../components/UserFeed';
 import type { FeedAlbum } from '../../../migrations/00006-createTableAlbums';
 import { type FeedResponseBodyGet } from '../../api/feed/index+api';
@@ -60,16 +60,18 @@ export default function Feed() {
   );
 
   return (
-    <SafeAreaView>
-      {followFeed.length > 0 && isLoading ? (
-        <FlatList
-          data={followFeed}
-          renderItem={renderAlbumFeed}
-          keyExtractor={(item: FeedAlbum) => String(item.id)}
-        />
-      ) : (
-        <Text>No Albums</Text>
-      )}
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
+        {followFeed.length > 0 && isLoading ? (
+          <FlatList
+            data={followFeed}
+            renderItem={renderAlbumFeed}
+            keyExtractor={(item: FeedAlbum) => String(item.id)}
+          />
+        ) : (
+          <Text>No Albums</Text>
+        )}
+      </View>
     </SafeAreaView>
   );
 }
