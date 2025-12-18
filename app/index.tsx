@@ -1,6 +1,5 @@
-/* import { Redirect, useFocusEffect } from 'expo-router';
+import { Redirect, useFocusEffect } from 'expo-router';
 import { useState } from 'react';
-
 
 export default function Index() {
   const [isLoading, setIsLoading] = useState(true);
@@ -25,9 +24,4 @@ export default function Index() {
   ) : (
     <Redirect href="/(auth)/login" />
   );
-} */
-import { Text } from 'react-native-paper';
-
-export default function Index() {
-  return <Text>TEST</Text>;
 }
