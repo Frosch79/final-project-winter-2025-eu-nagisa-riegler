@@ -1,8 +1,8 @@
 import { type ExpoConfig } from 'expo/config';
 
 const config: ExpoConfig = {
-  name: 'expo-example-winter-2025-eu-nagisa-riegler',
-  slug: 'expo-example-winter-2025-eu-nagisa-riegler',
+  name: 'final-project-winter-2025-eu-nagisa-riegler',
+  slug: 'final-project-winter-2025-eu-nagisa-riegler',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/images/icon-shutter.png',
@@ -13,7 +13,7 @@ const config: ExpoConfig = {
     supportsTablet: true,
   },
   android: {
-    package: 'com.frosch79.expoexamplewinter2025eunagisariegler',
+    package: 'com.upleveled.final-project-winter-2025-eu-nagisa-riegler',
     adaptiveIcon: {
       foregroundImage: './assets/images/icon-shutter.png',
       backgroundColor: '#ffffff',
