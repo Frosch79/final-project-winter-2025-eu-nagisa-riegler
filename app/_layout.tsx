@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+/* import { Stack } from 'expo-router';
 import { Provider as PaperProvider } from 'react-native-paper';
 import HeaderBackButton from '../components/HeaderBackButton';
 import { theme } from '../constants/Theme';
@@ -25,7 +25,7 @@ export default function RootLayout() {
           },
         }}
       >
-        {/* Tabs */}
+
         <Stack.Screen
           name="(tabs)"
           options={{
@@ -33,7 +33,6 @@ export default function RootLayout() {
           }}
         />
 
-        {/* Auth */}
         <Stack.Screen
           name="(auth)"
           options={{
@@ -41,7 +40,7 @@ export default function RootLayout() {
           }}
         />
 
-        {/* Modal / others */}
+
         <Stack.Screen
           name="album/newAlbum"
           options={{
@@ -71,4 +70,11 @@ export default function RootLayout() {
       </Stack>
     </PaperProvider>
   );
+}
+ */
+
+import { Text } from 'react-native-paper';
+
+export default function Page() {
+  return <Text>HELLO</Text>;
 }
