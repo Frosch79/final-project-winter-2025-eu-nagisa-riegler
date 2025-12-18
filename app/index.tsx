@@ -26,9 +26,3 @@ export default function Index() {
     <Redirect href="/(auth)/login" />
   );
 } */
-
-import { Text } from 'react-native-paper';
-
-export default function Page() {
-  return <Text>HELLO</Text>;
-}
