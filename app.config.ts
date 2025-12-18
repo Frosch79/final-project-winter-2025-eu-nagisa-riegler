@@ -21,7 +21,7 @@ const config: ExpoConfig = {
   },
   web: {
     bundler: 'metro',
-    output: 'static',
+    output: 'server',
     favicon: './assets/images/icon-shutter.png',
   },
   plugins: [
