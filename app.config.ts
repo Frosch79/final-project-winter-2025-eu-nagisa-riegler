@@ -27,9 +27,9 @@ const config: ExpoConfig = {
   plugins: [
     [
       'expo-router',
-      {
+      /*  {
         origin: 'https://final-project-winter-2025-eu-nagisa.vercel.app/',
-      },
+      }, */
     ],
 
     [
