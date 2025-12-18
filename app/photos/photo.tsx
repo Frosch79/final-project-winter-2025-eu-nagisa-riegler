@@ -112,9 +112,9 @@ export default function PostMyPhotos() {
     // get sign
     let sigRes;
     if (Platform.OS === 'web') {
-      sigRes = await fetch('/api/cloudinary/sign'); // note: this port is only web test
+      sigRes = await fetch('/api/cloudinary/sign'); // note: this port is only web
     } else {
-      sigRes = await fetch('http://192.168.0.226:8081/api/cloudinary/sign'); // note: this port is only test
+      sigRes = await fetch('http://192.168.0.226:8081/api/cloudinary/sign'); // note: this port is only mobile test
     }
 
     const { timestamp, signature, cloudName, apiKey } = await sigRes.json();
@@ -169,11 +169,13 @@ export default function PostMyPhotos() {
               {cloudinaryPath ? (
                 <Card.Cover
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: 0,
+                    width: 300,
+                    aspectRatio: 4 / 3,
+                    alignSelf: 'center',
+                    borderRadius: 8,
                   }}
                   source={{ uri: cloudinaryPath }}
+                  resizeMode="cover"
                 />
               ) : (
                 <View
@@ -230,7 +232,7 @@ export default function PostMyPhotos() {
                 onPress={() =>
                   router.replace({
                     pathname: '/album/[albumId]',
-                    params: { albumId: album.id.toString() },
+                    params: { albumId: album.id },
                   })
                 }
               >
@@ -280,7 +282,7 @@ export default function PostMyPhotos() {
                   if ('photo' in createdPhotoResponse) {
                     router.replace({
                       pathname: '/album/[albumId]',
-                      params: { albumId: album.id.toString() },
+                      params: { albumId: album.id },
                     });
                   }
                 }}

@@ -83,7 +83,7 @@ export async function PUT(
     return ExpoApiResponse.json(
       {
         error: 'Request does not contain album object',
-        /*  errorIssues: result.error.issues, */
+        errorIssues: result.error.issues,
       },
       {
         status: 400,

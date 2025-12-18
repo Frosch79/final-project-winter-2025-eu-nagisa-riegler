@@ -77,6 +77,11 @@ export default function PostMyAlbum() {
           <Button
             mode="contained"
             onPress={async () => {
+              if (!title || title === '') {
+                setIsError(true);
+                setMessage('Please write a title');
+                return;
+              }
               const response = await fetch('/api/albums', {
                 method: 'POST',
                 body: JSON.stringify({

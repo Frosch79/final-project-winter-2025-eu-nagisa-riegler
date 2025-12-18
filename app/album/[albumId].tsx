@@ -187,47 +187,49 @@ export default function UserAlbum() {
         </View>
         {/* Action Buttons (for owner) */}
         <View>
-          {user && album && user.id === album.userId ? (
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginBottom: spacing.md,
-              }}
-            >
-              <IconButton
-                // close album page
-                mode="contained-tonal"
-                icon="close-thick"
-                size={30}
-                onPress={() => router.replace('/(tabs)/(user)/user')}
-              />
-              <IconButton
-                // to edit page
-                mode="contained-tonal"
-                icon="file-edit"
-                size={30}
-                onPress={() =>
-                  router.replace({
-                    pathname: '/album/editAlbum/[editId]',
-                    params: { editId: album.id },
-                  })
-                }
-              />
-              <IconButton
-                // add new photo
-                mode="contained-tonal"
-                icon="camera"
-                size={30}
-                onPress={() =>
-                  router.replace({
-                    pathname: '/photos/photo',
-                    params: { albumId: albumId },
-                  })
-                }
-              />
-            </View>
-          ) : null}
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: spacing.md,
+            }}
+          >
+            <IconButton
+              // close album page
+              mode="contained-tonal"
+              icon="close-thick"
+              size={30}
+              onPress={() => router.replace('/(tabs)/(user)/user')}
+            />
+            {user && album && user.id === album.userId ? (
+              <>
+                <IconButton
+                  // to edit page
+                  mode="contained-tonal"
+                  icon="file-edit"
+                  size={30}
+                  onPress={() =>
+                    router.replace({
+                      pathname: '/album/editAlbum/[editId]',
+                      params: { editId: album.id },
+                    })
+                  }
+                />
+                <IconButton
+                  // add new photo
+                  mode="contained-tonal"
+                  icon="camera"
+                  size={30}
+                  onPress={() =>
+                    router.replace({
+                      pathname: '/photos/photo',
+                      params: { albumId: albumId },
+                    })
+                  }
+                />
+              </>
+            ) : null}
+          </View>
         </View>
 
         {photos.length > 0 ? (

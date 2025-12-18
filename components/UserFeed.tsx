@@ -1,7 +1,8 @@
 import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
-import { View } from 'react-native';
-import { Avatar, Button, Card, IconButton, Text } from 'react-native-paper';
+import { Pressable, View } from 'react-native';
+import { Avatar, Card, IconButton, Text } from 'react-native-paper';
+import { colors } from '../constants/Colors';
 import { components } from '../constants/Components';
 import { spacing } from '../constants/Spacing';
 import { typography } from '../constants/Typography';
@@ -42,62 +43,80 @@ export default function UserFeed(props: Props) {
         overflow: 'hidden',
       }}
     >
+      {/* user and date */}
       <Card.Title
         title={userName}
         subtitle={dayjs(createdDate).format('YYYY-MM-DD')}
         left={leftContent}
         titleStyle={{ ...typography.title }}
       />
-
-      <Button
-        onPress={() =>
-          router.navigate({
-            pathname: '/album/[albumId]',
-            params: { albumId: albumId.toString() },
-          })
-        }
-        style={{ padding: 0 }}
+      <View
+        style={{
+          flexDirection: 'row',
+          gap: 24,
+          paddingHorizontal: 16,
+          paddingBottom: 16,
+        }}
       >
-        <Card.Content style={{ paddingBottom: spacing.sm }}>
-          <Text style={{ ...typography.title, marginBottom: spacing.xs }}>
-            {albumTitle}
-          </Text>
-          {albumDescription && <Text>{albumDescription}</Text>}
-          {albumLocation && (
-            <Text
-              style={{
-                ...typography.small,
-                marginTop: spacing.xs,
-              }}
-            >
-              {albumLocation}
+        <Pressable
+          onPress={() =>
+            router.navigate({
+              pathname: '/album/[albumId]',
+              params: { albumId: albumId },
+            })
+          }
+          style={{
+            flexDirection: 'row',
+            padding: spacing.md,
+            alignItems: 'flex-start',
+          }}
+        >
+          {/* cover */}
+          <Card.Cover
+            source={{ uri: albumCover || 'https://picsum.photos/700' }}
+            style={{
+              width: 140,
+              aspectRatio: 4 / 3,
+              borderRadius: 8,
+              marginRight: spacing.xl,
+            }}
+            resizeMode="contain"
+          />
+          {/* album information */}
+          <View style={{ flex: 1, marginRight: spacing.md }}>
+            <Text style={{ ...typography.title, marginBottom: spacing.xs }}>
+              {albumTitle}
             </Text>
-          )}
-        </Card.Content>
-      </Button>
-      <Card.Cover
-        style={{ width: '100%', height: 180, borderRadius: 0 }}
-        source={{ uri: albumCover || 'https://picsum.photos/700' }}
-      />
+            {albumDescription && (
+              <Text style={{ ...typography.body, marginBottom: spacing.xs }}>
+                {albumDescription}
+              </Text>
+            )}
+            {albumLocation && (
+              <Text
+                style={{ ...typography.small, color: colors.textSecondary }}
+              >
+                {albumLocation}
+              </Text>
+            )}
+          </View>
+        </Pressable>
+      </View>
 
+      {/* actions */}
       <Card.Content
         style={{
           flexDirection: 'row',
-          justifyContent: 'flex-start',
           marginTop: spacing.sm,
+          gap: spacing.md,
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <IconButton icon="heart-outline" size={20} />
           <Text>{albumLike}</Text>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginRight: spacing.md,
-          }}
-        >
+
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <IconButton icon="comment-outline" size={20} />
           <Text>{albumComment}</Text>
         </View>

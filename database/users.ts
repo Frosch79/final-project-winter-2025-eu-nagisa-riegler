@@ -110,6 +110,34 @@ export async function getUserWithPasswordHashInsecure(email: User['email']) {
   `;
   return user;
 }
+export type UpdateUser = Pick<User, 'name' | 'country' | 'accountDescription'>;
+export async function updateUser(
+  sessionToken: Session['token'],
+  userData: UpdateUser,
+) {
+  const [user] = await sql<UpdateUser[]>`
+    UPDATE users
+    SET
+      name = ${userData.name},
+      account_description = ${userData.accountDescription},
+      country = ${userData.country}
+    WHERE
+      users.id IN (
+        SELECT
+          user_id
+        FROM
+          sessions
+        WHERE
+          token = ${sessionToken}
+          AND sessions.expiry_timestamp > now()
+      )
+    RETURNING
+      users.name,
+      users.account_description,
+      users.country
+  `;
+  return user;
+}
 
 export async function selectUserExists(userId: User['id']) {
   const [record] = await sql<{ exists: boolean }[]>`

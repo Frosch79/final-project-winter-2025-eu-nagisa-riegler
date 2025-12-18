@@ -7,6 +7,7 @@ import VisibilitySelector from '../../../components/RadioGroup';
 import { spacing } from '../../../constants/Spacing';
 import { typography } from '../../../constants/Typography';
 import type {
+  AlbumResponseBodyDelete,
   AlbumResponseBodyGet,
   AlbumResponseBodyPut,
 } from '../../api/albums/[albumId]+api';
@@ -97,8 +98,47 @@ export default function EditAlbum() {
             Cancel
           </Button>
           <Button
+            mode="elevated"
+            onPress={async () => {
+              const response = await fetch(`/api/albums/${editId}`, {
+                method: 'DELETE',
+              });
+              if (!response.ok) {
+                let errorMessage = 'Error Delete Album';
+                const responseBody: AlbumResponseBodyDelete =
+                  await response.json();
+                if ('error' in responseBody) {
+                  errorMessage = responseBody.error;
+                }
+
+                setIsError(true);
+                setMessage(errorMessage);
+
+                return;
+              }
+
+              const responseBody: AlbumResponseBodyDelete =
+                await response.json();
+
+              if ('error' in responseBody) {
+                setIsError(true);
+                setMessage(responseBody.error);
+                return;
+              }
+
+              router.replace('/(tabs)/(user)/user');
+            }}
+          >
+            DELETE
+          </Button>
+          <Button
             mode="contained"
             onPress={async () => {
+              if (!title || title === '') {
+                setIsError(true);
+                setMessage('Please write a title');
+                return;
+              }
               const response = await fetch(`/api/albums/${editId}`, {
                 method: 'PUT',
                 body: JSON.stringify({
@@ -140,7 +180,7 @@ export default function EditAlbum() {
               });
             }}
           >
-            Ok
+            EDIT
           </Button>
         </Card.Actions>
       </Card>

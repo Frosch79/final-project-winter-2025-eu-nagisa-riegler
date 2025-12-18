@@ -45,7 +45,7 @@ export default function RootLayout() {
         <Stack.Screen
           name="album/newAlbum"
           options={{
-            title: 'New Album',
+            title: 'Create Album',
             headerShown: false,
           }}
         />
@@ -53,13 +53,16 @@ export default function RootLayout() {
         <Stack.Screen
           name="photos/photo"
           options={{
-            title: 'Photo',
+            title: 'Create Photo',
+            headerLeft: () => '',
           }}
         />
         <Stack.Screen
           name="album/[albumId]"
           options={{
             title: 'Album',
+            headerShown: true,
+            headerLeft: () => '',
           }}
         />
         <Stack.Screen

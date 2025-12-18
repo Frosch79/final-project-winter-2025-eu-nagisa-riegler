@@ -119,6 +119,9 @@ export default function UserPage() {
                 isFollow={false}
                 followedUsersItem={followed}
                 followerUsersItem={follower}
+                editMyAccount={() =>
+                  router.navigate('/(tabs)/(user)/(editAccount)/editAccount')
+                }
               />
             ) : null}
             {isError ? <HelperText type="error"> {message}</HelperText> : null}

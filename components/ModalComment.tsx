@@ -43,10 +43,18 @@ export default function ModalComment({
       setIsError(true);
       setMessage('Network error');
     }
+    onUpdateComment();
   };
   const renderUserComments = ({ item }: { item: CommentWithUserName }) => {
     return (
-      <View style={{ marginBottom: spacing.sm }}>
+      <View
+        style={{
+          alignSelf: 'center',
+          paddingHorizontal: 16,
+          borderRadius: 30,
+          marginRight: spacing.lg,
+        }}
+      >
         <Button
           onPress={() =>
             router.navigate({
@@ -67,7 +75,7 @@ export default function ModalComment({
         <Text>{dayjs(item.createdDate).format('YYYY-MM-DD-HH:mm')}</Text>
         {userId && userId === item.userId ? (
           <Button onPress={() => pressHandle(item.id)}>
-            <Text>Delete</Text>
+            <Text style={{ color: colors.outline }}>Delete</Text>
           </Button>
         ) : null}
       </View>
@@ -75,6 +83,11 @@ export default function ModalComment({
   };
 
   const commentHandle = async () => {
+    if (!content || content === '') {
+      setIsError(true);
+      setMessage('Comment text is empty');
+      return;
+    }
     const response = await fetch('/api/comments', {
       method: 'POST',
       body: JSON.stringify({
@@ -100,6 +113,12 @@ export default function ModalComment({
     <Modal
       visible={visible}
       onDismiss={onDismiss}
+      style={{
+        alignItems: 'center',
+        alignSelf: 'center',
+        paddingHorizontal: 16,
+        borderRadius: 30,
+      }}
       contentContainerStyle={{
         padding: spacing.md,
         margin: spacing.md,
@@ -107,29 +126,36 @@ export default function ModalComment({
         backgroundColor: colors.background,
       }}
     >
-      <Text style={{ ...typography.title, marginBottom: spacing.sm }}>
-        Comments
-      </Text>
-      {comments.length > 0 ? (
-        <FlatList data={comments} renderItem={renderUserComments} />
-      ) : (
-        <Text>No comments</Text>
-      )}
+      <View
+        style={{
+          alignItems: 'center',
+          paddingHorizontal: 16,
+          borderRadius: 30,
+        }}
+      >
+        <Text style={{ ...typography.title, marginBottom: spacing.sm }}>
+          Comments
+        </Text>
+        {comments.length > 0 ? (
+          <FlatList data={comments} renderItem={renderUserComments} />
+        ) : (
+          <Text>No comments</Text>
+        )}
 
-      <TextInput
-        label=""
-        placeholder="comment here"
-        value={content}
-        onChangeText={(text) => setContent(text)}
-      />
-      <Button mode="contained" onPress={async () => await commentHandle()}>
-        <Text> send comment</Text>
-      </Button>
-      {isError ? <HelperText type="error">{message}</HelperText> : null}
-
-      <Button onPress={onDismiss} style={{ marginTop: spacing.sm }}>
-        <Text>Close</Text>
-      </Button>
+        <TextInput
+          label=""
+          placeholder="comment here"
+          value={content}
+          onChangeText={(text) => setContent(text)}
+        />
+        <Button mode="contained" onPress={async () => await commentHandle()}>
+          <Text> send comment</Text>
+        </Button>
+        {isError ? <HelperText type="error">{message}</HelperText> : null}
+        <Button onPress={onDismiss} style={{ marginTop: spacing.sm }}>
+          <Text>Close</Text>
+        </Button>
+      </View>
     </Modal>
   );
 }

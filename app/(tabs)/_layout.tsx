@@ -40,6 +40,13 @@ export default function TabLayout() {
           href: null,
         }}
       />
+
+      <Tabs.Screen
+        name="(user)/(editAccount)/editAccount"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

@@ -1,50 +1,206 @@
-# Welcome to your Expo app 👋
+# PixVault
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Overview
 
-## Get started
+**PixVault** is a full-stack photo-sharing application with a strong focus on
+**database-centered design and relational data integrity**.
 
-1. Install dependencies
+The application allows users to create albums, upload photos, and interact through likes, comments, and follows.
+Images are securely handled via **Cloudinary**, while all metadata and relationships are managed using **PostgreSQL**.
 
-   ```bash
-   npm install
-   ```
+This project was designed to demonstrate practical skills in:
 
-2. Start the app
+- Relational database modeling
+- Backend validation and authentication
+- Full-stack application architecture
 
-   ```bash
-    npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## Demo / Screenshots
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+> 📸 Screenshots from the deployed application
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+**Feed / Homepage**
+![Feed Screenshot](./assets/feed.png)
 
-## Get a fresh project
+**Album View & Photos**
+![Album Screenshot](./assets/album.png)
 
-When you're ready, run:
+**User Profile**
+![Profile Screenshot](./assets/profile.png)
+
+---
+
+## Database-Centered Design
+
+### ER Diagram
+
+**Title:** `Database Schema for PixVault`
+
+**Description:**
+This ER diagram represents the relational database design of **PixVault**.
+It visualizes how users, albums, photos, comments, likes, follows, visibilities, and sessions are connected.
+
+The schema is designed to ensure:
+
+- Strong data integrity
+- Clear ownership of user-generated content
+- Scalability for social features
+
+**Diagram (click to view full version on DrawSQL):**
+[![Database Schema for PixVault](https://drawsql.app/teams/nagisa/diagrams/database-schema-for-photosns)](https://drawsql.app/teams/nagisa/diagrams/database-schema-for-photosns)
+
+---
+
+## Core Database Tables
+
+### users
+
+| Column              | Type        | Constraints                               |
+| ------------------- | ----------- | ----------------------------------------- |
+| id                  | integer     | PRIMARY KEY, GENERATED ALWAYS AS IDENTITY |
+| name                | varchar(30) | NOT NULL                                  |
+| birthday            | date        | NOT NULL                                  |
+| country             | varchar(30) | NOT NULL                                  |
+| account_description | text        | NULL                                      |
+| email               | varchar(50) | NOT NULL, UNIQUE                          |
+| password_hash       | text        | NOT NULL                                  |
+| created_date        | timestamp   | DEFAULT now()                             |
+
+---
+
+### albums
+
+| Column        | Type        | Constraints                            |
+| ------------- | ----------- | -------------------------------------- |
+| id            | integer     | PRIMARY KEY                            |
+| user_id       | integer     | REFERENCES users(id) ON DELETE CASCADE |
+| title         | varchar(30) | NOT NULL                               |
+| description   | text        | NULL                                   |
+| location      | text        | NULL                                   |
+| created_date  | timestamp   | DEFAULT now()                          |
+| visibility_id | integer     | REFERENCES visibilities(id)            |
+
+---
+
+### photos
+
+| Column               | Type        | Constraints                             |
+| -------------------- | ----------- | --------------------------------------- |
+| id                   | integer     | PRIMARY KEY                             |
+| album_id             | integer     | REFERENCES albums(id) ON DELETE CASCADE |
+| title                | varchar(30) | NULL                                    |
+| cloudinary_data_path | text        | NOT NULL                                |
+| description          | text        | NULL                                    |
+| location             | text        | NULL                                    |
+| created_date         | timestamp   | DEFAULT now()                           |
+
+---
+
+### Social Interaction Tables
+
+- **comments** – user comments on albums
+- **likes** – user likes on albums
+- **follows** – user-to-user following relationships
+
+All relations use **foreign keys with ON DELETE CASCADE** to prevent orphaned data.
+
+---
+
+### Supporting Tables
+
+- **visibilities** – controls album visibility (e.g. public/private)
+- **sessions** – token-based authentication with expiry timestamps
+
+---
+
+## Tech Stack
+
+| Layer          | Technology                                |
+| -------------- | ----------------------------------------- |
+| Frontend       | React 18, Expo Router, React Native Paper |
+| Backend        | Node.js, TypeScript, Ley                  |
+| Database       | PostgreSQL (`postgres` driver)            |
+| Validation     | Zod (server-side schemas)                 |
+| Authentication | Custom auth with bcryptjs + sessions      |
+| Image Storage  | Cloudinary                                |
+| Testing        | Jest, jest-expo                           |
+| Tooling        | ESLint, Prettier, tsx                     |
+| Deployment     | Vercel                                    |
+
+---
+
+## Key Features
+
+- User registration and login
+- Album creation with visibility control
+- Photo uploads using Cloudinary
+- Likes, comments, and follow system
+- Secure server-side validation with Zod
+- Relational queries combining multiple tables
+- Deployed and runnable production build
+
+---
+
+## Sample Data
+
+- Pre-seeded photo data using Cloudinary demo images
+- Demonstrates real database usage and relational queries
+- Enables immediate preview of albums and feeds
+
+---
+
+## Local Setup
 
 ```bash
-npm run reset-project
+git clone https://github.com/Frosch79/final-project-winter-2025-eu-nagisa-riegler
+cd pixvault
+pnpm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Environment Variables
 
-## Learn more
+```env
+CLOUDINARY_API_KEY=your_key
+CLOUDINARY_API_SECRET=your_secret
+CLOUDINARY_CLOUD_NAME=your_cloud
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### Run Migrations
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+pnpm migrate
+```
 
-## Join the community
+### Start Development Server
 
-Join our community of developers creating universal apps.
+```bash
+pnpm start
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+
+## Future Improvements
+
+- Real-time features via WebSocket (live comments, likes, notifications)
+- Analytics and reporting APIs (engagement, popular albums)
+- Enhanced security (UUID-based primary keys)
+- Performance optimization for large feeds
+
+---
+
+## Why PixVault?
+
+- **Database-first design** with clear relational modeling
+- Strong emphasis on data integrity and cascading rules
+- Real-world backend validation and authentication
+- Cloud-based image handling
+- Visual documentation via ER diagrams
+- Production-ready structure suitable for extension
+
+---
+
+### Final Note
+
+PixVault was built as a portfolio project to demonstrate
+**practical full-stack development with a strong backend and database focus**.

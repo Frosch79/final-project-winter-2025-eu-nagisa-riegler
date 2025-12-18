@@ -5,7 +5,11 @@ export const userLoginSchema = z.object({
   email: z.email(),
   password: z.string().min(8),
 });
-
+export const updateUserSchema = z.object({
+  name: z.string().min(3),
+  country: z.string(),
+  accountDescription: z.string(),
+});
 export const userSchema = z.object({
   name: z.string().min(3),
   birthday: z.coerce.date(),

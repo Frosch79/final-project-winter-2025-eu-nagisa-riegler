@@ -17,20 +17,21 @@ import ModalShowFollows from './ModalShowFollows';
 
 type Props = {
   userData: FullUser;
+  editMyAccount:
+    | (((event: GestureResponderEvent) => void) &
+        ((e: GestureResponderEvent) => void))
+    | undefined;
   editOnPress:
     | (((event: GestureResponderEvent) => void) &
-        ((e: GestureResponderEvent) => void) 
-        )
+        ((e: GestureResponderEvent) => void))
     | undefined;
   homeOnPress:
     | (((event: GestureResponderEvent) => void) &
-        ((e: GestureResponderEvent) => void) 
-        )
+        ((e: GestureResponderEvent) => void))
     | undefined;
   followOnPress:
     | (((event: GestureResponderEvent) => void) &
-        ((e: GestureResponderEvent) => void) 
-        )
+        ((e: GestureResponderEvent) => void))
     | undefined;
   onSwitch: boolean;
   isFollow: boolean;
@@ -47,6 +48,7 @@ export default function UserCard(props: Props) {
     editOnPress,
     homeOnPress,
     followOnPress,
+    editMyAccount,
     onSwitch,
     isFollow,
     followedUsersItem,
@@ -145,8 +147,11 @@ export default function UserCard(props: Props) {
           </View>
         </Card.Content>
         <Card.Actions>
-          {onSwitch && editOnPress ? (
-            <IconButton icon="pen" onPress={editOnPress} />
+          {onSwitch && editOnPress && editMyAccount ? (
+            <>
+              <IconButton icon="account-edit" onPress={editMyAccount} />
+              <IconButton icon="pen" onPress={editOnPress} />
+            </>
           ) : (
             followOnPress && (
               <Button

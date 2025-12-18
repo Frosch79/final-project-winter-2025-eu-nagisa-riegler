@@ -63,77 +63,135 @@ export default function UserAlbumCard(props: Props) {
   };
 
   return (
-    <View style={{ marginBottom: spacing.md }}>
-      <Card style={{ borderRadius: 6, overflow: 'hidden' }}>
-        <Card.Title
-          title={album.title}
-          subtitle={album.description}
-          titleStyle={typography.title}
-        />
-        <Card.Content>
-          <Button
-            onPress={() =>
-              router.navigate({
-                pathname:
-                  userId === album.userId
-                    ? '/(tabs)/(user)/user'
-                    : '/(tabs)/(user)/[userId]',
-                params: { userId: album.userId },
-              })
-            }
-          >
-            <Text>{album.userName}</Text>
-          </Button>
-
-          <Text
+    <View style={{ ...typography, marginBottom: spacing.md }}>
+      <View style={{ marginVertical: 24, paddingHorizontal: 24 }}>
+        <Card
+          style={{
+            borderRadius: 8,
+            overflow: 'hidden',
+            backgroundColor: colors.surface,
+          }}
+        >
+          {/* user, created date */}
+          <View
             style={{
-              ...typography.title,
-              marginTop: spacing.xs,
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              paddingVertical: 16,
+              paddingHorizontal: 16,
             }}
           >
-            {album.location}
-          </Text>
-          <Text style={{ ...typography.small }}>
-            {dayjs(album.createdDate).format('YYYY-MM-DD')}
-          </Text>
-        </Card.Content>
-
-        <Card.Cover
-          style={{
-            borderRadius: 0,
-          }}
-          source={{ uri: 'https://picsum.photos/700' }}
-        />
-        <Card.Actions
-          style={{ justifyContent: 'space-between', marginTop: spacing.sm }}
-        >
-          {/* Likes */}
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <IconButton
-              icon="heart"
-              iconColor={isLiked ? colors.like : colors.textSecondary}
-              onPress={async () => await likeHandel()}
-            />
-
-            <Text style={{ ...typography.body }}>{likeCount} </Text>
-            <Button onPress={() => setIsLikeModalVisible(true)}>
-              <Text>show likes...</Text>
+            <Button
+              style={{
+                alignSelf: 'flex-start',
+                paddingHorizontal: 16,
+                borderRadius: 30,
+                marginRight: spacing.lg,
+              }}
+              mode="outlined"
+              onPress={() =>
+                router.navigate({
+                  pathname:
+                    userId === album.userId
+                      ? '/(tabs)/(user)/user'
+                      : '/(tabs)/(user)/[userId]',
+                  params: { userId: album.userId },
+                })
+              }
+            >
+              <Text style={{ color: colors.accent }}>{album.userName}</Text>
             </Button>
-          </View>
-          {/* Comments */}
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <IconButton
-              icon="comment"
-              onPress={() => setIsCommentModalVisible(true)}
-            />
-            <Text style={{ ...typography.body }}>{commentCount}</Text>
+
+            <Text style={{ fontSize: 14, color: colors.outline }}>
+              Created: {dayjs(album.createdDate).format('YYYY-MM-DD')}
+            </Text>
           </View>
 
-          {isError ? (
-            <Text style={{ color: colors.like }}>{message}</Text>
-          ) : null}
-        </Card.Actions>
-      </Card>
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: 24,
+              paddingHorizontal: 16,
+              paddingBottom: 16,
+            }}
+          >
+            {/* cover*/}
+            <Card.Cover
+              style={{
+                width: 220,
+                aspectRatio: 3 / 4,
+                borderRadius: 8,
+              }}
+              source={{ uri: 'https://picsum.photos/700' }}
+            />
+
+            {/* album  */}
+            <View style={{ flex: 1 }}>
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: '600',
+                  color: '#FFFFFF',
+                  marginBottom: 8,
+                }}
+              >
+                {album.title}
+              </Text>
+
+              <Text
+                style={{
+                  fontSize: 16,
+                  lineHeight: 24,
+                  color: '#A0B2B0',
+                  marginBottom: 8,
+                }}
+              >
+                {album.description}
+              </Text>
+
+              {album.location ? (
+                <Text style={{ fontSize: 14, color: '#8C8C8C' }}>
+                  {album.location}
+                </Text>
+              ) : null}
+            </View>
+          </View>
+
+          {/* Actions */}
+          <Card.Actions
+            style={{ justifyContent: 'flex-start', paddingHorizontal: 16 }}
+          >
+            {/* Likes */}
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <IconButton
+                icon="heart"
+                iconColor={isLiked ? colors.like : colors.textSecondary}
+                onPress={async () => await likeHandel()}
+              />
+              <Text style={{ fontSize: 16, color: colors.white }}>
+                {likeCount}
+              </Text>
+              <Button onPress={() => setIsLikeModalVisible(true)}>
+                <Text>show likes...</Text>
+              </Button>
+            </View>
+
+            {/* Comments */}
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <IconButton
+                icon="comment"
+                onPress={() => setIsCommentModalVisible(true)}
+              />
+              <Text style={{ fontSize: 16 }}>{commentCount}</Text>
+            </View>
+
+            {isError ? (
+              <Text style={{ color: colors.like }}>{message}</Text>
+            ) : null}
+          </Card.Actions>
+        </Card>
+      </View>
 
       <Portal>
         <ModalComment

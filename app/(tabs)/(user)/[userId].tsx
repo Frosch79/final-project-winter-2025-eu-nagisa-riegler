@@ -157,6 +157,7 @@ export default function UserPage() {
                 isFollow={isFollowed}
                 followerUsersItem={follower}
                 followedUsersItem={followed}
+                editMyAccount={undefined}
               />
             ) : null}
             {isError ? <HelperText type="error"> {message} </HelperText> : null}

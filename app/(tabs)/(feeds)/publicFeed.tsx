@@ -59,7 +59,7 @@ export default function Feed() {
   );
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
         {publicFeed.length > 0 && isLoading ? (
           <FlatList
