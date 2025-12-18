@@ -12,6 +12,9 @@ jobs:
       PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
       PGUSERNAME: final_project_eu_nagisa_riegler_winter_2025
       PGPASSWORD: final_project_eu_nagisa_riegler_winter_2025
+      CLOUDINARY_API_SECRET: dummy
+      CLOUDINARY_CLOUD_NAME: dummy
+      CLOUDINARY_API_KEY: dummy
     steps:
       - name: Start preinstalled PostgreSQL on Ubuntu
         run: |
