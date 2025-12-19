@@ -1,4 +1,4 @@
-package com.frosch79.expoexamplewinter2025eunagisariegler
+package com.final_projectwinter_2025_eu_nagisa_riegler
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

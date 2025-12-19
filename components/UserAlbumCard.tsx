@@ -5,7 +5,6 @@ import { View } from 'react-native';
 import { Button, Card, IconButton, Portal, Text } from 'react-native-paper';
 import { colors } from '../constants/Colors';
 import { spacing } from '../constants/Spacing';
-import { typography } from '../constants/Typography';
 import type { AlbumByUser } from '../database/albums';
 import type { CommentWithUserName } from '../database/comments';
 import type { LikeUsers } from '../migrations/00010-createTableLikes';
@@ -63,7 +62,7 @@ export default function UserAlbumCard(props: Props) {
   };
 
   return (
-    <View style={{ ...typography, marginBottom: spacing.md }}>
+    <View style={{ marginBottom: spacing.md }}>
       <View style={{ marginVertical: 24, paddingHorizontal: 24 }}>
         <Card
           style={{
@@ -120,7 +119,7 @@ export default function UserAlbumCard(props: Props) {
             <Card.Cover
               style={{
                 width: 220,
-                aspectRatio: 3 / 4,
+                aspectRatio: 2 / 4,
                 borderRadius: 8,
               }}
               source={{ uri: 'https://picsum.photos/700' }}

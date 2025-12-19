@@ -110,12 +110,8 @@ export default function PostMyPhotos() {
     };
 
     // get sign
-    let sigRes;
-    if (Platform.OS === 'web') {
-      sigRes = await fetch('/api/cloudinary/sign'); // note: this port is only web
-    } else {
-      sigRes = await fetch('http://192.168.0.226:8081/api/cloudinary/sign'); // note: this port is only mobile test
-    }
+
+    const sigRes = await fetch('/api/cloudinary/sign'); // get sign of cloudinary
 
     const { timestamp, signature, cloudName, apiKey } = await sigRes.json();
 

@@ -1,13 +1,14 @@
 import { Redirect, useFocusEffect } from 'expo-router';
 import { useState } from 'react';
 
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 export default function Index() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useFocusEffect(() => {
     const checkAuth = async () => {
-      const response = await fetch('/api/user');
+      const response = await fetch(`${apiUrl}/api/user`);
       const data = await response.json();
       if (!('error' in data)) {
         setIsLoggedIn(true);

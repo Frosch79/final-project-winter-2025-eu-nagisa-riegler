@@ -5,9 +5,14 @@
     // Based on expo/tsconfig.base.json
     // https://github.com/expo/expo/blob/main/packages/expo/tsconfig.base.json
     "jsx": "react-native",
-    "verbatimModuleSyntax": false,
+    "target": "ESNext",
+    "verbatimModuleSyntax": false
+    /*  "moduleResolution": "node",
+    "allowJs": true,
+    "skipLibCheck": true,
 
-    "target": "ESNext"
+    "noEmit": true,
+    "types": ["expo"]*/
   },
   "include": [
     "**/*.ts",
@@ -19,7 +24,6 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
   ],
-  "module": "ESNext",
-
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "module": "ESNext"
 }

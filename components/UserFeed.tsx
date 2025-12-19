@@ -54,8 +54,8 @@ export default function UserFeed(props: Props) {
         style={{
           flexDirection: 'row',
           gap: 24,
-          paddingHorizontal: 16,
-          paddingBottom: 16,
+          paddingHorizontal: 2,
+          paddingBottom: 5,
         }}
       >
         <Pressable
@@ -76,9 +76,9 @@ export default function UserFeed(props: Props) {
             source={{ uri: albumCover || 'https://picsum.photos/700' }}
             style={{
               width: 140,
-              aspectRatio: 4 / 3,
+              aspectRatio: 2 / 3,
               borderRadius: 8,
-              marginRight: spacing.xl,
+              marginRight: spacing.md,
             }}
             resizeMode="contain"
           />

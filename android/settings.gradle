@@ -21,7 +21,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   }
 }
 
-rootProject.name = 'expo-example-winter-2025-eu-nagisa-riegler'
+rootProject.name = 'final-project-winter-2025-eu-nagisa-riegler'
 
 dependencyResolutionManagement {
   versionCatalogs {
