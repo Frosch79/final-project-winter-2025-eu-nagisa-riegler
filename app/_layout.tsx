@@ -1,11 +1,37 @@
 import { Stack } from 'expo-router';
-import { Provider as PaperProvider } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Provider as PaperProvider, Text } from 'react-native-paper';
 import HeaderBackButton from '../components/HeaderBackButton';
 import { theme } from '../constants/Theme';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#072623', // アプリ全体背景
+  },
+  header: {
+    width: '100%',
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#234620',
+  },
+  content: {
+    flex: 1,
+    padding: 16,
+  },
+});
 
 export default function RootLayout() {
   return (
     <PaperProvider theme={theme}>
+      <View style={styles.header}>
+        <Text style={styles.title}>PixVault</Text>
+      </View>
       <Stack
         screenOptions={{
           headerStyle: {

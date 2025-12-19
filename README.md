@@ -14,6 +14,9 @@ This project was designed to demonstrate practical skills in:
 - Backend validation and authentication
 - Full-stack application architecture
 
+PixVault also includes a **mobile client built with Expo (React Native)**,
+sharing the same backend and database as the web version.
+
 ---
 
 ## Demo / Screenshots
@@ -28,6 +31,10 @@ This project was designed to demonstrate practical skills in:
 
 **User Profile**
 ![Profile Screenshot](./assets/profile.png)
+
+**Mobile Preview (Expo / Android Emulator)**  
+![Mobile Feed Screenshot](./assets/mobile-feed.png)
+![Mobile Album Screenshot](./assets/mobile-album.png)
 
 ---
 
@@ -116,18 +123,67 @@ All relations use **foreign keys with ON DELETE CASCADE** to prevent orphaned da
 
 ## Tech Stack
 
-| Layer          | Technology                                |
-| -------------- | ----------------------------------------- |
-| Frontend       | React 18, Expo Router, React Native Paper |
-| Backend        | Node.js, TypeScript, Ley                  |
-| Database       | PostgreSQL (`postgres` driver)            |
-| Validation     | Zod (server-side schemas)                 |
-| Authentication | Custom auth with bcryptjs + sessions      |
-| Image Storage  | Cloudinary                                |
-| Testing        | Jest, jest-expo                           |
-| Tooling        | ESLint, Prettier, tsx                     |
-| Deployment     | Vercel                                    |
+| Layer          | Technology                                               |
+| -------------- | -------------------------------------------------------- |
+| Frontend       | React 18, Expo Router, React Native Paper (Web & Mobile) |
+| Backend        | Node.js, TypeScript, Ley                                 |
+| Database       | PostgreSQL (`postgres` driver)                           |
+| Validation     | Zod (server-side schemas)                                |
+| Authentication | Custom auth with bcryptjs + sessions                     |
+| Image Storage  | Cloudinary                                               |
+| Testing        | Jest, jest-expo                                          |
+| Tooling        | ESLint, Prettier, tsx                                    |
+| Deployment     | Vercel                                                   |
 
+---
+
+## Mobile App (Expo Preview Build)
+
+PixVault includes a mobile application built with **Expo (React Native)**.
+The mobile app uses the **same backend API and PostgreSQL database**
+as the web version, deployed on Vercel with Neon.
+
+### Expo Preview Build
+
+A preview build is available for testing the mobile app
+in a production-like environment.
+
+**Key points:**
+
+- Uses production backend (Vercel API + Neon database)
+- No local Metro server required
+- Intended for testing and portfolio demonstration
+- Not published to Google Play Store
+
+### Requirements
+
+- Android Emulator or physical Android device
+- Expo / EAS CLI (optional, for local builds)
+
+### Environment Variables (Mobile)
+
+The mobile app requires a public API base URL:
+
+````env
+EXPO_PUBLIC_API_URL=https://your-vercel-app.vercel.app
+This variable is injected at build time via EAS environment variables.
+
+Notes
+
+Preview builds behave like production builds
+
+Authentication and database access require a running backend
+
+If the backend or database is unavailable, the app may stop at the auth check screen
+
+
+### Mobile (Optional)
+
+To run the mobile app locally:
+
+```bash
+npx expo start
+For production-like testing, an Expo preview build is recommended instead of local development.
 ---
 
 ## Key Features
@@ -156,7 +212,7 @@ All relations use **foreign keys with ON DELETE CASCADE** to prevent orphaned da
 git clone https://github.com/Frosch79/final-project-winter-2025-eu-nagisa-riegler
 cd pixvault
 pnpm install
-```
+````
 
 ### Environment Variables
 
@@ -178,7 +234,8 @@ pnpm migrate
 pnpm start
 ```
 
----
+```md
+## | Deployment | Vercel (Web & API), Expo EAS (Mobile Preview) |
 
 ## Future Improvements
 
@@ -204,3 +261,4 @@ pnpm start
 
 PixVault was built as a portfolio project to demonstrate
 **practical full-stack development with a strong backend and database focus**.
+```

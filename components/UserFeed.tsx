@@ -69,6 +69,7 @@ export default function UserFeed(props: Props) {
             flexDirection: 'row',
             padding: spacing.md,
             alignItems: 'flex-start',
+            flex: 1,
           }}
         >
           {/* cover */}
