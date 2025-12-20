@@ -56,7 +56,11 @@ export default function UserCard(props: Props) {
   } = props;
 
   const leftContent = () => (
-    <Avatar.Text size={40} label={userData.name[0] || '?'} />
+    <Avatar.Text
+      testID="avatar"
+      size={40}
+      label={userData.name[0] ? userData.name[0] : '?'}
+    />
   );
   return (
     <SafeAreaView>
@@ -68,6 +72,7 @@ export default function UserCard(props: Props) {
       >
         {!onSwitch && (
           <Button
+            testID="my-page-nav"
             onPress={homeOnPress}
             icon="home-variant"
             mode="text"
@@ -85,6 +90,7 @@ export default function UserCard(props: Props) {
         />
         <Card.Content style={{ marginTop: spacing.sm }}>
           <Text
+            testID="country"
             style={{
               ...typography.body,
               marginBottom: spacing.sm,
@@ -102,6 +108,7 @@ export default function UserCard(props: Props) {
             }}
           >
             <Button
+              testID="follower"
               mode="contained-tonal"
               onPress={() => {
                 setIsFollowerModalVisible(true);
@@ -124,6 +131,7 @@ export default function UserCard(props: Props) {
             </Button>
 
             <Button
+              testID="followed"
               mode="contained-tonal"
               onPress={() => {
                 setIsFollowedModalVisible(true);
@@ -149,12 +157,21 @@ export default function UserCard(props: Props) {
         <Card.Actions>
           {onSwitch && editOnPress && editMyAccount ? (
             <>
-              <IconButton icon="account-edit" onPress={editMyAccount} />
-              <IconButton icon="pen" onPress={editOnPress} />
+              <IconButton
+                testID="edit"
+                icon="account-edit"
+                onPress={editMyAccount}
+              />
+              <IconButton
+                testID="write-album"
+                icon="pen"
+                onPress={editOnPress}
+              />
             </>
           ) : (
             followOnPress && (
               <Button
+                testID="follow-button"
                 onPress={followOnPress}
                 icon={isFollow ? 'account-minus' : 'account-plus-outline'}
                 mode={isFollow ? 'outlined' : 'contained'}

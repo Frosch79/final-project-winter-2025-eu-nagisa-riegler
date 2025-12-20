@@ -131,6 +131,7 @@ export default function ModalComment({
           alignItems: 'center',
           paddingHorizontal: 16,
           borderRadius: 30,
+          flex: 1,
         }}
       >
         <Text style={{ ...typography.title, marginBottom: spacing.sm }}>

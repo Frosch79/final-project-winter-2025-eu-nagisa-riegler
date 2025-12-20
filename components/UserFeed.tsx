@@ -7,7 +7,7 @@ import { components } from '../constants/Components';
 import { spacing } from '../constants/Spacing';
 import { typography } from '../constants/Typography';
 
-type Props = {
+export type Props = {
   albumTitle: string;
   userName: string;
   albumDescription: string | null;
@@ -30,10 +30,11 @@ export default function UserFeed(props: Props) {
     albumLike,
     albumId,
   } = props;
-  const leftContent = () => (
-    <Avatar.Text size={40} label={userName[0] || '?'} />
-  );
+
   const router = useRouter();
+  const leftContent = () => (
+    <Avatar.Text size={40} label={userName[0] ? userName[0] : '?'} />
+  );
 
   return (
     <Card
@@ -59,6 +60,7 @@ export default function UserFeed(props: Props) {
         }}
       >
         <Pressable
+          testID="route"
           onPress={() =>
             router.navigate({
               pathname: '/album/[albumId]',
@@ -74,6 +76,7 @@ export default function UserFeed(props: Props) {
         >
           {/* cover */}
           <Card.Cover
+            testID="photo-image"
             source={{ uri: albumCover || 'https://picsum.photos/700' }}
             style={{
               width: 140,
@@ -114,12 +117,12 @@ export default function UserFeed(props: Props) {
       >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <IconButton icon="heart-outline" size={20} />
-          <Text>{albumLike}</Text>
+          <Text>{Number(albumLike) > 0 ? albumLike : 0}</Text>
         </View>
 
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <IconButton icon="comment-outline" size={20} />
-          <Text>{albumComment}</Text>
+          <Text>{Number(albumComment) > 0 ? albumComment : 0}</Text>
         </View>
       </Card.Content>
     </Card>

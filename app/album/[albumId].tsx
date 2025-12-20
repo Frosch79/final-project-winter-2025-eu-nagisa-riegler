@@ -169,78 +169,78 @@ export default function UserAlbum() {
   };
   return (
     <Provider theme={theme}>
-      <SafeAreaView style={layout.container}>
-        {/* album card */}
-        <View style={{ marginBottom: spacing.md }}>
-          {album && user ? (
-            <UserAlbumCard
-              album={album}
-              userId={Number(user.id)}
-              albumLikes={userLikes}
-              albumComments={userComments}
-              onUpdateComment={reloadComments}
-              onUpdateLike={reloadLikes}
-            />
-          ) : (
-            <HelperText type="error">{message}</HelperText>
-          )}
-        </View>
-        {/* Action Buttons (for owner) */}
-        <View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: spacing.md,
-            }}
-          >
-            <IconButton
-              // close album page
-              mode="contained-tonal"
-              icon="close-thick"
-              size={30}
-              onPress={() => router.replace('/(tabs)/(user)/user')}
-            />
-            {user && album && user.id === album.userId ? (
-              <>
-                <IconButton
-                  // to edit page
-                  mode="contained-tonal"
-                  icon="file-edit"
-                  size={30}
-                  onPress={() =>
-                    router.replace({
-                      pathname: '/album/editAlbum/[editId]',
-                      params: { editId: album.id },
-                    })
-                  }
-                />
-                <IconButton
-                  // add new photo
-                  mode="contained-tonal"
-                  icon="camera"
-                  size={30}
-                  onPress={() =>
-                    router.replace({
-                      pathname: '/photos/photo',
-                      params: { albumId: albumId },
-                    })
-                  }
-                />
-              </>
-            ) : null}
-          </View>
-        </View>
+      <SafeAreaView style={{ ...layout.container, flex: 1 }}>
+        <FlatList
+          data={photos}
+          renderItem={renderUserPhotos}
+          numColumns={numColumns}
+          keyExtractor={(item) => String(item.id)}
+          ListHeaderComponent={
+            <>
+              {/* album card */}
+              <View style={{ marginBottom: spacing.md }}>
+                {album && user ? (
+                  <UserAlbumCard
+                    album={album}
+                    userId={Number(user.id)}
+                    albumLikes={userLikes}
+                    albumComments={userComments}
+                    onUpdateComment={reloadComments}
+                    onUpdateLike={reloadLikes}
+                  />
+                ) : (
+                  <HelperText type="error">{message}</HelperText>
+                )}
+              </View>
 
-        {photos.length > 0 ? (
-          <FlatList
-            data={photos}
-            renderItem={renderUserPhotos}
-            numColumns={numColumns}
-          />
-        ) : (
-          <Text style={{ ...typography.body }}>No Photos</Text>
-        )}
+              {/* Action Buttons */}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginBottom: spacing.md,
+                }}
+              >
+                <IconButton
+                  mode="contained-tonal"
+                  icon="close-thick"
+                  size={30}
+                  onPress={() => router.replace('/(tabs)/(user)/user')}
+                />
+
+                {user && album && user.id === album.userId && (
+                  <>
+                    <IconButton
+                      mode="contained-tonal"
+                      icon="file-edit"
+                      size={30}
+                      onPress={() =>
+                        router.replace({
+                          pathname: '/album/editAlbum/[editId]',
+                          params: { editId: album.id },
+                        })
+                      }
+                    />
+                    <IconButton
+                      mode="contained-tonal"
+                      icon="camera"
+                      size={30}
+                      onPress={() =>
+                        router.replace({
+                          pathname: '/photos/photo',
+                          params: { albumId },
+                        })
+                      }
+                    />
+                  </>
+                )}
+              </View>
+            </>
+          }
+          ListEmptyComponent={
+            <Text style={{ ...typography.body }}>No Photos</Text>
+          }
+        />
       </SafeAreaView>
     </Provider>
   );

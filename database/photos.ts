@@ -7,17 +7,7 @@ export async function createPhotoInAlbum(
   sessionToken: Session['token'],
   photoData: Omit<Photo, 'id' | 'createdDate'>,
 ) {
-  const [createdPhoto] = await sql<
-    {
-      id: number;
-      albumId: number;
-      title: string | null;
-      cloudinaryDataPath: string;
-      description: string | null;
-      location: string | null;
-      createdDate: Date;
-    }[]
-  >`
+  const [createdPhoto] = await sql<Photo[]>`
     INSERT INTO
       photos (
         album_id,
@@ -68,17 +58,7 @@ export async function getAlbumPhotos(
 }
 
 export async function getPhoto(photoId: Photo['id']) {
-  const [photo] = await sql<
-    {
-      id: number;
-      albumId: number;
-      title: string | null;
-      cloudinaryDataPath: string;
-      description: string | null;
-      location: string | null;
-      createdDate: Date;
-    }[]
-  >`
+  const [photo] = await sql<Photo[]>`
     SELECT
       photos.*
     FROM
@@ -95,17 +75,7 @@ export async function updatePhoto(
   photoData: Omit<Photo, 'id' | 'createdDate'>,
   photoId: Photo['id'],
 ) {
-  const updatedPhoto = await sql<
-    {
-      id: number;
-      albumId: number;
-      title: string | null;
-      cloudinaryDataPath: string;
-      description: string | null;
-      location: string | null;
-      createdDate: Date;
-    }[]
-  >`
+  const updatedPhoto = await sql<Photo[]>`
     UPDATE photos
     SET
       title = ${photoData.title},
@@ -139,17 +109,7 @@ export async function deletePhoto(
   photoId: Photo['id'],
   albumId: Album['id'],
 ) {
-  const deletedPhoto = await sql<
-    {
-      id: number;
-      albumId: number;
-      title: string | null;
-      cloudinaryDataPath: string;
-      description: string | null;
-      location: string | null;
-      createdDate: Date;
-    }[]
-  >`
+  const deletedPhoto = await sql<Photo[]>`
     DELETE FROM photos
     WHERE
       id = ${photoId}

@@ -5,6 +5,7 @@ import { Button, HelperText, Provider, Text } from 'react-native-paper';
 import type { LogoutResponseBodyGet } from '../../(auth)/api/logout+api';
 import UserCard from '../../../components/UserCard';
 import UserFeed from '../../../components/UserFeed';
+import { colors } from '../../../constants/Colors';
 import { theme } from '../../../constants/Theme';
 import type { FollowUser } from '../../../database/followers';
 import type { FullUser } from '../../../database/users';
@@ -156,7 +157,7 @@ export default function UserPage() {
             router.push('/(auth)/login');
           }}
         >
-          <Text>logout</Text>
+          <Text style={{ color: colors.accent }}>logout</Text>
         </Button>
       </SafeAreaView>
     </Provider>

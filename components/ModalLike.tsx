@@ -24,7 +24,7 @@ export default function ModalLike({
 
   const renderUserLikes = ({ item }: { item: LikeUsers }) => {
     return (
-      <View style={{ marginBottom: spacing.xs }}>
+      <View style={{ marginBottom: spacing.xs, flex: 1 }}>
         <Button
           onPress={() =>
             router.navigate({
