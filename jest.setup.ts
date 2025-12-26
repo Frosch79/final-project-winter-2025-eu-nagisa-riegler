@@ -1,5 +1,10 @@
 import { jest } from '@jest/globals';
+import { useEffect } from 'react';
 
+const effectCall = (cb: any) =>
+  useEffect(() => {
+    cb();
+  }, []);
 // console warn ignore
 beforeAll(() => {
   jest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -18,6 +23,9 @@ jest.mock('expo-router', () => ({
   })),
   useNavigation: jest.fn(),
   useLocalSearchParams: jest.fn(() => ({})),
+  useFocusEffect: (cb: any) => {
+    effectCall(cb);
+  },
 }));
 
 jest.mock('react-native-gesture-handler', () => {

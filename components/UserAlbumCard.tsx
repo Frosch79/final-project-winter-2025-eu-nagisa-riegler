@@ -128,6 +128,7 @@ export default function UserAlbumCard(props: Props) {
             {/* album  */}
             <View style={{ flex: 1 }}>
               <Text
+                testID="album-title"
                 style={{
                   fontSize: 22,
                   fontWeight: '600',
@@ -139,6 +140,7 @@ export default function UserAlbumCard(props: Props) {
               </Text>
 
               <Text
+                testID="album-description"
                 style={{
                   fontSize: 16,
                   lineHeight: 24,
@@ -150,7 +152,10 @@ export default function UserAlbumCard(props: Props) {
               </Text>
 
               {album.location ? (
-                <Text style={{ fontSize: 14, color: '#8C8C8C' }}>
+                <Text
+                  testID="album-location"
+                  style={{ fontSize: 14, color: '#8C8C8C' }}
+                >
                   {album.location}
                 </Text>
               ) : null}
@@ -164,14 +169,21 @@ export default function UserAlbumCard(props: Props) {
             {/* Likes */}
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <IconButton
+                testID="likes-icon-button"
                 icon="heart"
                 iconColor={isLiked ? colors.like : colors.textSecondary}
                 onPress={async () => await likeHandel()}
               />
-              <Text style={{ fontSize: 16, color: colors.white }}>
+              <Text
+                testID="likes-count"
+                style={{ fontSize: 16, color: colors.white }}
+              >
                 {likeCount}
               </Text>
-              <Button onPress={() => setIsLikeModalVisible(true)}>
+              <Button
+                testID="likes-modal"
+                onPress={() => setIsLikeModalVisible(true)}
+              >
                 <Text>show likes...</Text>
               </Button>
             </View>
@@ -179,10 +191,13 @@ export default function UserAlbumCard(props: Props) {
             {/* Comments */}
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <IconButton
+                testID="comment-modal-icon-button"
                 icon="comment"
                 onPress={() => setIsCommentModalVisible(true)}
               />
-              <Text style={{ fontSize: 16 }}>{commentCount}</Text>
+              <Text testID="comment-count" style={{ fontSize: 16 }}>
+                {commentCount}
+              </Text>
             </View>
 
             {isError ? (

@@ -82,112 +82,118 @@ export default function UserCard(props: Props) {
             Mypage
           </Button>
         )}
-        <Card.Title
-          title={userData.name || 'undefined'}
-          subtitle={userData.accountDescription || ''}
-          left={leftContent}
-          titleStyle={{ ...typography.title }}
-        />
-        <Card.Content style={{ marginTop: spacing.sm }}>
-          <Text
-            testID="country"
-            style={{
-              ...typography.body,
-              marginBottom: spacing.sm,
-            }}
-          >
-            Country: {userData.country || 'N/A'}
-          </Text>
-
-          {/* show follows */}
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginVertical: spacing.sm,
-            }}
-          >
-            <Button
-              testID="follower"
-              mode="contained-tonal"
-              onPress={() => {
-                setIsFollowerModalVisible(true);
-                setIdSwitch('follower');
-              }}
-              style={{
-                flex: 1,
-                marginRight: spacing.xs,
-                borderRadius: components.button.borderRadius,
-                paddingVertical: components.button.paddingVertical,
-              }}
-              labelStyle={{
-                ...typography.button,
-
-                textTransform: 'none',
-              }}
-              icon="account-group"
-            >
-              <Text>Follower ({followerUsersItem.length})</Text>
-            </Button>
-
-            <Button
-              testID="followed"
-              mode="contained-tonal"
-              onPress={() => {
-                setIsFollowedModalVisible(true);
-                setIdSwitch('followed');
-              }}
-              style={{
-                flex: 1,
-                marginLeft: spacing.xs,
-                borderRadius: components.button.borderRadius,
-                paddingVertical: components.button.paddingVertical,
-              }}
-              labelStyle={{
-                ...typography.button,
-
-                textTransform: 'none',
-              }}
-              icon="account-multiple"
-            >
-              <Text>Followed ({followedUsersItem.length})</Text>
-            </Button>
-          </View>
-        </Card.Content>
-        <Card.Actions>
-          {onSwitch && editOnPress && editMyAccount ? (
-            <>
-              <IconButton
-                testID="edit"
-                icon="account-edit"
-                onPress={editMyAccount}
-              />
-              <IconButton
-                testID="write-album"
-                icon="pen"
-                onPress={editOnPress}
-              />
-            </>
-          ) : (
-            followOnPress && (
-              <Button
-                testID="follow-button"
-                onPress={followOnPress}
-                icon={isFollow ? 'account-minus' : 'account-plus-outline'}
-                mode={isFollow ? 'outlined' : 'contained'}
+        {!userData.id ? (
+          <Text testID="user-undefined">user undefined</Text>
+        ) : (
+          <>
+            <Card.Title
+              title={userData.name || 'undefined'}
+              subtitle={userData.accountDescription || ''}
+              left={leftContent}
+              titleStyle={{ ...typography.title }}
+            />
+            <Card.Content style={{ marginTop: spacing.sm }}>
+              <Text
+                testID="country"
                 style={{
-                  borderRadius: components.button.borderRadius,
-                  paddingVertical: components.button.paddingVertical,
-                }}
-                labelStyle={{
-                  ...typography.button,
+                  ...typography.body,
+                  marginBottom: spacing.sm,
                 }}
               >
-                {isFollow ? 'Followed' : 'Follow'}
-              </Button>
-            )
-          )}
-        </Card.Actions>
+                Country: {userData.country || 'N/A'}
+              </Text>
+
+              {/* show follows */}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginVertical: spacing.sm,
+                }}
+              >
+                <Button
+                  testID="follower"
+                  mode="contained-tonal"
+                  onPress={() => {
+                    setIsFollowerModalVisible(true);
+                    setIdSwitch('follower');
+                  }}
+                  style={{
+                    flex: 1,
+                    marginRight: spacing.xs,
+                    borderRadius: components.button.borderRadius,
+                    paddingVertical: components.button.paddingVertical,
+                  }}
+                  labelStyle={{
+                    ...typography.button,
+
+                    textTransform: 'none',
+                  }}
+                  icon="account-group"
+                >
+                  <Text>Follower ({followerUsersItem.length})</Text>
+                </Button>
+
+                <Button
+                  testID="followed"
+                  mode="contained-tonal"
+                  onPress={() => {
+                    setIsFollowedModalVisible(true);
+                    setIdSwitch('followed');
+                  }}
+                  style={{
+                    flex: 1,
+                    marginLeft: spacing.xs,
+                    borderRadius: components.button.borderRadius,
+                    paddingVertical: components.button.paddingVertical,
+                  }}
+                  labelStyle={{
+                    ...typography.button,
+
+                    textTransform: 'none',
+                  }}
+                  icon="account-multiple"
+                >
+                  <Text>Followed ({followedUsersItem.length})</Text>
+                </Button>
+              </View>
+            </Card.Content>
+            <Card.Actions>
+              {onSwitch && editOnPress && editMyAccount ? (
+                <>
+                  <IconButton
+                    testID="edit"
+                    icon="account-edit"
+                    onPress={editMyAccount}
+                  />
+                  <IconButton
+                    testID="write-album"
+                    icon="pen"
+                    onPress={editOnPress}
+                  />
+                </>
+              ) : (
+                followOnPress && (
+                  <Button
+                    testID="follow-button"
+                    onPress={followOnPress}
+                    icon={isFollow ? 'account-minus' : 'account-plus-outline'}
+                    mode={isFollow ? 'outlined' : 'contained'}
+                    style={{
+                      borderRadius: components.button.borderRadius,
+                      paddingVertical: components.button.paddingVertical,
+                    }}
+                    labelStyle={{
+                      ...typography.button,
+                    }}
+                  >
+                    {isFollow ? 'Followed' : 'Follow'}
+                  </Button>
+                )
+              )}
+            </Card.Actions>
+          </>
+        )}
       </Card>
       {/* Modal */}
       <Portal>
