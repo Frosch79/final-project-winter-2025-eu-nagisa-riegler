@@ -26,6 +26,7 @@ export default function ModalLike({
     return (
       <View style={{ marginBottom: spacing.xs, flex: 1 }}>
         <Button
+          testID="user-route"
           onPress={() =>
             router.navigate({
               pathname:
@@ -36,7 +37,9 @@ export default function ModalLike({
             })
           }
         >
-          <Text style={{ ...typography.body }}>{item.name}</Text>
+          <Text testID="user-name" style={{ ...typography.body }}>
+            {item.name}
+          </Text>
         </Button>
       </View>
     );
@@ -53,16 +56,27 @@ export default function ModalLike({
         backgroundColor: colors.background,
       }}
     >
-      <Text style={{ ...typography.title, marginBottom: spacing.sm }}>
+      <Text
+        testID="modal-title"
+        style={{ ...typography.title, marginBottom: spacing.sm }}
+      >
         Likes
       </Text>
       {likes.length > 0 ? (
-        <FlatList data={likes} renderItem={renderUserLikes} />
+        <FlatList
+          testID="user-list"
+          data={likes}
+          renderItem={renderUserLikes}
+        />
       ) : (
-        <Text>No likes</Text>
+        <Text testID="no-likes">No likes</Text>
       )}
 
-      <Button onPress={onDismiss} style={{ marginTop: spacing.sm }}>
+      <Button
+        testID="close-button"
+        onPress={onDismiss}
+        style={{ marginTop: spacing.sm }}
+      >
         Close
       </Button>
     </Modal>

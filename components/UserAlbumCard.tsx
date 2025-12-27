@@ -51,7 +51,7 @@ export default function UserAlbumCard(props: Props) {
 
     if (!response.ok || 'error' in data) {
       setIsError(true);
-      setMessage(data ?? 'Error updating like');
+      setMessage('Error updating like');
       return;
     }
 
@@ -89,6 +89,7 @@ export default function UserAlbumCard(props: Props) {
                 marginRight: spacing.lg,
               }}
               mode="outlined"
+              testID="route"
               onPress={() =>
                 router.navigate({
                   pathname:
@@ -151,14 +152,12 @@ export default function UserAlbumCard(props: Props) {
                 {album.description}
               </Text>
 
-              {album.location ? (
-                <Text
-                  testID="album-location"
-                  style={{ fontSize: 14, color: '#8C8C8C' }}
-                >
-                  {album.location}
-                </Text>
-              ) : null}
+              <Text
+                testID="album-location"
+                style={{ fontSize: 14, color: '#8C8C8C' }}
+              >
+                {album.location ?? ''}
+              </Text>
             </View>
           </View>
 
@@ -201,7 +200,9 @@ export default function UserAlbumCard(props: Props) {
             </View>
 
             {isError ? (
-              <Text style={{ color: colors.like }}>{message}</Text>
+              <Text testID="error-text" style={{ color: colors.like }}>
+                {message}
+              </Text>
             ) : null}
           </Card.Actions>
         </Card>

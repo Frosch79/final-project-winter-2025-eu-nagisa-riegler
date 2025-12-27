@@ -1,10 +1,6 @@
 import { jest } from '@jest/globals';
 import { useEffect } from 'react';
 
-const effectCall = (cb: any) =>
-  useEffect(() => {
-    cb();
-  }, []);
 // console warn ignore
 beforeAll(() => {
   jest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -14,17 +10,27 @@ afterAll(() => {
   (console.warn as jest.Mock).mockRestore();
 });
 
+const useEffectCall = (cb: () => void | (() => void)) =>
+  useEffect(() => {
+    return cb();
+  }, [cb]);
+export const mockNavigate = jest.fn();
+export const mockPush = jest.fn();
+export const mockReplace = jest.fn();
+export const mockBack = jest.fn();
+
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(() => ({
-    push: jest.fn(),
-    replace: jest.fn(),
-    back: jest.fn(),
-    navigate: jest.fn(),
+    navigate: mockNavigate,
+    push: mockPush,
+    replace: mockReplace,
+    back: mockBack,
   })),
+
   useNavigation: jest.fn(),
   useLocalSearchParams: jest.fn(() => ({})),
   useFocusEffect: (cb: any) => {
-    effectCall(cb);
+    useEffectCall(cb);
   },
 }));
 
@@ -53,3 +59,8 @@ jest.mock('expo-font', () => ({
   loadAsync: jest.fn(),
   isLoaded: jest.fn(() => true),
 }));
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+(global as any).setImmediate = setTimeout;
+
+jest.useFakeTimers();

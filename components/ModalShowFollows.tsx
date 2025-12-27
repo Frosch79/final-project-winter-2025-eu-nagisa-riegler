@@ -31,6 +31,7 @@ export default function ModalShowFollows({
     return (
       <View style={{ marginBottom: spacing.xs }}>
         <Button
+          testID="user-nav"
           onPress={() =>
             router.navigate({
               pathname: isMyPage
@@ -40,7 +41,12 @@ export default function ModalShowFollows({
             })
           }
         >
-          <Text style={{ ...typography.body }}>{item.userName}</Text>
+          <Text
+            testID={`user-name-${item.userName}`}
+            style={{ ...typography.body }}
+          >
+            {item.userName}
+          </Text>
         </Button>
       </View>
     );
@@ -57,16 +63,24 @@ export default function ModalShowFollows({
         backgroundColor: colors.background,
       }}
     >
-      <Text style={{ ...typography.title, marginBottom: spacing.sm }}>
+      <Text
+        testID="text-switch"
+        style={{ ...typography.title, marginBottom: spacing.sm }}
+      >
         {idSwitch === 'follower' ? 'Follower' : 'Followed'}
       </Text>
+
       {items.length > 0 ? (
         <FlatList data={items} renderItem={renderFollows} />
       ) : (
-        <Text>No Users</Text>
+        <Text testID="no-users">No Users</Text>
       )}
 
-      <Button onPress={onDismiss} style={{ marginTop: spacing.sm }}>
+      <Button
+        testID="close-button"
+        onPress={onDismiss}
+        style={{ marginTop: spacing.sm }}
+      >
         Close
       </Button>
     </Modal>

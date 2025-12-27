@@ -1,5 +1,5 @@
 import type { LikeUsers } from '../../../migrations/00010-createTableLikes';
-import { howl, kiki, totoro } from './testUser';
+import { howl, kiki } from './testUser';
 
 export const likes: LikeUsers[] = [
   {

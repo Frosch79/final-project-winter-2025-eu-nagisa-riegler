@@ -46,9 +46,6 @@ export const baseProps = {
   followerUsersItem: [mockFollowUser1],
 };
 
-// -----------------------------
-// Props: Edge case（description null, empty follow lists）
-// -----------------------------
 export const edgeProps = {
   userData: mockFullUserNoDescription,
   editMyAccount: jest.fn(),
@@ -61,9 +58,6 @@ export const edgeProps = {
   followerUsersItem: [],
 };
 
-// -----------------------------
-// Props: Fail case（invalid date, undefined handlers）
-// -----------------------------
 export const failProps = {
   userData: mockFullUserInvalidDate,
   editMyAccount: undefined,

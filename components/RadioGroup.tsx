@@ -10,13 +10,14 @@ export default function VisibilitySelector({
   onChange: (val: string) => void;
 }) {
   return (
-    <View style={{ marginTop: spacing.md }}>
+    <View testID="button-parent" style={{ marginTop: spacing.md }}>
       {[
         { key: 'public', label: 'Public' },
         { key: 'followersOnly', label: 'Followers Only' },
         { key: 'private', label: 'Private' },
       ].map((item) => (
         <View
+          testID="button-text"
           key={`key-${item.key}`}
           style={{
             flexDirection: 'row',
@@ -25,6 +26,7 @@ export default function VisibilitySelector({
           }}
         >
           <RadioButton
+            testID="button"
             value={item.key}
             status={value === item.key ? 'checked' : 'unchecked'}
             onPress={() => onChange(item.key)}

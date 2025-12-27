@@ -4,11 +4,12 @@ import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
 import { Text, View } from 'react-native';
 import * as Paper from 'react-native-paper';
+import { mockNavigate } from '../../jest.setup';
 import type { Props } from '../UserFeed';
 import UserFeed from '../UserFeed';
 
 // react native paper mock
-const cardTtestleMock: any = (props: any) => (
+const cardTestTitleMock: any = (props: any) => (
   <View>
     <Text>{props}</Text>
   </View>
@@ -16,18 +17,10 @@ const cardTtestleMock: any = (props: any) => (
 
 jest.mock('react-native-paper', () => ({
   Card: {
-    Ttestle: cardTtestleMock,
+    TestTitle: cardTestTitleMock,
   },
 })) as unknown as jest.Mocked<typeof Paper>;
 //  mock end
-
-const mockNavigate = jest.fn();
-
-jest.mock('expo-router', () => ({
-  useRouter: jest.fn(() => ({
-    navigate: mockNavigate,
-  })),
-}));
 
 const baseProps: Props = {
   albumTitle: 'My Album',

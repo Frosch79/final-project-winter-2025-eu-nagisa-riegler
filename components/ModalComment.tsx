@@ -56,6 +56,7 @@ export default function ModalComment({
         }}
       >
         <Button
+          testID="user-route"
           onPress={() =>
             router.navigate({
               pathname:
@@ -66,15 +67,22 @@ export default function ModalComment({
             })
           }
         >
-          <Text style={{ ...typography.body, fontWeight: '500' }}>
+          <Text
+            testID="user-name"
+            style={{ ...typography.body, fontWeight: '500' }}
+          >
             {item.name}
           </Text>
         </Button>
 
-        <Text style={{ ...typography.body }}>{item.content}</Text>
-        <Text>{dayjs(item.createdDate).format('YYYY-MM-DD-HH:mm')}</Text>
+        <Text testID={`content-${item.id}`} style={{ ...typography.body }}>
+          {item.content}
+        </Text>
+        <Text testID="date">
+          {dayjs(item.createdDate).format('YYYY-MM-DD-HH:mm')}
+        </Text>
         {userId && userId === item.userId ? (
-          <Button onPress={() => pressHandle(item.id)}>
+          <Button testID="delete-button" onPress={() => pressHandle(item.id)}>
             <Text style={{ color: colors.outline }}>Delete</Text>
           </Button>
         ) : null}
@@ -138,22 +146,39 @@ export default function ModalComment({
           Comments
         </Text>
         {comments.length > 0 ? (
-          <FlatList data={comments} renderItem={renderUserComments} />
+          <FlatList
+            testID="comment-list"
+            data={comments}
+            renderItem={renderUserComments}
+          />
         ) : (
-          <Text>No comments</Text>
+          <Text testID="no-comments">No comments</Text>
         )}
 
         <TextInput
+          testID="comment-input"
           label=""
           placeholder="comment here"
           value={content}
           onChangeText={(text) => setContent(text)}
         />
-        <Button mode="contained" onPress={async () => await commentHandle()}>
+        <Button
+          testID="send-button"
+          mode="contained"
+          onPress={async () => await commentHandle()}
+        >
           <Text> send comment</Text>
         </Button>
-        {isError ? <HelperText type="error">{message}</HelperText> : null}
-        <Button onPress={onDismiss} style={{ marginTop: spacing.sm }}>
+        {isError ? (
+          <HelperText testID="error-message" type="error">
+            {message}
+          </HelperText>
+        ) : null}
+        <Button
+          testID="close-button"
+          onPress={onDismiss}
+          style={{ marginTop: spacing.sm }}
+        >
           <Text>Close</Text>
         </Button>
       </View>
