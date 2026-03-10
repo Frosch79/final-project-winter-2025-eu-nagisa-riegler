@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { router, useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { SafeAreaView } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
@@ -17,6 +17,8 @@ export default function Register() {
   const [isError, setIsError] = useState(false);
   const [userPasswordConfirm, setUserPasswordConfirm] = useState('');
 
+  const router = useRouter();
+
   useFocusEffect(
     useCallback(() => {
       async function getUser() {
@@ -29,7 +31,7 @@ export default function Register() {
         }
       }
       getUser().catch((error) => console.error(error));
-    }, []),
+    }, [router]),
   );
 
   const inputMaxLength = {
@@ -42,6 +44,7 @@ export default function Register() {
   return (
     <SafeAreaView>
       <TextInput
+        testID="input-username"
         maxLength={inputMaxLength.name}
         mode="outlined"
         label="username"
@@ -53,6 +56,7 @@ export default function Register() {
       />
 
       <TextInput
+        testID="input-birthday"
         mode="outlined"
         label="birthday"
         value={userBirthday}
@@ -62,6 +66,7 @@ export default function Register() {
         style={{ marginBottom: spacing.md }}
       />
       <TextInput
+        testID="input-country"
         maxLength={inputMaxLength.country}
         mode="outlined"
         label="country"
@@ -72,6 +77,7 @@ export default function Register() {
         right={<TextInput.Affix text={`/${inputMaxLength.country}`} />}
       />
       <TextInput
+        testID="input-description"
         maxLength={inputMaxLength.description}
         mode="outlined"
         label="description"
@@ -82,6 +88,7 @@ export default function Register() {
         right={<TextInput.Affix text={`/${inputMaxLength.description}`} />}
       />
       <TextInput
+        testID="input-email"
         maxLength={inputMaxLength.email}
         mode="outlined"
         label="Email"
@@ -93,16 +100,25 @@ export default function Register() {
         right={<TextInput.Affix text={`/${inputMaxLength.email}`} />}
       />
       <TextInput
+        testID="input-password"
         label="Password"
         mode="outlined"
         secureTextEntry
-        onChangeText={(value) => setUserPassword(value)}
+        onChangeText={(value) => {
+          setUserPassword(value);
+          if (value.length < 8) {
+            setMessage('Password must be at least 8 characters');
+          } else {
+            setMessage('');
+          }
+        }}
         error={false}
         style={{ marginBottom: spacing.md }}
         /* check  by login */
         right={<TextInput.Icon icon="eye" />}
       />
       <TextInput
+        testID="input-confirm-password"
         label="Password"
         mode="outlined"
         secureTextEntry
@@ -118,7 +134,15 @@ export default function Register() {
       </HelperText>
 
       <Button
+        testID="register"
         mode="outlined"
+        disabled={
+          !userName ||
+          !userBirthday ||
+          !userEmail ||
+          !userPassword ||
+          userPassword !== userPasswordConfirm
+        }
         onPress={async () => {
           const response = await fetch('/api/register', {
             method: 'POST',
@@ -164,7 +188,11 @@ export default function Register() {
       </Button>
 
       <Text>if you already have an account</Text>
-      <Button mode="outlined" onPress={() => router.replace('/(auth)/login')}>
+      <Button
+        testID="login-page"
+        mode="outlined"
+        onPress={() => router.replace('/(auth)/login')}
+      >
         <Text>login</Text>
       </Button>
     </SafeAreaView>

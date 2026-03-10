@@ -3,7 +3,7 @@ import {
   type FullUser,
   getUser,
   updateUser,
-  UpdateUser,
+  type UpdateUser,
 } from '../../database/users';
 import { ExpoApiResponse } from '../../ExpoApiResponse';
 import { updateUserSchema } from '../../migrations/00000-createTableUsers';

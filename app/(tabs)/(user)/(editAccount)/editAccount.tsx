@@ -4,8 +4,8 @@ import { SafeAreaView } from 'react-native';
 import { Button, Card, HelperText, TextInput } from 'react-native-paper';
 import { spacing } from '../../../../constants/Spacing';
 import { typography } from '../../../../constants/Typography';
-import { FullUser } from '../../../../database/users';
-import {
+import type { FullUser } from '../../../../database/users';
+import type {
   UserResponseBodyGet,
   UserResponseBodyPut,
 } from '../../../api/user+api';
@@ -50,6 +50,7 @@ export default function EditAccount() {
         />
         <Card.Content>
           <TextInput
+            testID="edit-name"
             label="Username"
             value={name}
             onChangeText={(text) => setName(text)}
@@ -57,6 +58,7 @@ export default function EditAccount() {
             style={{ marginBottom: spacing.md }}
           />
           <TextInput
+            testID="edit-country"
             label="country"
             value={country}
             onChangeText={(text) => setCountry(text)}
@@ -64,6 +66,7 @@ export default function EditAccount() {
             style={{ marginBottom: spacing.md }}
           />
           <TextInput
+            testID="edit-description"
             label="description"
             value={description || ''}
             onChangeText={(text) => setDescription(text)}

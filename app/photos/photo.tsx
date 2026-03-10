@@ -1,43 +1,14 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Platform, SafeAreaView, ScrollView, View } from 'react-native';
+import { SafeAreaView, ScrollView, View } from 'react-native';
 import { Button, Card, HelperText, Text, TextInput } from 'react-native-paper';
+import { uploadImage } from '../../components/CloudinaryUpload';
 import { components } from '../../constants/Components';
 import type { AlbumByUser } from '../../database/albums';
 import type { AlbumResponseBodyGet } from '../api/albums/[albumId]+api';
 import type { CreatePhotoResponseBodyPost } from '../api/photos/index+api';
 import type { UserResponseBodyGet } from '../api/user+api';
-
-type CloudinaryUploadResponse = {
-  secure_url: string;
-  public_id: string;
-  width: number;
-  height: number;
-  format: string;
-};
-
-// Compress image before upload (web only)
-async function compressBlob(blob: Blob): Promise<Blob> {
-  const img = new Image();
-  img.src = URL.createObjectURL(blob);
-  await new Promise((r) => {
-    img.onload = r;
-  });
-
-  const maxWidth = 1600;
-  const scale = Math.min(1, maxWidth / img.width);
-
-  const canvas = document.createElement('canvas');
-  canvas.width = img.width * scale;
-  canvas.height = img.height * scale;
-
-  canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-  return await new Promise((resolve) => {
-    canvas.toBlob((b) => resolve(b!), 'image/jpeg', 0.7);
-  });
-}
 
 export default function PostMyPhotos() {
   const [title, setTitle] = useState('');
@@ -47,7 +18,7 @@ export default function PostMyPhotos() {
     undefined,
   );
   const [isError, setIsError] = useState(false);
-  const [message, setMessage] = useState<string | null>('');
+  const [message, setMessage] = useState<string>('');
   const [album, setAlbum] = useState<AlbumByUser>();
 
   const { albumId } = useLocalSearchParams<{ albumId: string }>();
@@ -78,66 +49,29 @@ export default function PostMyPhotos() {
         if ('album' in albumResponse) {
           setAlbum(albumResponse.album);
         }
-        setMessage(null);
+        setMessage('');
       }
 
       loadAlbum().catch((error) => {
-        console.error(error);
+        console.log(error);
       });
     }, [albumId, router]),
   );
 
   const pickImageAsync = async () => {
-    /* add photo to cloudinary  */
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       quality: 1,
     });
 
     if (result.canceled) return;
+
     const image = result.assets[0];
     if (!image) return;
 
-    const blob = await fetch(image.uri).then((response) => response.blob());
+    const url = await uploadImage(image.uri);
 
-    const uploadBlob = Platform.OS === 'web' ? await compressBlob(blob) : blob;
-
-    const file = {
-      uri: image.uri,
-      type: image.mimeType ?? 'image/jpeg',
-      name: 'upload.jpg',
-    };
-
-    // get sign
-
-    const sigRes = await fetch('/api/cloudinary/sign'); // get sign of cloudinary
-
-    const { timestamp, signature, cloudName, apiKey } = await sigRes.json();
-
-    // FormData sends to cloudinary
-    const formData = new FormData();
-    formData.append(
-      'file',
-      Platform.OS === 'web' ? uploadBlob : (file as any),
-      'upload.jpg',
-    );
-    formData.append('api_key', apiKey);
-    formData.append('timestamp', timestamp);
-    formData.append('signature', signature);
-    formData.append('folder', 'my_app');
-
-    const uploadRes = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-      {
-        method: 'POST',
-        body: formData,
-      },
-    );
-
-    const data: CloudinaryUploadResponse = await uploadRes.json();
-
-    setCloudinaryPath(data.secure_url);
+    setCloudinaryPath(url);
   };
 
   return (
@@ -164,6 +98,7 @@ export default function PostMyPhotos() {
             >
               {cloudinaryPath ? (
                 <Card.Cover
+                  testID="upload-photo"
                   style={{
                     width: 300,
                     aspectRatio: 4 / 3,
@@ -187,6 +122,7 @@ export default function PostMyPhotos() {
             </View>
 
             <Button
+              testID="select-photo"
               mode="contained"
               onPress={pickImageAsync}
               style={{
@@ -223,8 +159,12 @@ export default function PostMyPhotos() {
           </HelperText>
 
           {album ? (
-            <Card.Actions style={{ justifyContent: 'space-between' }}>
+            <Card.Actions
+              testID="post-button"
+              style={{ justifyContent: 'space-between' }}
+            >
               <Button
+                testID="cancel-button"
                 onPress={() =>
                   router.replace({
                     pathname: '/album/[albumId]',
@@ -235,6 +175,7 @@ export default function PostMyPhotos() {
                 <Text>Cancel</Text>
               </Button>
               <Button
+                testID="continue-button"
                 mode="contained"
                 disabled={!cloudinaryPath}
                 onPress={async () => {

@@ -1,5 +1,4 @@
-import { useFocusEffect } from 'expo-router';
-import { useLocalSearchParams, useRouter } from 'expo-router/build/hooks';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { SafeAreaView, View } from 'react-native';
 import { Button, Card, HelperText, TextInput } from 'react-native-paper';
@@ -57,12 +56,14 @@ export default function EditAlbum() {
     <SafeAreaView style={{ flex: 1, padding: spacing.md }}>
       <Card mode="outlined">
         <Card.Title
+          testID="album-title"
           title="Edit Album"
           titleStyle={typography.title}
           subtitle="Update album details"
         />
         <Card.Content>
           <TextInput
+            testID="edit-album-title"
             label="Album title"
             value={title}
             onChangeText={(text) => setTitle(text)}
@@ -70,6 +71,7 @@ export default function EditAlbum() {
             style={{ marginBottom: spacing.md }}
           />
           <TextInput
+            testID="edit-album-description"
             label="description"
             value={description}
             onChangeText={(text) => setDescription(text)}
@@ -77,6 +79,7 @@ export default function EditAlbum() {
             style={{ marginBottom: spacing.md }}
           />
           <TextInput
+            testID="edit-album-location"
             label="location"
             value={location}
             onChangeText={(text) => setLocation(text)}
@@ -87,17 +90,19 @@ export default function EditAlbum() {
             <VisibilitySelector value={visibility} onChange={setVisibility} />
           </View>
         </Card.Content>
-        <HelperText type="error" visible={isError}>
+        <HelperText testID="error-message" type="error" visible={isError}>
           {message}
         </HelperText>
         <Card.Actions>
           <Button
+            testID="cancel-button"
             mode="text"
             onPress={() => router.replace('/(tabs)/(user)/user')}
           >
             Cancel
           </Button>
           <Button
+            testID="delete-button"
             mode="elevated"
             onPress={async () => {
               const response = await fetch(`/api/albums/${editId}`, {
@@ -170,6 +175,7 @@ export default function EditAlbum() {
                 return;
               }
               const albumId = responseBody.album.id;
+
               setTitle('');
               setDescription('');
               setLocation('');

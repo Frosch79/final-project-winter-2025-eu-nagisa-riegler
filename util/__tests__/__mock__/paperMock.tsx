@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { Text, View } from 'react-native';
 import * as Paper from 'react-native-paper';
 
@@ -13,13 +13,14 @@ const avatarTextMock: any = ({ label }: any) => (
     <Text>{label}</Text>
   </View>
 );
+
 const PaperProviderMock: React.FC<{ children: ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
 
-const buttonMock: React.FC<any> = ({ children, onPress, testID }) => {
+const buttonMock: React.FC<any> = ({ children, onPress, testID, disabled }) => {
   return (
-    <Text testID={testID} onPress={onPress}>
+    <Text testID={testID} onPress={onPress} disabled={disabled}>
       {children}
     </Text>
   );
@@ -38,6 +39,7 @@ export const paperMock = () =>
       Card: {
         Title: cardTitleMock,
         Content: cardTitleMock,
+        Action: buttonMock,
       },
       Portal: PaperProviderMock,
       Avatar: {

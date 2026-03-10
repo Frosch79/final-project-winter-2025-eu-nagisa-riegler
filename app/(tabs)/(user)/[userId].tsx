@@ -33,8 +33,6 @@ export default function UserPage() {
   useFocusEffect(
     useCallback(() => {
       async function getUser() {
-        setIsLoading(true);
-
         const [
           userResponse,
           userPageResponse,
@@ -58,24 +56,30 @@ export default function UserPage() {
         setIsMyPage(Number(userId) === Number(userResponse.user.id));
 
         if ('error' in userPageResponse) {
-          setIsLoading(false);
+          setMessage(userPageResponse.error);
+          setIsError(true);
           return;
         }
-
-        setUser(userPageResponse.user);
+        if ('user' in userPageResponse) {
+          setUser(userPageResponse.user);
+        }
 
         if ('error' in userAlbumsResponse) {
+          setIsError(true);
+          setMessage(userAlbumsResponse.error);
           setAlbums([]);
-          setIsLoading(false);
-          return;
         }
-        setAlbums(userAlbumsResponse.album);
+        if ('album' in userAlbumsResponse) {
+          setAlbums(userAlbumsResponse.album);
+        }
 
         if ('error' in isFollowResponse) {
-          return;
+          setIsError(true);
+          setMessage(isFollowResponse.error);
         }
-
-        setIsFollowed(isFollowResponse.result.valueOf());
+        if ('result' in isFollowResponse) {
+          setIsFollowed(isFollowResponse.result.valueOf());
+        }
 
         const [followerResponse, followedResponse]: [
           FollowerUserResponseBodyGet,
@@ -92,16 +96,19 @@ export default function UserPage() {
           setIsError(true);
           setMessage(followerResponse.error);
           setFollower([]);
-          return;
         }
-        setFollower(followerResponse.user);
         if ('error' in followedResponse) {
           setIsError(true);
           setMessage(followedResponse.error);
           setFollowed([]);
-          return;
         }
-        setFollowed(followedResponse.user);
+        if ('user' in followerResponse) {
+          setFollower(followerResponse.user);
+        }
+        if ('user' in followedResponse) {
+          setFollowed(followedResponse.user);
+        }
+
         setIsLoading(false);
       }
       getUser().catch((error) => console.log(error));
@@ -173,6 +180,7 @@ export default function UserPage() {
             )}
 
             <Button
+              testID="logout-button"
               onPress={async () => {
                 const response = await fetch('/api/logout');
 

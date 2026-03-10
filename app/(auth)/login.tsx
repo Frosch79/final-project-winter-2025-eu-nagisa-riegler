@@ -1,8 +1,8 @@
 import {
   type Href,
-  router,
   useFocusEffect,
   useLocalSearchParams,
+  useRouter,
 } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { SafeAreaView, View } from 'react-native';
@@ -17,6 +17,7 @@ export default function Login() {
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
   const { returnTo } = useLocalSearchParams<{ returnTo: string }>();
+  const router = useRouter();
 
   useFocusEffect(
     useCallback(() => {
@@ -36,13 +37,14 @@ export default function Login() {
       getUser().catch((error) => {
         console.error(error);
       });
-    }, [returnTo]),
+    }, [returnTo, router]),
   );
 
   return (
     <SafeAreaView>
       <View>
         <TextInput
+          testID="input-email"
           mode="outlined"
           label="Email"
           value={userEmail}
@@ -54,6 +56,7 @@ export default function Login() {
         />
 
         <TextInput
+          testID="input-password"
           label="Password"
           mode="outlined"
           secureTextEntry
@@ -67,6 +70,7 @@ export default function Login() {
       </View>
 
       <Button
+        testID="login-button"
         mode="outlined"
         onPress={async () => {
           const response = await fetch('/api/login', {
@@ -107,6 +111,7 @@ export default function Login() {
       </Button>
       <Text>if you don't have an account</Text>
       <Button
+        testID="register-button"
         mode="outlined"
         onPress={() => router.replace('/(auth)/register')}
       >

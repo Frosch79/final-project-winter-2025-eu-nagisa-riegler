@@ -42,18 +42,21 @@ export default function PostMyAlbum() {
         />
         <Card.Content>
           <TextInput
+            testID="input-album-title"
             label="Album title"
             value={title}
             onChangeText={(text) => setTitle(text)}
             style={{ marginBottom: spacing.md }}
           />
           <TextInput
+            testID="input-description"
             label="description"
             value={description}
             onChangeText={(text) => setDescription(text)}
             style={{ marginBottom: spacing.md }}
           />
           <TextInput
+            testID="input-location"
             label="location"
             value={location}
             onChangeText={(text) => setLocation(text)}
@@ -64,7 +67,7 @@ export default function PostMyAlbum() {
             <VisibilitySelector value={visibility} onChange={setVisibility} />
           </View>
         </Card.Content>
-        <HelperText type="error" visible={isError}>
+        <HelperText testID="error-message" type="error" visible={isError}>
           {message}
         </HelperText>
         <Card.Actions>

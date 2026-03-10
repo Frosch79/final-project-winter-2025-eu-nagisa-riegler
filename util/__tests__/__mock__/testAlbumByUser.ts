@@ -1,4 +1,4 @@
-import { AlbumByUser } from '../../../database/albums';
+import type { AlbumByUser } from '../../../database/albums';
 import { mockAlbum } from './testAlbumPhoto';
 import { mockFullUser } from './testUser';
 import { mockUserPhoto, mockUserPhotoEdge } from './testUserPhoto';

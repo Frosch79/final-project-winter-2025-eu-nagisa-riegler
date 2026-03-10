@@ -87,6 +87,7 @@ export default function UserCard(props: Props) {
         ) : (
           <>
             <Card.Title
+              testID="user-name"
               title={userData.name || 'undefined'}
               subtitle={userData.accountDescription || ''}
               left={leftContent}
@@ -177,6 +178,7 @@ export default function UserCard(props: Props) {
                   <Button
                     testID="follow-button"
                     onPress={followOnPress}
+                    accessibilityState={{ selected: isFollow }}
                     icon={isFollow ? 'account-minus' : 'account-plus-outline'}
                     mode={isFollow ? 'outlined' : 'contained'}
                     style={{

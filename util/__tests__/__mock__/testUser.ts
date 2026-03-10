@@ -1,5 +1,5 @@
-import { FullUser, UpdateUser } from '../../../database/users';
-import { User } from '../../../migrations/00000-createTableUsers';
+import type { FullUser, UpdateUser } from '../../../database/users';
+import type { User } from '../../../migrations/00000-createTableUsers';
 
 // 基本の User
 
@@ -62,9 +62,51 @@ export const mockFullUserInvalidDate: FullUser = {
   createdDate: new Date('invalid'),
 };
 
-// UpdateUser 用モック
+// UpdateUser
 export const mockUpdateUser: UpdateUser = {
   name: 'Totoro Updated',
   country: 'Japan',
   accountDescription: 'Forest guardian',
+};
+
+export const otherUser: FullUser = {
+  ...(users[1] as User),
+  createdDate: new Date('2020-01-01'),
+};
+
+// user data for register and login
+// base user
+export const registerUser: Omit<User, 'id'> & { password: string } = {
+  name: 'newUser',
+  birthday: new Date('2020-10-10'),
+  country: '',
+  accountDescription: 'userDescription',
+  email: 'user@ex.com',
+  password: 'userPassword',
+};
+
+// register success
+export const registerUserSuccess = {
+  ...registerUser,
+  email: 'success@ex.com',
+  password: 'successPassword',
+};
+
+// register fail
+export const registerUserFail = {
+  ...registerUser,
+  email: 'fail@ex.com',
+  password: 'failPassword',
+};
+
+// login success
+export const loginUserSuccess = {
+  email: 'loginSuccess@ex.com',
+  password: 'loginSuccessPass',
+};
+
+// login fail
+export const loginUserFail = {
+  email: 'loginFail@ex.com',
+  password: 'wrongPass',
 };

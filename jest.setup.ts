@@ -10,7 +10,7 @@ afterAll(() => {
   (console.warn as jest.Mock).mockRestore();
 });
 
-const useEffectCall = (cb: () => void | (() => void)) =>
+export const useEffectCall = (cb: () => void | (() => void)) =>
   useEffect(() => {
     return cb();
   }, [cb]);
@@ -28,7 +28,9 @@ jest.mock('expo-router', () => ({
   })),
 
   useNavigation: jest.fn(),
-  useLocalSearchParams: jest.fn(() => ({})),
+
+  useLocalSearchParams: jest.fn(),
+
   useFocusEffect: (cb: any) => {
     useEffectCall(cb);
   },

@@ -1,4 +1,4 @@
-import { FollowUser } from '../../../database/followers';
+import type { FollowUser } from '../../../database/followers';
 
 export const mockFollowUser1: FollowUser = {
   id: 1,

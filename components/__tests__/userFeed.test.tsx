@@ -2,25 +2,14 @@ import { expect, jest, test } from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react-native';
 import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
-import { Text, View } from 'react-native';
-import * as Paper from 'react-native-paper';
 import { mockNavigate } from '../../jest.setup';
+import { paperMock } from '../../util/__tests__/__mock__/paperMock';
 import type { Props } from '../UserFeed';
 import UserFeed from '../UserFeed';
 
 // react native paper mock
-const cardTestTitleMock: any = (props: any) => (
-  <View>
-    <Text>{props}</Text>
-  </View>
-);
 
-jest.mock('react-native-paper', () => ({
-  Card: {
-    TestTitle: cardTestTitleMock,
-  },
-})) as unknown as jest.Mocked<typeof Paper>;
-//  mock end
+paperMock();
 
 const baseProps: Props = {
   albumTitle: 'My Album',

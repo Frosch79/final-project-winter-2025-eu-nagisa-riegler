@@ -1,4 +1,4 @@
-import { router, useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { FlatList, SafeAreaView, Text, View } from 'react-native';
 import UserFeed from '../../../components/UserFeed';
@@ -9,6 +9,7 @@ import type { UserResponseBodyGet } from '../../api/user+api';
 export default function Feed() {
   const [publicFeed, setPublicFeed] = useState<FeedAlbum[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
   const renderAlbumFeed = ({ item }: { item: FeedAlbum }) => {
     return (
       <UserFeed
@@ -28,7 +29,6 @@ export default function Feed() {
   useFocusEffect(
     useCallback(() => {
       const getUserFeed = async () => {
-        setIsLoading(false);
         const [userResponse, userPublicFeedResponse]: [
           UserResponseBodyGet,
           FeedResponseBodyGet,
@@ -45,23 +45,22 @@ export default function Feed() {
         }
         if ('error' in userPublicFeedResponse) {
           setPublicFeed([]);
-          setIsLoading(true);
         }
 
         if ('feedAlbum' in userPublicFeedResponse) {
           setPublicFeed(userPublicFeedResponse.feedAlbum);
-          setIsLoading(true);
         }
+        setIsLoading(false);
       };
 
       getUserFeed().catch((error) => console.log(error));
-    }, []),
+    }, [router]),
   );
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
-        {publicFeed.length > 0 && isLoading ? (
+        {publicFeed.length > 0 && !isLoading ? (
           <FlatList
             data={publicFeed}
             renderItem={renderAlbumFeed}

@@ -1,4 +1,4 @@
-import { UserPhoto } from '../../../migrations/00008-createTablePhotos';
+import type { UserPhoto } from '../../../migrations/00008-createTablePhotos';
 import { mockAlbum } from './testAlbumPhoto';
 
 export const mockUserPhoto: UserPhoto = {

@@ -1,8 +1,8 @@
-import { Album } from '../../../migrations/00006-createTableAlbums';
-import { Photo } from '../../../migrations/00008-createTablePhotos';
+import type { AlbumByUser } from '../../../database/albums';
+import type { Photo } from '../../../migrations/00008-createTablePhotos';
 import { mockFullUser } from './testUser';
 
-export const mockAlbum: Album = {
+export const mockAlbum: AlbumByUser = {
   id: 1,
   userId: mockFullUser.id,
   title: 'Valley of the Wind',
@@ -10,6 +10,9 @@ export const mockAlbum: Album = {
   location: 'Japan',
   createdDate: new Date('2025-07-20'),
   visibilityId: 1,
+  userName: mockFullUser.name,
+  visibilityName: 'Public',
+  photos: [],
 };
 
 export const mockPhoto: Photo = {

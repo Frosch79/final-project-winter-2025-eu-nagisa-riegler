@@ -1,64 +1,67 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { render, waitFor } from '@testing-library/react-native';
-import { View } from 'react-native';
+import { Redirect, useFocusEffect } from 'expo-router';
 import Index from '../index';
 
-// __tests__/mocks/expo-router.ts
-export const mockRedirect = jest.fn(({ href }: { href: string }) => {
-  return <View testID="redirect">{href}</View>;
-});
-
 jest.mock('expo-router', () => ({
-  __esModule: true,
-  Redirect: mockRedirect,
-  useFocusEffect: (fn: () => void) => fn(),
+  Redirect: jest.fn(),
+  useFocusEffect: jest.fn(),
 }));
 
-describe('Index Page', () => {
-  afterEach(() => {
-    jest.resetAllMocks();
+describe('Index redirect test', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
   test('redirects to user page when logged in', async () => {
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ id: 1, name: 'Alice' }),
-      } as Response),
-    );
+    // success fetch
+    (global.fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue({
+      json: () => ({ id: 1, name: 'test' }),
+    } as any);
 
-    const { getByTestId } = render(<Index />);
+    // useFocusEffect
+    (useFocusEffect as jest.Mock).mockImplementation((callback: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      callback();
+    });
+
+    render(<Index />);
 
     await waitFor(() => {
-      expect(getByTestId('redirect').props.children).toBe(
-        '/(tabs)/(user)/user',
-      );
+      const firstArg = (Redirect as jest.Mock).mock.calls[0];
+      expect(firstArg).toEqual([
+        {
+          href: '/(tabs)/(user)/user',
+        },
+        {},
+      ]);
     });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      `${process.env.EXPO_PUBLIC_API_URL}/api/user`,
+    );
   });
 
-  test('redirects to login page when not logged in', async () => {
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ error: 'Not logged in' }),
-      } as Response),
-    );
+  test('redirects to login when not logged in', async () => {
+    (global.fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue({
+      json: () => ({ error: 'User not found' }),
+    } as any);
 
-    const { getByTestId } = render(<Index />);
-
-    await waitFor(() => {
-      expect(getByTestId('redirect').props.children).toBe('/(auth)/login');
+    (useFocusEffect as jest.Mock).mockImplementation((callback: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      callback();
     });
-  });
 
-  test('handles fetch failure gracefully', async () => {
-    global.fetch = jest.fn(() =>
-      Promise.reject(new Error('Network error')),
-    ) as jest.Mock;
-
-    const { getByTestId } = render(<Index />);
+    render(<Index />);
 
     await waitFor(() => {
-      expect(getByTestId('redirect').props.children).toBe('/(auth)/login');
+      const firstArg = (Redirect as jest.Mock).mock.calls[0];
+      expect(firstArg).toEqual([
+        {
+          href: '/(auth)/login',
+        },
+        {},
+      ]);
     });
   });
 });

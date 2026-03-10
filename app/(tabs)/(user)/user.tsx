@@ -1,7 +1,7 @@
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Alert, FlatList, SafeAreaView, View } from 'react-native';
-import { Button, HelperText, Provider, Text } from 'react-native-paper';
+import { Button, Provider, Text } from 'react-native-paper';
 import type { LogoutResponseBodyGet } from '../../(auth)/api/logout+api';
 import UserCard from '../../../components/UserCard';
 import UserFeed from '../../../components/UserFeed';
@@ -24,8 +24,7 @@ export default function UserPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [follower, setFollower] = useState<FollowUser[]>([]);
   const [followed, setFollowed] = useState<FollowUser[]>([]);
-  const [isError, setIsError] = useState(false);
-  const [message, setMessage] = useState('');
+
   const renderAlbumFeed = ({ item }: { item: FeedAlbum }) => {
     return (
       <UserFeed
@@ -45,8 +44,6 @@ export default function UserPage() {
   useFocusEffect(
     useCallback(() => {
       async function getUser() {
-        setIsLoading(true);
-
         const userResponse: UserResponseBodyGet = await fetch('/api/user').then(
           (response) => response.json(),
         );
@@ -56,10 +53,11 @@ export default function UserPage() {
           return;
         }
         if ('user' in userResponse) {
-          setIsLoading(false);
+          setUser(userResponse.user);
         }
+
         const pageId = userResponse.user.id;
-        setUser(userResponse.user);
+
         setIsMyPage(true);
 
         const userAlbumsResponse: UserFeedResponseBodyGet = await fetch(
@@ -67,11 +65,11 @@ export default function UserPage() {
         ).then((response) => response.json());
 
         if ('error' in userAlbumsResponse) {
-          return;
+          setAlbums([]);
         }
-
-        setAlbums(userAlbumsResponse.album);
-
+        if ('album' in userAlbumsResponse) {
+          setAlbums(userAlbumsResponse.album);
+        }
         const [followerResponse, followedResponse]: [
           FollowerUserResponseBodyGet,
           FollowedUserResponseBodyGet,
@@ -84,24 +82,24 @@ export default function UserPage() {
           ),
         ]);
         if ('error' in followerResponse) {
-          setIsError(true);
-          setMessage(followerResponse.error);
+          /* console.log(followerResponse.error); */
           setFollower([]);
-          return;
         }
-        setFollower(followerResponse.user);
         if ('error' in followedResponse) {
-          setIsError(true);
-          setMessage(followedResponse.error);
           setFollowed([]);
-          return;
         }
-        setFollowed(followedResponse.user);
+        if ('user' in followerResponse) {
+          setFollower(followerResponse.user);
+        }
 
+        if ('user' in followedResponse) {
+          setFollowed(followedResponse.user);
+        }
         setIsLoading(false);
       }
-
-      getUser().catch(console.error);
+      getUser().catch((error) => {
+        console.log(error);
+      });
     }, [router]),
   );
 
@@ -125,7 +123,7 @@ export default function UserPage() {
                 }
               />
             ) : null}
-            {isError ? <HelperText type="error"> {message}</HelperText> : null}
+
             {albums.length > 0 ? (
               <FlatList
                 data={albums}
@@ -140,6 +138,7 @@ export default function UserPage() {
           <Text> not found</Text>
         )}
         <Button
+          testID="logout-button"
           onPress={async () => {
             const response = await fetch('/api/logout');
 
@@ -153,7 +152,6 @@ export default function UserPage() {
               Alert.alert('Error', errorMessage, [{ text: 'OK' }]);
               return;
             }
-
             router.push('/(auth)/login');
           }}
         >
