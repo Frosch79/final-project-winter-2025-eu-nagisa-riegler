@@ -37,9 +37,7 @@ describe('Index redirect test', () => {
       ]);
     });
 
-    expect(global.fetch).toHaveBeenCalledWith(
-      `${process.env.EXPO_PUBLIC_API_URL}/api/user`,
-    );
+    expect(global.fetch).toHaveBeenCalledWith(`/api/user`);
   });
 
   test('redirects to login when not logged in', async () => {

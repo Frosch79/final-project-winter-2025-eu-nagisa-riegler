@@ -165,8 +165,7 @@ in a production-like environment.
 The mobile app requires a public API base URL:
 
 ````env
-EXPO_PUBLIC_API_URL=https://your-vercel-app.vercel.app
-This variable is injected at build time via EAS environment variables.
+
 
 Notes
 
