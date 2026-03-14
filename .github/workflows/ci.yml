@@ -80,31 +80,30 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
 
-      - name: Setup JDK 17 # 11より17が推奨されることが多い
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
+      # 1. Maestro CLIのインストール
       - name: Install Maestro CLI
         run: |
           curl -Ls https://get.maestro.mobile.dev | bash
-          echo "$HOME/.maestro/bin" >> $GITHUB_PATH # PATHを通す
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      # ... (pnpm install, prebuild)
+      # 2. Expo Build (EAS) から APK をダウンロード
+      # URLはあなたが提示したものの「直接ダウンロード用URL」に差し替えてください
+      - name: Download Build Artifact
+        run: |
+          curl -L "https://expo.dev/artifacts/eas/4Buz43pUbZ874qnPoYBXNH.apk" -o app-debug.apk
 
+      # 3. エミュレーターを起動してテスト
       - name: Run Android Emulator & Maestro E2E
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 29
-          arch: x86_64 # Linuxランナーではこれが必要
+          api-level: 30
+          arch: x86_64
           disable-animations: true
           script: |
-            # ビルド（エミュレーター起動中に並行してビルドすると効率的）
-            ./android/gradlew assembleDebug
-            adb install android/app/build/outputs/apk/debug/app-debug.apk
+            # ダウンロードしたAPKをインストール
+            adb install app-debug.apk
+            # Maestroテスト実行
             maestro test .maestro/
 
       - name: Tear down database
