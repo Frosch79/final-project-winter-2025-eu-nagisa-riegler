@@ -99,23 +99,26 @@ jobs:
       - name: Install Maestro CLI
         run: curl -Ls https://get.maestro.mobile.dev | bash
 
-      - name: Clean android & prebuild
+      - name: Prebuild Android Project
         run: |
           rm -rf android/
-          npx expo prebuild --no-install
+          npx expo prebuild --clean
+          ls -la android/  # gradlew があるか確認
 
       - name: Make Gradlew Executable
-        run: chmod +x ./android/gradlew
+        run: chmod +x android/gradlew
 
       - name: Build Android Debug APK
         run: ./android/gradlew assembleDebug
 
-      - name: Run Android Emulator & Maestro
+      - name: Run Android Emulator & Maestro E2E
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
           script: |
+            echo "Installing Debug APK..."
             adb install -r android/app/build/outputs/apk/debug/app-debug.apk
+            echo "Running Maestro E2E tests..."
             maestro test .maestro
 
       - name: Tear down database
