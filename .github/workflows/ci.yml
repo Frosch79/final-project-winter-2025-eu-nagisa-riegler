@@ -76,7 +76,7 @@ jobs:
   maestro:
     name: Maestro E2E Tests
     # macos-latest (M1) ではなく、Intel CPUの macos-13 を指定
-    runs-on: macos-13
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -113,9 +113,9 @@ jobs:
       - name: Run Android Emulator & Maestro E2E
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
-          # macos-13 (Intel) なので arch は x86_64 に戻す
-          arch: x86_64
+          api-level: 31
+
+          arch: arm64-v8a
           disable-animations: true
           # エミュレーター起動オプションを最小限に
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
