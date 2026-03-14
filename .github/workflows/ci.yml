@@ -75,53 +75,37 @@ jobs:
 
   maestro:
     name: Maestro E2E Tests
+    # macOSはエミュレーターが標準で速いですが、Linuxで粘るなら以下
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup JDK 17 # 11より17が推奨されることが多い
+        uses: actions/setup-java@v4
         with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
-
-      - name: Setup JDK 11
-        uses: actions/setup-java@v3
-        with:
-          distribution: temurin
-          java-version: 11
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Install Maestro CLI
-        run: curl -Ls https://get.maestro.mobile.dev | bash
-
-      - name: Prebuild Android Project
         run: |
-          echo "Starting prebuild..."
-          npx expo doctor
-          npx expo prebuild --no-install || (echo "Prebuild failed!" && ls -la && exit 1)
-          echo "Checking android folder..."
-          ls -la android/
+          curl -Ls https://get.maestro.mobile.dev | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH # PATHを通す
 
-      - name: Make Gradlew Executable
-        run: chmod +x android/gradlew
-
-      - name: Build Android Debug APK
-        run: ./android/gradlew assembleDebug
+      # ... (pnpm install, prebuild)
 
       - name: Run Android Emulator & Maestro E2E
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
+          arch: x86_64 # Linuxランナーではこれが必要
+          disable-animations: true
           script: |
-            echo "Installing Debug APK..."
-            adb install -r android/app/build/outputs/apk/debug/app-debug.apk
-            echo "Running Maestro E2E tests..."
-            maestro test .maestro
+            # ビルド（エミュレーター起動中に並行してビルドすると効率的）
+            ./android/gradlew assembleDebug
+            adb install android/app/build/outputs/apk/debug/app-debug.apk
+            maestro test .maestro/
 
       - name: Tear down database
         run: pnpm migrate down --all
