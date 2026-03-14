@@ -115,7 +115,7 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory 2048
           script: |
-            # エミュレーターの起動完了を最大 120 秒待つ
+            #!/bin/bash
             TIMEOUT=120
             echo "Waiting for emulator to boot..."
             for i in $(seq 1 $TIMEOUT); do
