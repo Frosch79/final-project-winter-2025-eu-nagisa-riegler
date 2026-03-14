@@ -74,7 +74,7 @@ jobs:
         run: pnpm test:ci
 
   maestro:
-    name: Maestro E2E Tests (Lightweight)
+    name: Maestro E2E Tests (Lightweight Cloud)
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -91,11 +91,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Maestro CLI
-        run: |
-          curl -Ls https://get.maestro.mobile.dev | bash
-          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
-
+      # 1. 最新 APK を EAS Build から取得
       - name: Download latest Android APK from EAS Build
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
@@ -106,20 +102,16 @@ jobs:
             echo "Error: Could not find build URL"
             exit 1
           fi
+          echo "Downloading APK from $LATEST_URL"
           curl -L "$LATEST_URL" -o app-debug.apk
 
-      - name: Run lightweight Android Emulator & Maestro
-        uses: reactivecircus/android-emulator-runner@v2
+      # 2. Maestro Cloud でテスト実行
+      - name: Run Maestro Cloud Tests
+        uses: mobile-dev-inc/action-maestro-cloud@v2.0.2
         with:
-          api-level: 31
-          arch: x86_64
-          disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory 2048
-          script: |
-            # 起動完了まで待機
-            adb wait-for-device
-            adb install -r app-debug.apk
-            maestro test .maestro/
+          api-key: ${{ secrets.MAESTRO_API_KEY }}
+          project-id: ${{ secrets.MAESTRO_PROJECT_ID }}
+          app-file: app-debug.apk
 
       - name: Tear down database
         run: pnpm migrate down --all
