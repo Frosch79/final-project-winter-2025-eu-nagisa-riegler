@@ -74,7 +74,7 @@ jobs:
         run: pnpm test:ci
 
   maestro:
-    name: Maestro E2E Tests
+    name: Maestro E2E Tests (No Emulator)
     runs-on: ubuntu-latest
 
     steps:
@@ -82,7 +82,8 @@ jobs:
 
       - uses: pnpm/action-setup@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
           cache: 'pnpm'
@@ -95,43 +96,26 @@ jobs:
           curl -Ls https://get.maestro.mobile.dev | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      - name: Get Latest Build URL and Download APK
+      - name: Get Latest EAS Build APK
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           pnpm install -g eas-cli
-          LATEST_URL=$(eas build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0].artifacts.applicationArchiveUrl // .[0].artifacts.buildUrl')
+          LATEST_URL=$(eas build:list --platform android --status finished --limit 1 --json --non-interactive \
+            | jq -r '.[0].artifacts.applicationArchiveUrl // .[0].artifacts.buildUrl')
+
           if [ "$LATEST_URL" = "null" ]; then
             echo "Error: Could not find build URL"
             exit 1
           fi
+
+          echo "Downloading APK from $LATEST_URL"
           curl -L "$LATEST_URL" -o app-debug.apk
 
-      - name: Run Android Emulator & Maestro
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 31
-          arch: x86_64
-          disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory 2048
-          script: |
-            #!/bin/bash
-            TIMEOUT=120
-            echo "Waiting for emulator to boot..."
-            for i in $(seq 1 $TIMEOUT); do
-              if adb shell getprop sys.boot_completed 2>/dev/null | grep -q "1"; then
-                echo "Emulator booted!"
-                break
-              fi
-              sleep 1
-            done
-            if [ $i -eq $TIMEOUT ]; then
-              echo "Emulator failed to boot in $TIMEOUT seconds"
-              exit 1
-            fi
-
-            adb install -r app-debug.apk
-            maestro test .maestro/
+      - name: Run Maestro E2E
+        run: |
+          echo "Running Maestro tests directly on APK"
+          maestro test .maestro/ --apk app-debug.apk
 
       - name: Tear down database
         run: pnpm migrate down --all
