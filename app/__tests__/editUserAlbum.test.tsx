@@ -185,7 +185,7 @@ describe('EditAlbum screen', () => {
       );
       expect(mockReplace).toHaveBeenCalledWith({
         pathname: '/album/[albumId]',
-        params: { albumId: '123' },
+        params: { albumId: '123', from: 'editAlbum' },
       });
     });
   });

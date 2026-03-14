@@ -30,6 +30,9 @@ export default function UserAlbumCard(props: Props) {
   const router = useRouter();
 
   const { album, userId, albumLikes, albumComments } = props;
+  const albumCover = !album.photos[0]
+    ? 'https://picsum.photos/700'
+    : (album.photos[0].cloudinaryDataPath as string);
 
   useFocusEffect(
     useCallback(() => {
@@ -119,11 +122,12 @@ export default function UserAlbumCard(props: Props) {
             {/* cover*/}
             <Card.Cover
               style={{
-                width: 220,
+                width: '50%',
+                height: '50%',
                 aspectRatio: 2 / 4,
                 borderRadius: 8,
               }}
-              source={{ uri: 'https://picsum.photos/700' }}
+              source={{ uri: albumCover }}
             />
 
             {/* album  */}
@@ -188,7 +192,12 @@ export default function UserAlbumCard(props: Props) {
             </View>
 
             {/* Comments */}
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+            >
               <IconButton
                 testID="comment-modal-icon-button"
                 icon="comment"

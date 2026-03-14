@@ -26,7 +26,7 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
-        <data android:scheme="com.final_projectwinter_2025_eu_nagisa_riegler"/>
+        <data android:scheme="com.final_project_winter_2025_eu_nagisa_riegler"/>
         <data android:scheme="exp+final-project-winter-2025-eu-nagisa-riegler"/>
       </intent-filter>
     </activity>

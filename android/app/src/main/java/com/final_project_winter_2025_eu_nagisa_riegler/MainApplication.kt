@@ -1,4 +1,4 @@
-package com.final_projectwinter_2025_eu_nagisa_riegler
+package com.final_project_winter_2025_eu_nagisa_riegler
 
 import android.app.Application
 import android.content.res.Configuration

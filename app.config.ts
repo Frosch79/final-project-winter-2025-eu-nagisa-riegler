@@ -13,7 +13,7 @@ const config: ExpoConfig = {
     supportsTablet: true,
   },
   android: {
-    package: 'com.final_projectwinter_2025_eu_nagisa_riegler',
+    package: 'com.final_project_winter_2025_eu_nagisa_riegler',
     adaptiveIcon: {
       foregroundImage: './assets/images/icon-shutter.png',
       backgroundColor: '#ffffff',

@@ -11,7 +11,6 @@ expo-env.d.ts
 
 # Native
 *.orig.*
-*.jks
 *.p8
 *.p12
 *.key
@@ -32,6 +31,7 @@ yarn-error.*
 # local env files
 .env*.local
 .env
+.env.*
 
 
 # typescript
@@ -42,4 +42,39 @@ app-example
 .eslintcache
 
 .vercel
-.env*.local
+
+# android build
+.gradle/
+android/.gradle/
+android/build/
+android/app/build/
+
+# android artifacts
+*.apk
+*.aab
+*.apks
+universal.apk
+output/
+android/local.properties
+
+# keystore
+*.keystore
+*.jks
+
+# bundletool
+bundletool*.jar
+
+# maestro temp
+.maestro/screenshots/
+.maestro/tmp/
+
+# jest
+coverage/
+
+# Node
+logs/
+*.log
+
+# editors
+.idea/
+.vscode/

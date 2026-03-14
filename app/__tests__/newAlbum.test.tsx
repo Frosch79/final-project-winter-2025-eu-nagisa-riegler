@@ -102,7 +102,7 @@ describe('PostMyAlbum screen', () => {
       );
       expect(mockNavigate).toHaveBeenCalledWith({
         pathname: '/album/[albumId]',
-        params: { albumId: '123' },
+        params: { albumId: '123', from: 'editAlbum' },
       });
     });
   });

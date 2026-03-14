@@ -35,7 +35,10 @@ export default function UserAlbum() {
   const [user, setUser] = useState<FullUser>();
   const [album, setAlbum] = useState<AlbumByUser>();
   const [photos, setPhotos] = useState<Photo[]>([]);
-  const { albumId } = useLocalSearchParams<{ albumId: string }>();
+  const { albumId, from } = useLocalSearchParams<{
+    albumId: string;
+    from?: string;
+  }>();
   const router = useRouter();
 
   useFocusEffect(
@@ -116,31 +119,33 @@ export default function UserAlbum() {
   // photo render
   const renderUserPhotos = ({ item }: { item: Photo }) => {
     return (
-      <Button
-        style={{ padding: spacing.xs }}
-        onPress={() =>
-          router.navigate({
-            pathname: '/photos/[photoId]',
-            params: { photoId: Number(item.id) },
-          })
-        }
+      <View
+        style={{ width: cardSize, height: cardSize, marginBottom: spacing.sm }}
       >
-        <View
-          style={{
-            width: cardSize,
-            height: cardSize,
-            borderRadius: components.card.image.borderRadius,
-            overflow: 'hidden',
-          }}
+        <Button
+          style={{ padding: 0, margin: 0, width: '100%', height: '100%' }}
+          onPress={() =>
+            router.navigate({
+              pathname: '/photos/[photoId]',
+              params: { photoId: Number(item.id) },
+            })
+          }
         >
-          <Image
-            style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
-            source={{
-              uri: item.cloudinaryDataPath,
+          <View
+            style={{
+              width: '100%',
+              height: '100%',
+              borderRadius: components.card.image.borderRadius,
+              overflow: 'hidden',
             }}
-          />
-        </View>
-      </Button>
+          >
+            <Image
+              style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
+              source={{ uri: item.cloudinaryDataPath }}
+            />
+          </View>
+        </Button>
+      </View>
     );
   };
   // reload Likes / Comments
@@ -167,9 +172,20 @@ export default function UserAlbum() {
       setUserLikes([]);
     }
   };
+
+  const handleBack = () => {
+    if (from === 'editAlbum') {
+      router.replace('/(user)/user');
+    } else {
+      router.back();
+    }
+  };
+
   return (
     <Provider theme={theme}>
-      <SafeAreaView style={{ ...layout.container, flex: 1 }}>
+      <SafeAreaView
+        style={{ ...layout.container, flex: 1, marginBottom: '10%' }}
+      >
         <FlatList
           data={photos}
           renderItem={renderUserPhotos}
@@ -205,7 +221,7 @@ export default function UserAlbum() {
                   mode="contained-tonal"
                   icon="close-thick"
                   size={30}
-                  onPress={() => router.replace('/(tabs)/(user)/user')}
+                  onPress={handleBack}
                 />
 
                 {user && album && user.id === album.userId && (
@@ -238,7 +254,9 @@ export default function UserAlbum() {
             </>
           }
           ListEmptyComponent={
-            <Text style={{ ...typography.body }}>No Photos</Text>
+            <Text style={{ ...typography.body, marginBottom: '10%' }}>
+              No Photos
+            </Text>
           }
         />
       </SafeAreaView>
