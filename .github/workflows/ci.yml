@@ -121,6 +121,16 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           script: |
             adb wait-for-device
+            # ブート完了を確認してから進める
+            for i in {1..30}; do
+              BOOT_COMPLETED=$(adb shell getprop sys.boot_completed 2>/dev/null)
+              if [ "$BOOT_COMPLETED" = "1" ]; then
+                echo "Emulator booted"
+                break
+              fi
+              echo "Waiting for emulator to boot... ($i/30)"
+              sleep 10
+            done
             adb install app-debug.apk
             maestro test .maestro/
 
