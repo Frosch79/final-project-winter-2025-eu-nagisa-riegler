@@ -76,7 +76,7 @@ jobs:
   maestro:
     name: Maestro E2E Tests
     # macOSはエミュレーターが標準で速いですが、Linuxで粘るなら以下
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -89,9 +89,21 @@ jobs:
 
       # 2. Expo Build (EAS) から APK をダウンロード
       # URLはあなたが提示したものの「直接ダウンロード用URL」に差し替えてください
-      - name: Download Build Artifact
+      - name: Get Latest Build URL and Download
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
-          curl -L "https://expo.dev/artifacts/eas/4Buz43pUbZ874qnPoYBXNH.apk" -o app-debug.apk
+          # 最新の完了済みビルドからAPKのURLを取得
+          # 階層が深い場合があるため '..buildUrl?' で検索するのが最も確実です
+          LATEST_URL=$(npx eas-cli build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0] | .artifacts.applicationArchiveUrl // .artifacts.buildUrl')
+
+          if [ "$LATEST_URL" = "null" ]; then
+            echo "Error: Could not find build URL"
+            exit 1
+          fi
+
+          echo "Latest Build URL: $LATEST_URL"
+          curl -L "$LATEST_URL" -o app-debug.apk
 
       # 3. エミュレーターを起動してテスト
       - name: Run Android Emulator & Maestro E2E
