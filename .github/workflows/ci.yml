@@ -75,63 +75,62 @@ jobs:
 
   maestro:
     name: Maestro E2E Tests
-    # macos-latest (M1) ではなく、Intel CPUの macos-13 を指定
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+
       - uses: pnpm/action-setup@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Install Maestro CLI
         run: |
           curl -Ls https://get.maestro.mobile.dev | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      - name: Get Latest Build URL and Download
+      - name: Get Latest Build URL and Download APK
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           pnpm install -g eas-cli
-          # 確実に1つ目の要素からURLを取る設定
           LATEST_URL=$(eas build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0].artifacts.applicationArchiveUrl // .[0].artifacts.buildUrl')
-
           if [ "$LATEST_URL" = "null" ]; then
             echo "Error: Could not find build URL"
             exit 1
           fi
           curl -L "$LATEST_URL" -o app-debug.apk
 
-      - name: Run Android Emulator & Maestro E2E
+      - name: Run Android Emulator & Maestro
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 31
-
-          arch: arm64-v8a
+          arch: x86_64
           disable-animations: true
-          # エミュレーター起動オプションを最小限に
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory 2048
           script: |
-            adb wait-for-device
-            # ブート完了を確認してから進める
-            for i in {1..30}; do
-              BOOT_COMPLETED=$(adb shell getprop sys.boot_completed 2>/dev/null)
-              if [ "$BOOT_COMPLETED" = "1" ]; then
-                echo "Emulator booted"
+            # エミュレーターの起動完了を最大 120 秒待つ
+            TIMEOUT=120
+            echo "Waiting for emulator to boot..."
+            for i in $(seq 1 $TIMEOUT); do
+              if adb shell getprop sys.boot_completed 2>/dev/null | grep -q "1"; then
+                echo "Emulator booted!"
                 break
               fi
-              echo "Waiting for emulator to boot... ($i/30)"
-              sleep 10
+              sleep 1
             done
-            adb install app-debug.apk
+            if [ $i -eq $TIMEOUT ]; then
+              echo "Emulator failed to boot in $TIMEOUT seconds"
+              exit 1
+            fi
+
+            adb install -r app-debug.apk
             maestro test .maestro/
 
       - name: Tear down database
