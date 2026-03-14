@@ -75,64 +75,53 @@ jobs:
 
   maestro:
     name: Maestro E2E Tests
-    # macOSはエミュレーターが標準で速いですが、Linuxで粘るなら以下
-    runs-on: ubuntu-latest
+    # macos-latest (M1) ではなく、Intel CPUの macos-13 を指定
+    runs-on: macos-13
 
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4 # 追加
+      - uses: pnpm/action-setup@v4
 
-      # NodeとInstallを追加（DB操作に必要なら）
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
           cache: 'pnpm'
+
       - name: Install dependencies
         run: pnpm install
 
-      # 1. Maestro CLIのインストール
       - name: Install Maestro CLI
         run: |
           curl -Ls https://get.maestro.mobile.dev | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      # 2. Expo Build (EAS) から APK をダウンロード
-      # URLはあなたが提示したものの「直接ダウンロード用URL」に差し替えてください
       - name: Get Latest Build URL and Download
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
-          # eas-cliを事前にインストールしてログを分離する
           pnpm install -g eas-cli
+          # 確実に1つ目の要素からURLを取る設定
+          LATEST_URL=$(eas build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0].artifacts.applicationArchiveUrl // .[0].artifacts.buildUrl')
 
-          # 完了済みの最新ビルドURLを取得（エラーハンドリング付き）
-          # --non-interactive をつけることで余計な対話ログを防ぎます
-          RAW_JSON=$(eas build:list --platform android --status finished --limit 1 --json --non-interactive)
-
-          # JSONからURLを抽出（applicationArchiveUrl または buildUrl）
-          LATEST_URL=$(echo "$RAW_JSON" | jq -r '.[0].artifacts.applicationArchiveUrl // .[0].artifacts.buildUrl')
-
-          if [ "$LATEST_URL" = "null" ] || [ -z "$LATEST_URL" ]; then
-            echo "Error: Could not find build URL. Raw output was:"
-            echo "$RAW_JSON"
+          if [ "$LATEST_URL" = "null" ]; then
+            echo "Error: Could not find build URL"
             exit 1
           fi
-
-          echo "Latest Build URL: $LATEST_URL"
           curl -L "$LATEST_URL" -o app-debug.apk
 
-      # 3. エミュレーターを起動してテスト
       - name: Run Android Emulator & Maestro E2E
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
+          # macos-13 (Intel) なので arch は x86_64 に戻す
           arch: x86_64
           disable-animations: true
+          # エミュレーター起動オプションを最小限に
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           script: |
-            # ダウンロードしたAPKをインストール
+            adb wait-for-device
             adb install app-debug.apk
-            # Maestroテスト実行
             maestro test .maestro/
 
       - name: Tear down database
