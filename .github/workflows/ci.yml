@@ -101,9 +101,11 @@ jobs:
 
       - name: Prebuild Android Project
         run: |
-          rm -rf android/
-          npx expo prebuild --clean
-          ls -la android/  # gradlew があるか確認
+          echo "Starting prebuild..."
+          npx expo doctor
+          npx expo prebuild --no-install || (echo "Prebuild failed!" && ls -la && exit 1)
+          echo "Checking android folder..."
+          ls -la android/
 
       - name: Make Gradlew Executable
         run: chmod +x android/gradlew
