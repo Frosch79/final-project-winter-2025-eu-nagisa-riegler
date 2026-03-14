@@ -74,12 +74,12 @@ jobs:
         run: pnpm test:ci
 
   maestro:
-    name: Maestro E2E Tests (No Emulator)
+    name: Maestro E2E Tests (Lightweight)
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
@@ -96,26 +96,30 @@ jobs:
           curl -Ls https://get.maestro.mobile.dev | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      - name: Get Latest EAS Build APK
+      - name: Download latest Android APK from EAS Build
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           pnpm install -g eas-cli
-          LATEST_URL=$(eas build:list --platform android --status finished --limit 1 --json --non-interactive \
-            | jq -r '.[0].artifacts.applicationArchiveUrl // .[0].artifacts.buildUrl')
-
+          LATEST_URL=$(eas build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0].artifacts.applicationArchiveUrl // .[0].artifacts.buildUrl')
           if [ "$LATEST_URL" = "null" ]; then
             echo "Error: Could not find build URL"
             exit 1
           fi
-
-          echo "Downloading APK from $LATEST_URL"
           curl -L "$LATEST_URL" -o app-debug.apk
 
-      - name: Run Maestro E2E
-        run: |
-          echo "Running Maestro tests directly on APK"
-          maestro test .maestro/ --apk app-debug.apk
+      - name: Run lightweight Android Emulator & Maestro
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 31
+          arch: x86_64
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory 2048
+          script: |
+            # 起動完了まで待機
+            adb wait-for-device
+            adb install -r app-debug.apk
+            maestro test .maestro/
 
       - name: Tear down database
         run: pnpm migrate down --all
