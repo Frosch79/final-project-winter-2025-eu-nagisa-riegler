@@ -103,12 +103,19 @@ jobs:
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
-          # 最新の完了済みビルドからAPKのURLを取得
-          # 階層が深い場合があるため '..buildUrl?' で検索するのが最も確実です
-          LATEST_URL=$(npx eas-cli build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0] | .artifacts.applicationArchiveUrl // .artifacts.buildUrl')
+          # eas-cliを事前にインストールしてログを分離する
+          pnpm install -g eas-cli
 
-          if [ "$LATEST_URL" = "null" ]; then
-            echo "Error: Could not find build URL"
+          # 完了済みの最新ビルドURLを取得（エラーハンドリング付き）
+          # --non-interactive をつけることで余計な対話ログを防ぎます
+          RAW_JSON=$(eas build:list --platform android --status finished --limit 1 --json --non-interactive)
+
+          # JSONからURLを抽出（applicationArchiveUrl または buildUrl）
+          LATEST_URL=$(echo "$RAW_JSON" | jq -r '.[0].artifacts.applicationArchiveUrl // .[0].artifacts.buildUrl')
+
+          if [ "$LATEST_URL" = "null" ] || [ -z "$LATEST_URL" ]; then
+            echo "Error: Could not find build URL. Raw output was:"
+            echo "$RAW_JSON"
             exit 1
           fi
 
@@ -120,7 +127,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
-          arch: x86_64
+          arch: arm64-v8a
           disable-animations: true
           script: |
             # ダウンロードしたAPKをインストール
