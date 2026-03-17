@@ -86,6 +86,9 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: 'gradle'
+
+      - name: Install dependencies
+        run: npm install
       - name: Make gradlew executable
         run: chmod +x android/gradlew
       # 1. アプリをビルド (APK作成)
