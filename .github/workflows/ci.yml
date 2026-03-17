@@ -80,43 +80,50 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: set up JDK 11
-        uses: actions/setup-java@v3
+      # 1. Setup pnpm (Required before install)
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      # 2. Setup Node (Required for React Native scripts)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 4. Setup Java (Required for Android build)
+      - uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      # 5. Build the APK
       - name: Make gradlew executable
         run: chmod +x android/gradlew
-      # 1. アプリをビルド (APK作成)
       - name: Build debug APK
         run: ./gradlew assembleDebug
         working-directory: android
 
-      # 2. Maestro CLI をインストール
+      # 6. Install Maestro CLI
       - name: Install Maestro CLI
         run: |
           curl -Ls "https://get.maestro.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      # 3. エミュレータ起動 ＋ テスト実行
-      # ReactiveCircusのアクションがエミュレータ起動完了まで待機してくれます
-      - name: Run Maestro Tests on Emulator
+      # 7. Start Emulator and Run Test
+      - name: Run Maestro Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
           target: google_apis
           arch: x86_64
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
           script: |
-            # アプリをエミュレータにインストール
-            adb install app/build/outputs/apk/debug/app-debug.apk
-            # テストを実行 (flow.yaml のパスを指定)
+            adb install android/app/build/outputs/apk/debug/app-debug.apk
             maestro test .maestro/flow.yaml
       - name: Tear down database
         run: pnpm migrate down --all
