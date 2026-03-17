@@ -73,45 +73,22 @@ jobs:
       - name: Run Jest tests
         run: pnpm test:ci
 
-  maestro:
-    name: Maestro E2E Tests (Lightweight Cloud)
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
+  maestro-cloud:
+      runs-on: ubuntu-latest
+      outputs:
+        app: app/build/outputs/apk/debug
+      steps:
+        - uses: actions/checkout@v3
+        - uses: actions/setup-java@v3
+          with:
+            java-version: 11
+            distribution: 'temurin'
+        - run: ./gradlew assembleDebug
+        - uses: mobile-dev-inc/action-maestro-cloud@v2.0.2
+          with:
+            api-key: ${{ secrets.MAESTRO_API_KEY }}
+            project-id: ${{ secrets.MAESTRO_PROJECT_ID }}
+            app-file: app/build/outputs/apk/debug/app-debug.apk
 
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      # 1. 最新 APK を EAS Build から取得
-      - name: Download latest Android APK from EAS Build
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          pnpm install -g eas-cli
-          LATEST_URL=$(eas build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0].artifacts.applicationArchiveUrl // .[0].artifacts.buildUrl')
-          if [ "$LATEST_URL" = "null" ]; then
-            echo "Error: Could not find build URL"
-            exit 1
-          fi
-          echo "Downloading APK from $LATEST_URL"
-          curl -L "$LATEST_URL" -o app-debug.apk
-
-      # 2. Maestro Cloud でテスト実行
-      - name: Run Maestro Cloud Tests
-        uses: mobile-dev-inc/action-maestro-cloud@v2.0.2
-        with:
-          api-key: ${{ secrets.MAESTRO_API_KEY }}
-          project-id: ${{ secrets.MAESTRO_PROJECT_ID }}
-          app-file: app-debug.apk
-
-      - name: Tear down database
+        - name: Tear down database
         run: pnpm migrate down --all
