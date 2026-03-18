@@ -74,42 +74,59 @@ jobs:
         run: pnpm test:ci
 
   maestro-local:
-    # エミュレータを高速に動かすため macOS ランナーを推奨
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
+    # データベース接続用の環境変数をジョブ全体に適用
+    env:
+      PGHOST: localhost
+      PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
+      PGUSERNAME: final_project_eu_nagisa_riegler_winter_2025
+      PGPASSWORD: final_project_eu_nagisa_riegler_winter_2025
 
     steps:
       - uses: actions/checkout@v4
 
-      # 1. Setup pnpm (Required before install)
+      # 0. データベースのセットアップ (MacOS用)
+      - name: Start PostgreSQL on macOS
+        run: |
+          rm -rf /usr/local/var/postgres
+          initdb /usr/local/var/postgres
+          pg_ctl -D /usr/local/var/postgres -l logfile start
+          createuser -s $PGUSERNAME
+          psql -c "ALTER USER $PGUSERNAME WITH PASSWORD '$PGPASSWORD';" postgres
+          createdb -O $PGUSERNAME $PGDATABASE
+
       - uses: pnpm/action-setup@v3
         with:
           version: 9
 
-      # 2. Setup Node (Required for React Native scripts)
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20' # LTS推奨
           cache: 'pnpm'
 
-      # 3. Install dependencies
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # 4. Setup Java (Required for Android build)
+      - name: Run database migrations
+        run: pnpm migrate up
+
       - uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: 'gradle'
 
-      # 5. Build the APK
+      # 5. Build the APK (ビルド時にAPI接続先を自分自身に向ける)
       - name: Make gradlew executable
         run: chmod +x android/gradlew
-      - name: Build debug APK
+      - name: Build Release APK
         run: ./gradlew assembleRelease
         working-directory: android
+        env:
+          EXPO_PUBLIC_API_URL: http://localhost:3000 # 必要に応じて変更
+          POSTGRES_URL: '' # Vercel設定を無効化
+          MAESTRO: 'true'
 
-      # 6. Install Maestro CLI
       - name: Install Maestro CLI
         run: |
           curl -Ls "https://get.maestro.dev" | bash
@@ -120,17 +137,16 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 31
-          target: google_apis_arm64 # macOS(M1)ランナーに最適化
-          arch: arm64-v8a # arm64-v8a を明示
+          target: google_apis # 標準の名前に戻す
+          arch: arm64-v8a
           profile: pixel_6
           disable-animations: true
-          # 不要なオプションを削り、安定性を高める
           emulator-options: -no-window -no-snapshot -no-audio -no-boot-anim
           script: |
-            # offlineを回避するため、完全に起動するまで待機
             adb wait-for-device
-            # インストールとテスト
+            # 念のため release フォルダを確認してインストール
             adb install android/app/build/outputs/apk/release/app-release.apk
             maestro test .maestro/
+
       - name: Tear down database
         run: pnpm migrate down --all
