@@ -73,6 +73,9 @@ jobs:
       - name: Run Jest tests
         run: pnpm test:ci
 
+      - name: Tear down database
+        run: pnpm migrate down --all
+
   maestro-local:
     runs-on: macos-latest
     # データベース接続用の環境変数をジョブ全体に適用
@@ -81,27 +84,31 @@ jobs:
       PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
       PGUSERNAME: final_project_eu_nagisa_riegler_winter_2025
       PGPASSWORD: final_project_eu_nagisa_riegler_winter_2025
+      CLOUDINARY_API_SECRET: dummy
+      CLOUDINARY_CLOUD_NAME: dummy
+      CLOUDINARY_API_KEY: dummy
 
     steps:
-      - uses: actions/checkout@v4
-
-      # 0. データベースのセットアップ (MacOS用)
-      - name: Start PostgreSQL on macOS
+      - name: Start preinstalled PostgreSQL
         run: |
-          rm -rf /usr/local/var/postgres
-          initdb /usr/local/var/postgres
-          pg_ctl -D /usr/local/var/postgres -l logfile start
-          createuser -s $PGUSERNAME
-          psql -c "ALTER USER $PGUSERNAME WITH PASSWORD '$PGPASSWORD';" postgres
-          createdb -O $PGUSERNAME $PGDATABASE
+          sudo systemctl start postgresql.service
+          pg_isready
 
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
+      - name: Create database user
+        run: |
+          sudo -u postgres psql --command="CREATE USER $PGUSERNAME PASSWORD '$PGPASSWORD'" --command="\du"
 
-      - uses: actions/setup-node@v4
+      - name: Create database
+        run: |
+          sudo -u postgres createdb --owner=$PGUSERNAME $PGDATABASE
+
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: '20' # LTS推奨
+          node-version: 'lts/*'
           cache: 'pnpm'
 
       - name: Install dependencies
