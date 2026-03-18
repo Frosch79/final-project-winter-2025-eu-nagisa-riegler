@@ -83,8 +83,8 @@ jobs:
       PGHOST: localhost
       PGPORT: 5432
       PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
-      PGUSERNAME: postgres
-      PGPASSWORD: password # Set your actual local password here
+      PGUSERNAME: ${{ secrets.PGPASSWORD }}
+      PGPASSWORD: ${{ secrets.PGPASSWORD }} # Set your actual local password here
 
     steps:
       - uses: actions/checkout@v4
