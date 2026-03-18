@@ -77,7 +77,7 @@ jobs:
         run: pnpm migrate down --all
 
   maestro-local:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     # データベース接続用の環境変数をジョブ全体に適用
     env:
       PGHOST: localhost
