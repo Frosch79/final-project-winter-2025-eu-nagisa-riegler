@@ -78,30 +78,30 @@ jobs:
 
   maestro-local:
     runs-on: macos-latest
+    timeout-minutes: 60 # 全体のタイムアウトを念のため延長
     env:
       PGHOST: localhost
       PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
-      PGUSERNAME: postgres # macOSのbrew版は標準がpostgres
+      PGUSERNAME: postgres
       PGPASSWORD: password
 
     steps:
       - uses: actions/checkout@v4
 
-      # 1. PostgreSQLのセットアップ (macOS用)
+      # 修正①: エミュレータの起動スペースを確保（これがないとサイレントに失敗します）
+      - name: Free Disk Space
+        run: |
+          sudo rm -rf /usr/local/lib/node_modules
+          sudo rm -rf /opt/pipx
+          sudo rm -rf /usr/share/dotnet
+
+      # 1. PostgreSQLのセットアップ (変更なし)
       - name: Start PostgreSQL on macOS
         run: |
-          # 1. インストール
           brew install postgresql@17
-
-          # 2. パスを通す（重要：これで pg_isready や psql が使えるようになります）
           echo "/opt/homebrew/opt/postgresql@17/bin" >> $GITHUB_PATH
           export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
-
-          # 3. 起動
           brew services start postgresql@17
-
-          # 4. 起動完了まで待機
-          # 初回は時間がかかる場合があるため、最大15回リトライします
           for i in {1..15}; do
             if pg_isready; then
               echo "PostgreSQL is ready!"
@@ -110,8 +110,6 @@ jobs:
             echo "Waiting for PostgreSQL... ($i/15)"
             sleep 3
           done
-
-          # 5. ユーザーとデータベースの作成
           psql postgres -c "CREATE ROLE $PGUSERNAME WITH LOGIN PASSWORD '$PGPASSWORD' SUPERUSER;"
           createdb -O $PGUSERNAME $PGDATABASE
 
@@ -133,7 +131,6 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      # 2. ビルド (EXPO_PUBLIC_API_URL をエミュレータから見たPCのIP 10.0.2.2 にする)
       - name: Make gradlew executable
         run: chmod +x android/gradlew
 
@@ -150,18 +147,27 @@ jobs:
           curl -Ls "https://get.maestro.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      # 3. エミュレータ実行 (Apple Siliconに最適化)
+      # 3. エミュレータ実行 (修正②: ターゲットを軽量版に変更し、タイムアウトを延長)
       - name: Run Maestro Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 31
-          target: google_apis
-          arch: arm64-v8a # macOSランナーはこの組み合わせが最速
+          target: aosp_atd # 最軽量のCI専用イメージに変更
+          arch: arm64-v8a
           profile: pixel_6
           disable-animations: true
+          emulator-boot-timeout: 900 # 15分まで待機
           emulator-options: -no-window -no-snapshot -no-audio -no-boot-anim
           script: |
+            # 修正③: システムが完全に立ち上がるまでループで待機
+            echo "Waiting for Android to boot..."
             adb wait-for-device
+            until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; do
+              echo "Still booting..."
+              sleep 5
+            done
+            echo "Boot completed!"
+
             adb install android/app/build/outputs/apk/release/app-release.apk
             maestro test .maestro/
 
