@@ -144,14 +144,14 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 31
-          target: google_apis # 標準の名前に戻す
-          arch: arm64-v8a
+          target: google_apis # ubuntuならこれでOK
+          arch: x86_64 # arm64-v8a から x86_64 に変更！
           profile: pixel_6
           disable-animations: true
+          # ubuntuでは -accel on が使えないため、非常に遅いことを覚悟する必要があります
           emulator-options: -no-window -no-snapshot -no-audio -no-boot-anim
           script: |
             adb wait-for-device
-            # 念のため release フォルダを確認してインストール
             adb install android/app/build/outputs/apk/release/app-release.apk
             maestro test .maestro/
 
