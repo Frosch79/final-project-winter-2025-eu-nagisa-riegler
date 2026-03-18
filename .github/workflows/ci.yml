@@ -127,6 +127,7 @@ jobs:
           # gpu設定を完全に削除し、ランナー側のデフォルトに任せる
           emulator-options: -no-window -no-snapshot -no-audio -no-boot-anim
           script: |
+            adb wait-for-device
             adb install android/app/build/outputs/apk/release/app-release.apk
             maestro test .maestro/
       - name: Tear down database
