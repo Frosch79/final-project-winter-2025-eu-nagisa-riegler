@@ -120,14 +120,16 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 31
-          target: aosp_atd
-          arch: x86_64
+          target: google_apis_arm64 # macOS(M1)ランナーに最適化
+          arch: arm64-v8a # arm64-v8a を明示
           profile: pixel_6
           disable-animations: true
-          # gpu設定を完全に削除し、ランナー側のデフォルトに任せる
+          # 不要なオプションを削り、安定性を高める
           emulator-options: -no-window -no-snapshot -no-audio -no-boot-anim
           script: |
+            # offlineを回避するため、完全に起動するまで待機
             adb wait-for-device
+            # インストールとテスト
             adb install android/app/build/outputs/apk/release/app-release.apk
             maestro test .maestro/
       - name: Tear down database
