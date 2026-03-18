@@ -124,8 +124,10 @@ jobs:
           arch: arm64-v8a
           profile: pixel_6
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -no-audio -no-boot-anim
+
+          emulator-options: -no-window -no-snapshot -no-audio -no-boot-anim
           script: |
+            adb devices
             adb install android/app/build/outputs/apk/release/app-release.apk
             maestro test .maestro/
       - name: Tear down database
