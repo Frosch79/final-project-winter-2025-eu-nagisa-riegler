@@ -77,99 +77,45 @@ jobs:
         run: pnpm migrate down --all
 
   maestro-local:
-    runs-on: macos-latest
-    timeout-minutes: 60 # 全体のタイムアウトを念のため延長
+    runs-on: self-hosted
+    timeout-minutes: 30
     env:
       PGHOST: localhost
+      PGPORT: 5432
       PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
       PGUSERNAME: postgres
-      PGPASSWORD: password
+      PGPASSWORD: password # Set your actual local password here
 
     steps:
       - uses: actions/checkout@v4
 
-      # 修正①: エミュレータの起動スペースを確保（これがないとサイレントに失敗します）
-      - name: Free Disk Space
-        run: |
-          sudo rm -rf /usr/local/lib/node_modules
-          sudo rm -rf /opt/pipx
-          sudo rm -rf /usr/share/dotnet
-
-      # 1. PostgreSQLのセットアップ (変更なし)
-      - name: Start PostgreSQL on macOS
-        run: |
-          brew install postgresql@17
-          echo "/opt/homebrew/opt/postgresql@17/bin" >> $GITHUB_PATH
-          export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
-          brew services start postgresql@17
-          for i in {1..15}; do
-            if pg_isready; then
-              echo "PostgreSQL is ready!"
-              break
-            fi
-            echo "Waiting for PostgreSQL... ($i/15)"
-            sleep 3
-          done
-          psql postgres -c "CREATE ROLE $PGUSERNAME WITH LOGIN PASSWORD '$PGPASSWORD' SUPERUSER;"
-          createdb -O $PGUSERNAME $PGDATABASE
-
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
-
+      # 1. Install Dependencies
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # 2. Database Migration (Local DB)
       - name: Run database migrations
         run: pnpm migrate up
 
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: 'gradle'
-
-      - name: Make gradlew executable
-        run: chmod +x android/gradlew
-
+      # 3. Build Release APK (Windows uses .bat)
       - name: Build Release APK
-        run: ./gradlew assembleRelease
+        run: .\gradlew.bat assembleRelease
         working-directory: android
         env:
           EXPO_PUBLIC_API_URL: 'http://10.0.2.2:3000'
           POSTGRES_URL: ''
           MAESTRO: 'true'
 
-      - name: Install Maestro CLI
-        run: |
-          curl -Ls "https://get.maestro.dev" | bash
-          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
-
-      # 3. エミュレータ実行 (修正②: ターゲットを軽量版に変更し、タイムアウトを延長)
+      # 4. Install and Run Maestro
       - name: Run Maestro Tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 31
-          target: aosp_atd # 最軽量のCI専用イメージに変更
-          arch: arm64-v8a
-          profile: pixel_6
-          disable-animations: true
-          emulator-boot-timeout: 900 # 15分まで待機
-          emulator-options: -no-window -no-snapshot -no-audio -no-boot-anim
-          script: |
-            # 修正③: システムが完全に立ち上がるまでループで待機
-            echo "Waiting for Android to boot..."
-            adb wait-for-device
-            until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; do
-              echo "Still booting..."
-              sleep 5
-            done
-            echo "Boot completed!"
+        shell: cmd # Force Windows Command Prompt
+        run: |
+          echo "Installing APK to running emulator..."
+          adb install -r android\app\build\outputs\apk\release\app-release.apk
 
-            adb install android/app/build/outputs/apk/release/app-release.apk
-            maestro test .maestro/
+          echo "Starting Maestro Tests..."
+          maestro test .maestro/
 
+      # 5. Clean up (Optional)
       - name: Tear down database
         run: pnpm migrate down --all
