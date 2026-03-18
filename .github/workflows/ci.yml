@@ -77,45 +77,82 @@ jobs:
         run: pnpm migrate down --all
 
   maestro-local:
-    runs-on: self-hosted
-    timeout-minutes: 30
+    runs-on: ubuntu-latest # Ubuntuに戻す
+    timeout-minutes: 60
     env:
       PGHOST: localhost
-      PGPORT: 5432
       PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
-      PGUSERNAME: ${{ secrets.PGPASSWORD }}
-      PGPASSWORD: ${{ secrets.PGPASSWORD }} # Set your actual local password here
+      PGUSERNAME: final_project_eu_nagisa_riegler_winter_2025
+      PGPASSWORD: final_project_eu_nagisa_riegler_winter_2025
 
     steps:
       - uses: actions/checkout@v4
 
-      # 1. Install Dependencies
+      # 1. PostgreSQLのセットアップ (Ubuntu用)
+      - name: Start preinstalled PostgreSQL
+        run: |
+          sudo systemctl start postgresql.service
+          pg_isready
+          sudo -u postgres psql --command="CREATE USER $PGUSERNAME PASSWORD '$PGPASSWORD'"
+          sudo -u postgres createdb --owner=$PGUSERNAME $PGDATABASE
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # 2. Database Migration (Local DB)
       - name: Run database migrations
         run: pnpm migrate up
 
-      # 3. Build Release APK (Windows uses .bat)
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      # 2. ビルド (Ubuntuは標準で gradlew に権限がないため付与)
+      - name: Make gradlew executable
+        run: chmod +x android/gradlew
+
       - name: Build Release APK
-        run: .\gradlew.bat assembleRelease
+        run: ./gradlew assembleRelease
         working-directory: android
         env:
           EXPO_PUBLIC_API_URL: 'http://10.0.2.2:3000'
           POSTGRES_URL: ''
           MAESTRO: 'true'
 
-      # 4. Install and Run Maestro
-      - name: Run Maestro Tests
-        shell: cmd # Force Windows Command Prompt
+      - name: Install Maestro CLI
         run: |
-          echo "Installing APK to running emulator..."
-          adb install -r android\app\build\outputs\apk\release\app-release.apk
+          curl -Ls "https://get.maestro.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-          echo "Starting Maestro Tests..."
-          maestro test .maestro/
+      # 3. KVMの有効化 (ご提示いただいたドキュメントの内容)
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
 
-      # 5. Clean up (Optional)
+      # 4. エミュレータ実行 (Ubuntu用に x86_64 を使用)
+      - name: Run Maestro Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 31
+          target: google_apis
+          arch: x86_64 # Ubuntu (Intel) 用に x86_64 を指定
+          profile: pixel_6
+          disable-animations: true
+          # 無料枠UbuntuではGPUが使えないため swiftshader_indirect を明示
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -no-audio -no-boot-anim
+          script: |
+            adb wait-for-device
+            adb install android/app/build/outputs/apk/release/app-release.apk
+            maestro test .maestro/
+
       - name: Tear down database
         run: pnpm migrate down --all
