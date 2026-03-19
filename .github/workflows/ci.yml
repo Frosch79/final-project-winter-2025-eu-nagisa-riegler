@@ -167,26 +167,19 @@ jobs:
       - name: Run Maestro tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 31
-          target: aosp_atd
+          api-level: 30
+          target: google_apis
           arch: x86_64
-          profile: pixel_6
-          ram-size: 2048M
-          disk-size: 2048M
-          emulator-options: -no-window -no-snapshot-save -gpu swiftshader_indirect -noaudio -no-boot-anim
+          profile: Nexus 6
           script: |
-            # パスを通す
             export PATH="$PATH:$HOME/.maestro/bin"
 
-            echo "Waiting for full boot..."
-            adb wait-for-device
-            # 構文エラー回避のため、1行にまとめる書き方に変更
-            until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; do sleep 5; done
+            adb devices
 
-            echo "Boot completed! Installing APK..."
+            echo "Installing APK..."
             adb install app-release.apk
 
-            echo "Starting Maestro tests..."
+            echo "Run Maestro..."
             maestro test .maestro/
 
       - name: Tear down database
