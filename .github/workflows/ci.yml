@@ -122,17 +122,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       # DBとMaestroだけ準備（ビルドはしないのでメモリが空いている）
-      - name: Enable KVM group perms
+      - name: Start PostgreSQL on macOS
         run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
+          brew install postgresql@17
+          # パスを通す (重要: これがないと psql や pg_isready が見つかりません)
+          echo "/opt/homebrew/opt/postgresql@17/bin" >> $GITHUB_PATH
+          export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
 
-      - name: Start PostgreSQL
-        run: |
-          sudo systemctl start postgresql.service
-          sudo -u postgres psql --command="CREATE USER $PGUSERNAME PASSWORD '$PGPASSWORD'"
-          sudo -u postgres createdb --owner=$PGUSERNAME $PGDATABASE
+          brew services start postgresql@17
+
+          # 起動を待つ
+          until pg_isready; do sleep 3; done
+
+          # ユーザーとDBの作成 (macOSのbrew版は標準ユーザーが実行権限を持ちます)
+          psql postgres -c "CREATE ROLE $PGUSERNAME WITH LOGIN PASSWORD '$PGPASSWORD' SUPERUSER;"
+          createdb -O $PGUSERNAME $PGDATABASE
       - uses: pnpm/action-setup@v4
       - run: pnpm install --frozen-lockfile
       - run: pnpm migrate up
@@ -156,6 +160,8 @@ jobs:
           target: google_apis
           arch: arm64-v8a # Use ARM64 for Mac
           profile: pixel_6
+          disable-animations: true # 追加
+          emulator-options: -no-window -no-snapshot -no-audio -no-boot-anim
           script: |
             export PATH="$PATH:$HOME/.maestro/bin"
             adb wait-for-device
