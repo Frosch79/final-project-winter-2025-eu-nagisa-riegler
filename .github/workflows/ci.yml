@@ -114,7 +114,6 @@ jobs:
   maestro-test:
     needs: build-apk
     runs-on: ubuntu-latest
-    timeout-minutes: 45
     env:
       PGHOST: localhost
       PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
@@ -124,24 +123,34 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. KVMの有効化（参考にされたコードの重要部分）
+      # 1. KVMの有効化
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      # 2. データベース起動（既存のものを維持）
+      # 2. PostgreSQLの起動と設定（これが必要です！）
       - name: Start PostgreSQL
         run: |
           sudo systemctl start postgresql.service
+          pg_isready
           sudo -u postgres psql --command="CREATE USER $PGUSERNAME PASSWORD '$PGPASSWORD'"
           sudo -u postgres createdb --owner=$PGUSERNAME $PGDATABASE
-      - uses: pnpm/action-setup@v4
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm migrate up
 
-      # 3. APKのダウンロード
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run database migrations
+        run: pnpm migrate up
+
+      # 3. 前のジョブでビルドしたAPKをダウンロード（これが必要です！）
       - name: Download APK
         uses: actions/download-artifact@v4
         with:
@@ -149,9 +158,9 @@ jobs:
           path: .
 
       # 4. Maestroのインストール
-      - name: Set up Maestro
+      - name: Install Maestro CLI
         run: |
-          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          curl -Ls "https://get.maestro.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
       # 5. エミュレータ実行とテスト
@@ -159,33 +168,23 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 31
-          target: aosp_atd # 無料枠のために最軽量イメージを使用
+          target: aosp_atd
           arch: x86_64
-          profile: pixel_6
-          # メモリ設定を現実的な値（無料枠の限界）に調整
-          ram-size: 2048M
-          disk-size: 2048M
-          emulator-options: -no-window -no-snapshot-save -gpu swiftshader_indirect -noaudio -no-boot-anim
+          force-avd-creation: true
+          emulator-boot-timeout: 1200
+          emulator-options: -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim
           script: |
-            # 完全に起動するまで待機
+            export PATH="$PATH:$HOME/.maestro/bin"
+
+            echo "Waiting for full boot..."
             adb wait-for-device
             until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; do
               sleep 5
             done
 
-            # APKをインストールしてテスト
+            # app-release.apk がダウンロードされているのでインストール可能
             adb install app-release.apk
             maestro test .maestro/
-
-      # 6. 失敗した時だけレポートと動画を保存
-      - name: Upload test report
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: Maestro_Test_Report
-          path: |
-            *.mp4
-            report.xml
 
       - name: Tear down database
         run: pnpm migrate down --all
