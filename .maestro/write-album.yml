@@ -26,3 +26,14 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     index: 2
 - tapOn:
     id: select-photo-text
+- tapOn: test-image1.jpg
+- tapOn: 'Photo Title'
+- inputText:
+    text: 'Test Photo Title'
+- tapOn: 'Description'
+- inputText:
+    text: 'Test Photo Decription'
+- tapOn: Location
+- inputText:
+    text: Test Photo Location
+- tapOn: Ok

@@ -172,7 +172,7 @@ jobs:
           arch: x86_64
           profile: Nexus 6
           script: |
-            # 1. Force install Maestro inside this specific shell to be 100% sure it exists
+            # 1. Force install Maestro to be 100% sure it exists
             curl -fsSL "https://get.maestro.mobile.dev" | bash
 
             # 2. Add to PATH for this session
@@ -181,11 +181,20 @@ jobs:
             # 3. Verify installation
             maestro --version
 
-            # 4. Standard boot check & install
+            # 4. Wait for emulator boot
             adb wait-for-device
+
+            # 5. Install the APK
             adb install app-release.apk
 
-            # 5. Run tests (use 'maestro' directly now that PATH is set)
+            # 6. Push test-assets into emulator internal storage
+            adb push util/test-assets /sdcard/Download/test-assets
+
+            # 7. Launch the app manually (optional, if Maestro needs app to be running)
+            adb shell monkey -p com.final_project_winter_2025_eu_nagisa_riegler -c android.intent.category.LAUNCHER 1
+            sleep 5
+
+            # 8. Run Maestro tests
             maestro test .maestro/register.yml
 
       - name: Tear down database
