@@ -1,8 +1,8 @@
-appId: com.final_project_winter_2025_eu_nagisa_riegler
+- launchApp:
+    appId: com.final_project_winter_2025_eu_nagisa_riegler
 ---
 # reload app
 - clearState
-- launchApp
 
   # --- Login page to register page ---
 - assertVisible: login

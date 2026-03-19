@@ -172,15 +172,11 @@ jobs:
           arch: x86_64
           profile: Nexus 6
           script: |
-            export PATH="$PATH:$HOME/.maestro/bin"
-
             adb devices
-
-            echo "Installing APK..."
             adb install app-release.apk
-
-            echo "Run Maestro..."
-            maestro test .maestro/
+            adb shell monkey -p com.final_project_winter_2025_eu_nagisa_riegler -c android.intent.category.LAUNCHER 1
+            sleep 5  # 数秒待つ
+            $HOME/.maestro/bin/maestro test .maestro/
 
       - name: Tear down database
         run: pnpm migrate down --all
