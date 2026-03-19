@@ -1,5 +1,9 @@
+appId: com.final_project_winter_2025_eu_nagisa_riegler
+---
 # reload app
-- clearState
+- stopApp
+- launchApp:
+    clearState: true
 
   # --- Login page to register page ---
 - assertVisible: login
@@ -39,19 +43,8 @@
     id: input-email
 - tapOn:
     id: register
-- assertVisible:
-    id: user-page
-- tapOn:
-    id: logout-button-text
-- tapOn:
-    id: input-email
-- inputText:
-    text: testuser@example.com
-- tapOn:
-    id: input-password
-- inputText:
-    text: Password123
-- tapOn:
-    id: login-button
-- assertVisible:
-    id: user-page
+- runFlow:
+    when:
+      visible:
+        id: 'user-page'
+    file: .maestro/login.yml

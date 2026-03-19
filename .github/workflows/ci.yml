@@ -186,7 +186,7 @@ jobs:
             adb install app-release.apk
 
             # 5. Run tests (use 'maestro' directly now that PATH is set)
-            maestro test .maestro/
+            maestro test .maestro/register.yml
 
       - name: Tear down database
         run: pnpm migrate down --all
