@@ -172,11 +172,21 @@ jobs:
           arch: x86_64
           profile: Nexus 6
           script: |
-            adb devices
+            # 1. Force install Maestro inside this specific shell to be 100% sure it exists
+            curl -fsSL "https://get.maestro.mobile.dev" | bash
+
+            # 2. Add to PATH for this session
+            export PATH="$PATH:$HOME/.maestro/bin"
+
+            # 3. Verify installation
+            maestro --version
+
+            # 4. Standard boot check & install
+            adb wait-for-device
             adb install app-release.apk
-            adb shell monkey -p com.final_project_winter_2025_eu_nagisa_riegler -c android.intent.category.LAUNCHER 1
-            sleep 5  # 数秒待つ
-            $HOME/.maestro/bin/maestro test .maestro/
+
+            # 5. Run tests (use 'maestro' directly now that PATH is set)
+            maestro test .maestro/
 
       - name: Tear down database
         run: pnpm migrate down --all

@@ -1,6 +1,3 @@
-- launchApp:
-    appId: com.final_project_winter_2025_eu_nagisa_riegler
----
 # reload app
 - clearState
 
@@ -8,50 +5,53 @@
 - assertVisible: login
 - tapOn:
     id: register-button
-
-  # --- input register information ---
 - tapOn:
     id: input-username
 - inputText:
     text: TestUser
-
 - tapOn:
     id: input-birthday
 - inputText:
     text: 1990-01-01
-
 - tapOn:
     id: input-country
 - inputText:
     text: Norway
-
 - tapOn:
     id: input-description
 - inputText:
     text: This is a test user.
-
 - tapOn:
     id: input-email
 - inputText:
     text: testuser@example.com
-
 - tapOn:
     id: input-password
 - inputText:
     text: Password123
 - tapOn:
     id: input-email
-
 - tapOn:
     id: input-confirm-password
 - inputText:
     text: Password123
 - tapOn:
     id: input-email
-
-  # --- tap register button ---
 - tapOn:
     id: register
-
-  # --- After register ---
-- assertVisible: TestUser
+- assertVisible:
+    id: user-page
+- tapOn:
+    id: logout-button-text
+- tapOn:
+    id: input-email
+- inputText:
+    text: testuser@example.com
+- tapOn:
+    id: input-password
+- inputText:
+    text: Password123
+- tapOn:
+    id: login-button
+- assertVisible:
+    id: user-page
