@@ -156,37 +156,38 @@ jobs:
       - name: Run Maestro Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 31
-          target: aosp_atd # 最軽量のテスト専用イメージ
-          arch: arm64-v8a
-          profile: pixel_6
+          api-level: 29
+          target: google_apis
+          arch: x86_64
+
           disable-animations: true
           # タイムアウトを最大（15分）に設定
           emulator-boot-timeout: 900
           emulator-options: -no-window -no-snapshot -no-audio -no-boot-anim
           script: |
-            # 1. Maestro のパスを確実に通す
-            export PATH="$PATH:$HOME/.maestro/bin"
+            ./gradlew connectedCheck
+             # 1. Maestro のパスを確実に通す
+             export PATH="$PATH:$HOME/.maestro/bin"
 
-            # 2. ADBサーバーを再起動して認識を強制する
-            adb kill-server
-            adb start-server
+             # 2. ADBサーバーを再起動して認識を強制する
+             adb kill-server
+             adb start-server
 
-            # 3. 接続を待つ（device not found 対策）
-            echo "Waiting for adb to see the device..."
-            adb wait-for-device
+             # 3. 接続を待つ（device not found 対策）
+             echo "Waiting for adb to see the device..."
+             adb wait-for-device
 
-            # 4. OSのブート完了を厳密にチェック（これが無いとインストールに失敗する）
-            echo "Checking system boot status..."
-            until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; do
-              echo "Still booting (checking sys.boot_completed)..."
-              sleep 5
-            done
-            echo "Emulator is fully booted!"
+             # 4. OSのブート完了を厳密にチェック（これが無いとインストールに失敗する）
+             echo "Checking system boot status..."
+             until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; do
+               echo "Still booting (checking sys.boot_completed)..."
+               sleep 5
+             done
+             echo "Emulator is fully booted!"
 
-            # 5. インストールとテスト
-            adb install app-release.apk
-            maestro test .maestro/
+             # 5. インストールとテスト
+             adb install app-release.apk
+             maestro test .maestro/
 
       - name: Tear down database
         run: pnpm migrate down --all
