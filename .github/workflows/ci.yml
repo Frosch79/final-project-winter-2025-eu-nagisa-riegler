@@ -113,7 +113,7 @@ jobs:
   # 2. テスト専用ジョブ（ここが本番）
   maestro-test:
     needs: build-apk # ビルドが終わるまで待つ
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     env:
       PGHOST: localhost
       PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
@@ -153,15 +153,12 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 31
-          target: aosp_atd
-          arch: x86_64
-          disable-animations: true
-          emulator-boot-timeout: 1200
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -no-audio -no-boot-anim
+          target: google_apis
+          arch: arm64-v8a # Use ARM64 for Mac
+          profile: pixel_6
           script: |
             export PATH="$PATH:$HOME/.maestro/bin"
             adb wait-for-device
-            # ダウンロードしたAPKを直接指定
             adb install app-release.apk
             maestro test .maestro/
 
