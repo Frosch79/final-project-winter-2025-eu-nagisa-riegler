@@ -143,15 +143,30 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 31
-          target: google_apis
-          arch: x86_64 # Ubuntu (Intel) 用に x86_64 を指定
+          # 無料枠対策①: 最軽量の「aosp_atd」を使用。
+          # Google Play系が入っていないため、ダウンロードと起動が劇的に速いです。
+          target: aosp_atd
+          arch: x86_64
           profile: pixel_6
           disable-animations: true
-          # 無料枠UbuntuではGPUが使えないため swiftshader_indirect を明示
+          # 無料枠対策②: タイムアウトを 20分(1200秒) に延長。
+          # サーバーが混んでいる時間帯でも、これで確実に起動を待ちきれます。
+          emulator-boot-timeout: 1200
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -no-audio -no-boot-anim
           script: |
+            # 無料枠対策③: PATHの再設定と、OSの完全起動を「手動」でチェック。
             export PATH="$PATH:$HOME/.maestro/bin"
+
+            echo "Waiting for emulator to boot fully..."
             adb wait-for-device
+            # sys.boot_completed が 1 になるまで最大3分ループで待機
+            until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; do
+              echo "Still booting..."
+              sleep 5
+            done
+            echo "Emulator is ready!"
+
+            # インストールとテスト
             adb install android/app/build/outputs/apk/release/app-release.apk
             maestro test .maestro/
 
