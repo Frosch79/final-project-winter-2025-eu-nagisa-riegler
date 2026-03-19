@@ -157,14 +157,20 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 31
-          target: google_apis
-          arch: arm64-v8a # Use ARM64 for Mac
+          # Use 'aosp_atd' - it is a "headless" image with no Google Play,
+          # making it much faster to boot on CI.
+          target: aosp_atd
+          arch: arm64-v8a
           profile: pixel_6
-          disable-animations: true # 追加
+          disable-animations: true
+          # Increase timeout to 15 minutes (900 seconds)
+          emulator-boot-timeout: 900
           emulator-options: -no-window -no-snapshot -no-audio -no-boot-anim
           script: |
             export PATH="$PATH:$HOME/.maestro/bin"
+            # Ensure ADB is connected
             adb wait-for-device
+            # Install and run
             adb install app-release.apk
             maestro test .maestro/
 
