@@ -112,82 +112,80 @@ jobs:
 
   # 2. テスト専用ジョブ（ここが本番）
   maestro-test:
-    needs: build-apk # ビルドが終わるまで待つ
-    runs-on: macos-latest
+    needs: build-apk
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
     env:
       PGHOST: localhost
       PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
       PGUSERNAME: final_project_eu_nagisa_riegler_winter_2025
       PGPASSWORD: final_project_eu_nagisa_riegler_winter_2025
+
     steps:
       - uses: actions/checkout@v4
-      # DBとMaestroだけ準備（ビルドはしないのでメモリが空いている）
-      - name: Start PostgreSQL on macOS
+
+      # 1. KVMの有効化（参考にされたコードの重要部分）
+      - name: Enable KVM
         run: |
-          brew install postgresql@17
-          # パスを通す (重要: これがないと psql や pg_isready が見つかりません)
-          echo "/opt/homebrew/opt/postgresql@17/bin" >> $GITHUB_PATH
-          export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
 
-          brew services start postgresql@17
-
-          # 起動を待つ
-          until pg_isready; do sleep 3; done
-
-          # ユーザーとDBの作成 (macOSのbrew版は標準ユーザーが実行権限を持ちます)
-          psql postgres -c "CREATE ROLE $PGUSERNAME WITH LOGIN PASSWORD '$PGPASSWORD' SUPERUSER;"
-          createdb -O $PGUSERNAME $PGDATABASE
+      # 2. データベース起動（既存のものを維持）
+      - name: Start PostgreSQL
+        run: |
+          sudo systemctl start postgresql.service
+          sudo -u postgres psql --command="CREATE USER $PGUSERNAME PASSWORD '$PGPASSWORD'"
+          sudo -u postgres createdb --owner=$PGUSERNAME $PGDATABASE
       - uses: pnpm/action-setup@v4
       - run: pnpm install --frozen-lockfile
       - run: pnpm migrate up
 
-      - name: Install Maestro CLI
-        run: |
-          curl -Ls "https://get.maestro.dev" | bash
-          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
-
-      # 保存されたAPKをダウンロード
+      # 3. APKのダウンロード
       - name: Download APK
         uses: actions/download-artifact@v4
         with:
           name: app-release-apk
           path: .
 
-      - name: Run Maestro Tests
+      # 4. Maestroのインストール
+      - name: Set up Maestro
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      # 5. エミュレータ実行とテスト
+      - name: Run Maestro tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 29
-          target: google_apis
+          api-level: 31
+          target: aosp_atd # 無料枠のために最軽量イメージを使用
           arch: x86_64
-
-          disable-animations: true
-          # タイムアウトを最大（15分）に設定
-          emulator-boot-timeout: 900
-          emulator-options: -no-window -no-snapshot -no-audio -no-boot-anim
+          profile: pixel_6
+          # メモリ設定を現実的な値（無料枠の限界）に調整
+          ram-size: 2048M
+          disk-size: 2048M
+          emulator-options: -no-window -no-snapshot-save -gpu swiftshader_indirect -noaudio -no-boot-anim
           script: |
-            ./gradlew connectedCheck
-             # 1. Maestro のパスを確実に通す
-             export PATH="$PATH:$HOME/.maestro/bin"
+            # 完全に起動するまで待機
+            adb wait-for-device
+            until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; do
+              sleep 5
+            done
 
-             # 2. ADBサーバーを再起動して認識を強制する
-             adb kill-server
-             adb start-server
+            # APKをインストールしてテスト
+            adb install app-release.apk
+            maestro test .maestro/
 
-             # 3. 接続を待つ（device not found 対策）
-             echo "Waiting for adb to see the device..."
-             adb wait-for-device
-
-             # 4. OSのブート完了を厳密にチェック（これが無いとインストールに失敗する）
-             echo "Checking system boot status..."
-             until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; do
-               echo "Still booting (checking sys.boot_completed)..."
-               sleep 5
-             done
-             echo "Emulator is fully booted!"
-
-             # 5. インストールとテスト
-             adb install app-release.apk
-             maestro test .maestro/
+      # 6. 失敗した時だけレポートと動画を保存
+      - name: Upload test report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Maestro_Test_Report
+          path: |
+            *.mp4
+            report.xml
 
       - name: Tear down database
         run: pnpm migrate down --all
