@@ -75,7 +75,6 @@ jobs:
 
       - name: Tear down database
         run: pnpm migrate down --all
-
   build-apk:
     runs-on: ubuntu-latest
     outputs:
@@ -94,11 +93,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: 'gradle'
+      - name: Make gradlew executable
+        run: chmod +x android/gradlew
+
       - name: Build Release APK
-        run: |
-          chmod +x android/gradlew
-          ./gradlew assembleRelease
+        run: ./gradlew assembleRelease
         working-directory: android
+
         env:
           EXPO_PUBLIC_API_URL: 'http://10.0.2.2:3000'
           MAESTRO: 'true'
