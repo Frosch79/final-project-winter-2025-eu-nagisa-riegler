@@ -150,6 +150,7 @@ jobs:
           # 無料枠UbuntuではGPUが使えないため swiftshader_indirect を明示
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -no-audio -no-boot-anim
           script: |
+            export PATH="$PATH:$HOME/.maestro/bin"
             adb wait-for-device
             adb install android/app/build/outputs/apk/release/app-release.apk
             maestro test .maestro/
