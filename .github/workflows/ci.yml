@@ -75,8 +75,6 @@ jobs:
       - name: Run Jest tests
         run: pnpm test:ci
 
-      - name: Tear down database
-        run: pnpm migrate down --all
   build-apk:
     runs-on: ubuntu-latest
     outputs:
