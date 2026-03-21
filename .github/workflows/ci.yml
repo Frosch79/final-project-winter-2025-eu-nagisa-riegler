@@ -195,7 +195,7 @@ jobs:
             sleep 5
 
             # 8. Run Maestro tests
-            maestro test .maestro/register.yml
+            maestro test .maestro/
       - name: Upload Maestro Artifacts
         if: always()
         uses: actions/upload-artifact@v4

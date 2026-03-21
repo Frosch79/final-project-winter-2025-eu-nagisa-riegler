@@ -54,8 +54,21 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 
 - tapOn:
     id: register
-- runFlow:
-    when:
-      visible:
-        id: 'user-page'
-    file: ./login.yml
+
+- tapOn:
+    id: logout-button-text
+- tapOn:
+    id: input-email
+- inputText:
+    text: testuser@example.com
+- hideKeyboard
+
+- tapOn:
+    id: input-password
+- inputText:
+    text: Password123
+- tapOn:
+    id: login-button
+- hideKeyboard
+- assertVisible:
+    id: user-page
