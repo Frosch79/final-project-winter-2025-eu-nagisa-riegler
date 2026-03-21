@@ -36,8 +36,7 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     id: input-password
 - inputText:
     text: Password123
-- tapOn:
-    id: input-email
+
 - scrollUntilVisible:
     element:
       id: input-confirm-password
@@ -45,8 +44,7 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     id: input-confirm-password
 - inputText:
     text: Password123
-- tapOn:
-    id: input-email
+
 - tapOn:
     id: register
 - runFlow:
