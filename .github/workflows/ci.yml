@@ -159,7 +159,7 @@ jobs:
           arch: x86_64
           profile: Nexus 6
           script: |
-            # 1. Force install Maestro to be 100% sure it exists
+            # 1. Force install Maestro to be 100% sure it exists.
             curl -fsSL "https://get.maestro.mobile.dev" | bash
             # 2. Add to PATH for this session
             export PATH="$PATH:$HOME/.maestro/bin"
