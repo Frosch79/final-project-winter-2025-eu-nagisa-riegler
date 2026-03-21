@@ -29,17 +29,10 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     id: input-email
 - inputText:
     text: testuser@example.com
-- scrollUntilVisible:
-    element:
-      id: input-password
 - tapOn:
     id: input-password
 - inputText:
     text: Password123
-
-- scrollUntilVisible:
-    element:
-      id: input-confirm-password
 - tapOn:
     id: input-confirm-password
 - inputText:
