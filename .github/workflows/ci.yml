@@ -20,15 +20,12 @@ jobs:
         run: |
           sudo systemctl start postgresql.service
           pg_isready
-
       - name: Create database user
         run: |
           sudo -u postgres psql --command="CREATE USER $PGUSERNAME PASSWORD '$PGPASSWORD'" --command="\du"
-
       - name: Create database
         run: |
           sudo -u postgres createdb --owner=$PGUSERNAME $PGDATABASE
-
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
 
@@ -45,7 +42,6 @@ jobs:
         run: |
           pnpm migrate down --all
           pnpm migrate up
-
       - name: Start Metro for typedRoutes TS
         run: |
           echo "Starting Expo project..."
@@ -65,7 +61,6 @@ jobs:
             exit 1
           fi
           kill $expo_pid
-
       - name: Check TypeScript types
         run: pnpm tsc
 
@@ -127,14 +122,12 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-
       - name: Start PostgreSQL
         run: |
           sudo systemctl start postgresql.service
           pg_isready
           sudo -u postgres psql --command="CREATE USER $PGUSERNAME PASSWORD '$PGPASSWORD'"
           sudo -u postgres createdb --owner=$PGUSERNAME $PGDATABASE
-
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -148,7 +141,6 @@ jobs:
         run: |
           pnpm migrate down --all
           pnpm migrate up
-
       - name: Download APK
         uses: actions/download-artifact@v4
         with:
@@ -159,7 +151,6 @@ jobs:
         run: |
           curl -Ls "https://get.maestro.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
-
       - name: Run Maestro tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -168,28 +159,21 @@ jobs:
           arch: x86_64
           profile: Nexus 6
           script: |
-
-
-
+            # 1. Force install Maestro to be 100% sure it exists
+            curl -fsSL "https://get.maestro.mobile.dev" | bash
             # 2. Add to PATH for this session
             export PATH="$PATH:$HOME/.maestro/bin"
-
             # 3. Verify installation
             maestro --version
-
             # 4. Wait for emulator boot
             adb wait-for-device
-
             # 5. Install the APK
             adb install app-release.apk
-
             # 6. Push test-assets into emulator internal storage
             adb push util/test-assets /sdcard/Download/test-assets
-
             # 7. Launch the app manually (optional, if Maestro needs app to be running)
             adb shell monkey -p com.final_project_winter_2025_eu_nagisa_riegler -c android.intent.category.LAUNCHER 1
             sleep 5
-
             # 8. Run Maestro tests
             maestro test .maestro/
       - name: Upload Maestro Artifacts
@@ -198,3 +182,6 @@ jobs:
         with:
           name: maestro-artifacts
           path: ~/.maestro/tests
+      - name: Tear down database
+        if: always()
+        run: pnpm migrate down --all
