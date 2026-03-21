@@ -101,16 +101,14 @@ jobs:
         working-directory: android
 
         env:
-          EXPO_PUBLIC_API_URL: 'http://10.0.2.2:3000'
           MAESTRO: 'true'
-      # ビルドしたAPKを保存
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
           path: android/app/build/outputs/apk/release/app-release.apk
 
-  # 2. テスト専用ジョブ（ここが本番）
   maestro-test:
     needs: build-apk
     runs-on: ubuntu-latest
@@ -123,14 +121,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. KVMの有効化
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      # 2. PostgreSQLの起動と設定（これが必要です！）
       - name: Start PostgreSQL
         run: |
           sudo systemctl start postgresql.service
