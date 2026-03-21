@@ -155,10 +155,10 @@ jobs:
           name: app-release-apk
           path: .
 
-      #- name: Install Maestro CLI
-      # run: |
-      #  curl -Ls "https://get.maestro.dev" | bash
-      # echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+      - name: Install Maestro CLI
+        run: |
+          curl -Ls "https://get.maestro.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
       - name: Run Maestro tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -168,10 +168,8 @@ jobs:
           arch: x86_64
           profile: Nexus 6
           script: |
-            # 1. Force install Maestro to be 100% sure it exists
 
-            curl -Ls "https://get.maestro.dev" | bash
-            echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
 
             # 2. Add to PATH for this session
             export PATH="$PATH:$HOME/.maestro/bin"
