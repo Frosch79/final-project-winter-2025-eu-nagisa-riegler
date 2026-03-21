@@ -6,7 +6,7 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     clearState: true
 
   # --- Login page to register page ---
-- assertVisible: login
+- assertVisible: PixVault
 - tapOn:
     id: register-button
 - tapOn:
@@ -29,12 +29,18 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     id: input-email
 - inputText:
     text: testuser@example.com
+- scrollUntilVisible:
+    element:
+      id: input-password
 - tapOn:
     id: input-password
 - inputText:
     text: Password123
 - tapOn:
     id: input-email
+- scrollUntilVisible:
+    element:
+      id: input-confirm-password
 - tapOn:
     id: input-confirm-password
 - inputText:
