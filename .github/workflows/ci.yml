@@ -41,8 +41,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run database migrations
-        run: pnpm migrate up
+      - name: Reset DB
+        run: |
+          pnpm migrate down --all
+          pnpm migrate up
 
       - name: Start Metro for typedRoutes TS
         run: |
@@ -101,6 +103,7 @@ jobs:
         working-directory: android
 
         env:
+          EXPO_PUBLIC_API_URL: 'http://10.0.2.2:3000'
           MAESTRO: 'true'
 
       - name: Upload APK
@@ -143,23 +146,22 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run database migrations
-        run: pnpm migrate up
+      - name: Reset DB
+        run: |
+          pnpm migrate down --all
+          pnpm migrate up
 
-      # 3. 前のジョブでビルドしたAPKをダウンロード（これが必要です！）
       - name: Download APK
         uses: actions/download-artifact@v4
         with:
           name: app-release-apk
           path: .
 
-      # 4. Maestroのインストール
       - name: Install Maestro CLI
         run: |
           curl -Ls "https://get.maestro.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      # 5. エミュレータ実行とテスト
       - name: Run Maestro tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -198,6 +200,3 @@ jobs:
         with:
           name: maestro-artifacts
           path: ~/.maestro/tests
-
-      - name: Tear down database
-        run: pnpm migrate down --all
