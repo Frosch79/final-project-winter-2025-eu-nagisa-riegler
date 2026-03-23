@@ -167,6 +167,7 @@ jobs:
             maestro --version
             # 4. Wait for emulator boot
             adb wait-for-device
+            adb reverse tcp:3000 tcp:3000
             # 5. Install the APK
             adb install app-release.apk
             # 6. Push test-assets into emulator internal storage
