@@ -96,7 +96,7 @@ jobs:
         working-directory: android
 
         env:
-          EXPO_PUBLIC_API_URL: 'http://10.0.2.2:3000'
+          # EXPO_PUBLIC_API_URL: 'http://10.0.2.2:3000'
           MAESTRO: 'true'
 
       - name: Upload APK
@@ -108,11 +108,15 @@ jobs:
   maestro-test:
     needs: build-apk
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       PGHOST: localhost
       PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
       PGUSERNAME: final_project_eu_nagisa_riegler_winter_2025
       PGPASSWORD: final_project_eu_nagisa_riegler_winter_2025
+      CLOUDINARY_API_SECRET: dummy
+      CLOUDINARY_CLOUD_NAME: dummy
+      CLOUDINARY_API_KEY: dummy
 
     steps:
       - uses: actions/checkout@v4
