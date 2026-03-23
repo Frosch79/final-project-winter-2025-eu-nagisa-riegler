@@ -146,18 +146,17 @@ jobs:
 
       - name: Start API Server
         run: |
-          pnpm run server &
-
-           echo "Waiting for API to respond on localhost:3000..."
+          pnpm start &
+           echo "Waiting for Expo Server on localhost:8081..."
            for i in {1..30}; do
-           # 3000番ポートが反応するかチェック
-           if curl -s http://localhost:3000 > /dev/null; then
-             echo "API is UP!"
+
+           if curl -s http://localhost:8081 > /dev/null; then
+             echo "Expo Server is UP!"
              exit 0
            fi
            sleep 2
            done
-           echo "API failed to start on port 3000"
+           echo "Expo Server failed to start"
            exit 1
 
       - name: Download APK
@@ -186,7 +185,7 @@ jobs:
             maestro --version
             # 4. Wait for emulator boot
             adb wait-for-device
-            adb reverse tcp:3000 tcp:3000
+            adb reverse tcp:8081 tcp:8081
             # 5. Install the APK
             adb install app-release.apk
             # 6. Push test-assets into emulator internal storage
