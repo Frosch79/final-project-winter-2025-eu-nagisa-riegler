@@ -146,17 +146,19 @@ jobs:
 
       - name: Start API Server
         run: |
-          pnpm start &
-          echo "Waiting for API to respond on localhost:3000..."
-          for i in {1..30}; do
-            if curl -s http://localhost:3000 > /dev/null; then
-              echo "API is UP!"
-              exit 0
-            fi
-            sleep 2
-          done
-          echo "API failed to start"
-          exit 1
+          pnpm run server &
+
+           echo "Waiting for API to respond on localhost:3000..."
+           for i in {1..30}; do
+           # 3000番ポートが反応するかチェック
+           if curl -s http://localhost:3000 > /dev/null; then
+             echo "API is UP!"
+             exit 0
+           fi
+           sleep 2
+           done
+           echo "API failed to start on port 3000"
+           exit 1
 
       - name: Download APK
         uses: actions/download-artifact@v4
