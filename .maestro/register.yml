@@ -37,7 +37,7 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - tapOn:
     id: input-email
 - inputText:
-    text: test6@ex.com
+    text: test7@ex.com
 - hideKeyboard
 
 - tapOn:
