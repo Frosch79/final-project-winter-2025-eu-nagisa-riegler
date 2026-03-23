@@ -142,9 +142,22 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Reset DB
+        run: pnpm migrate up
+
+      - name: Start API Server
         run: |
-          pnpm migrate down --all
-          pnpm migrate up
+          pnpm start &
+          echo "Waiting for API to respond on localhost:3000..."
+          for i in {1..30}; do
+            if curl -s http://localhost:3000 > /dev/null; then
+              echo "API is UP!"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "API failed to start"
+          exit 1
+
       - name: Download APK
         uses: actions/download-artifact@v4
         with:
