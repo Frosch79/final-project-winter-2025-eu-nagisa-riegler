@@ -80,6 +80,11 @@ jobs:
         with:
           name: app-release-apk
           path: android/app/build/outputs/apk/release/app-release.apk
+      - name: Debug APK API URL
+        run: |
+          unzip android/app/build/outputs/apk/release/app-release.apk -d apk_contents
+          echo "===== SEARCHING FOR URL ====="
+          grep -r "http" apk_contents || true
 
   maestro-test:
     needs: build-apk
