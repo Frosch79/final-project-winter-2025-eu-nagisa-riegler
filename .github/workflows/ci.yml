@@ -101,7 +101,7 @@ jobs:
         working-directory: android
 
         env:
-          EXPO_PUBLIC_API_URL: 'http://10.0.2.2:8081'
+          #EXPO_PUBLIC_API_URL: 'http://10.0.2.2:8081'
           MAESTRO: 'true'
 
       - name: Upload APK
@@ -123,7 +123,6 @@ jobs:
       CLOUDINARY_API_SECRET: dummy
       CLOUDINARY_CLOUD_NAME: dummy
       CLOUDINARY_API_KEY: dummy
-      DATABASE_URL: postgres://localhost:5432/final_project_eu_nagisa_riegler_winter_2025
 
     steps:
       - uses: actions/checkout@v4
@@ -177,7 +176,7 @@ jobs:
           pnpm start > expo.log 2>&1 &
           echo "Waiting for Expo Server on localhost:8081..."
           for i in {1..30}; do
-            if curl -s http://localhost:8081 > /dev/null; then
+            if curl -s http://10.0.2.2:8081 > /dev/null; then
               echo "Expo Server is UP!"
               # サーバーが認識している環境変数を念のため直接叩いて確認（もしdebug用APIがあれば）
               exit 0
