@@ -96,7 +96,7 @@ jobs:
       CLOUDINARY_API_KEY: dummy
 
       ANDROID_EMULATOR: true
-      EXPO_PUBLIC_API_URL: http://10.0.2.2:8081
+      EXPO_PUBLIC_API_URL: http://localhost:8081
 
     steps:
       - uses: actions/checkout@v4
@@ -129,7 +129,9 @@ jobs:
         run: pnpm build
 
       - name: Reset DB
-        run: pnpm migrate up
+        run: |
+          pnpm migrate down --all
+          pnpm migrate up
 
       - name: Start API Server
         run: |

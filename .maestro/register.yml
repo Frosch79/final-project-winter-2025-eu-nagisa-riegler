@@ -56,48 +56,111 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     id: register
 
 - tapOn:
-    id: logout-button-text
-
-- tapOn:
-    id: input-email
+    id: 'input-email'
 - inputText:
-    text: testuser@example.com
-- hideKeyboard
-
+    text: 'testuser@example.com'
+- 'hideKeyboard'
 - tapOn:
-    id: input-password
+    id: 'input-password'
 - inputText:
-    text: Password123
+    text: 'Password123'
+- 'hideKeyboard'
 - tapOn:
-    id: login-button
-- hideKeyboard
+    id: 'login-button'
 - assertVisible:
-    id: user-page
+    id: 'user-page'
 - tapOn:
-    id: follower-text
-- assertVisible: Follower
+    id: 'follower-text'
+- assertVisible: 'Follower'
 - tapOn:
-    id: close-button
+    id: 'close-button'
 - tapOn:
-    id: followed
-- assertVisible: Followed
+    id: 'followed'
+- assertVisible: 'Followed'
 - tapOn:
-    id: close-button
+    id: 'close-button'
 - tapOn:
-    id: edit
-- assertVisible: Edit Account
+    id: 'edit'
+- assertVisible: 'Edit Account'
 - tapOn:
-    id: edit-name
+    id: 'edit-name'
+- 'eraseText'
 - inputText:
-    text: EditUser
+    text: 'EditUser'
+- 'hideKeyboard'
+- tapOn:
+    id: 'edit-country'
+- 'eraseText'
+- inputText:
+    text: 'Austria'
+- 'hideKeyboard'
+- tapOn:
+    id: 'edit-description'
+- 'eraseText'
+- inputText:
+    text: 'This is edited user.'
+- 'hideKeyboard'
+- tapOn: 'EDIT'
+- assertVisible: 'EditUser'
+- tapOn: 'This is a test user.This is edited user.'
+- assertVisible:
+    id: 'country'
+- tapOn:
+    id: 'write-album'
+- assertVisible: 'Create Album'
+- tapOn:
+    id: 'input-album-title'
+- inputText:
+    text: 'Album title'
 - hideKeyboard
 - tapOn:
-    id: edit-country
+    id: 'input-description'
 - inputText:
-    text: Austria
+    text: 'Album description'
 - hideKeyboard
 - tapOn:
-    id: edit-description
+    id: 'input-location'
 - inputText:
-    text: This is edited user.
+    text: 'Album location'
 - hideKeyboard
+- tapOn:
+    id: 'button'
+    index: 1
+- tapOn: 'Ok'
+- assertVisible: 'Album title'
+- assertVisible: 'Album description'
+- tapOn: 'Album location'
+- tapOn:
+    id: 'icon-button'
+    index: 1
+- assertVisible: 'Edit Album'
+- tapOn:
+    id: 'edit-album-title'
+- 'eraseText'
+- inputText:
+    text: 'Edit title'
+- hideKeyboard
+- tapOn:
+    id: 'edit-album-description'
+- 'eraseText'
+- inputText:
+    text: 'Edit description'
+- hideKeyboard
+- tapOn:
+    id: 'edit-album-location'
+- 'eraseText'
+- inputText:
+    text: 'Edit location'
+- hideKeyboard
+- tapOn:
+    id: 'button'
+    index: 1
+- tapOn: 'EDIT'
+- assertVisible: 'Edit title'
+- assertVisible: 'Edit description'
+- assertVisible: 'Edit location'
+- tapOn:
+    id: 'icon-button'
+    index: 2
+- tapOn:
+    id: 'select-photo'
