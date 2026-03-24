@@ -16,6 +16,9 @@ jobs:
       CLOUDINARY_CLOUD_NAME: dummy
       CLOUDINARY_API_KEY: dummy
 
+      ANDROID_EMULATOR: false
+      EXPO_PUBLIC_API_URL: http://localhost:8081
+
     steps:
       - name: Start preinstalled PostgreSQL
         run: |
@@ -29,49 +32,21 @@ jobs:
           sudo -u postgres createdb --owner=$PGUSERNAME $PGDATABASE
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
           cache: 'pnpm'
-
       - name: Install dependencies
         run: pnpm install
-
       - name: Reset DB
         run: |
           pnpm migrate down --all
           pnpm migrate up
-
-      - name: Debug DB URL
-        run: echo $DATABASE_URL
-
-      - name: Start Metro for typedRoutes TS
-        run: |
-          echo "Starting Expo project..."
-          pnpm expo start > expo.log 2>&1 &
-          expo_pid=$!
-          for i in {1..10}; do
-            if grep -q "Logs for your project will appear below." expo.log; then
-              echo "Expo server started successfully"
-              break
-            fi
-            echo "Waiting for Expo server to start... ($i/10)"
-            sleep 1
-          done
-          if ! grep -q "Logs for your project will appear below." expo.log; then
-            echo "Expo server failed to start in time"
-            kill $expo_pid
-            exit 1
-          fi
-          kill $expo_pid
       - name: Check TypeScript types
         run: pnpm tsc
-
       - name: Lint with ESLint
         run: pnpm eslint . --max-warnings 0
-
       - name: Run Jest tests
         run: pnpm test:ci
 
@@ -95,15 +70,11 @@ jobs:
           cache: 'gradle'
       - name: Make gradlew executable
         run: chmod +x android/gradlew
-
       - name: Build Release APK
         run: ./gradlew assembleRelease
         working-directory: android
-
         env:
-          #EXPO_PUBLIC_API_URL: 'http://10.0.2.2:8081'
           MAESTRO: 'true'
-
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
@@ -124,6 +95,9 @@ jobs:
       CLOUDINARY_CLOUD_NAME: dummy
       CLOUDINARY_API_KEY: dummy
 
+      ANDROID_EMULATOR: true
+      EXPO_PUBLIC_API_URL: http://10.0.2.2:8081
+
     steps:
       - uses: actions/checkout@v4
 
@@ -132,18 +106,19 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+
       - name: Start PostgreSQL
         run: |
           sudo systemctl start postgresql.service
           pg_isready
           sudo -u postgres psql --command="CREATE USER $PGUSERNAME PASSWORD '$PGPASSWORD'"
           sudo -u postgres createdb --owner=$PGUSERNAME $PGDATABASE
+
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
           cache: 'pnpm'
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -156,35 +131,19 @@ jobs:
       - name: Reset DB
         run: pnpm migrate up
 
-      # - name: Start API Server
-      # run: |
-      #   pnpm start &
-      #    echo "Waiting for Expo Server on localhost:8081..."
-      #    for i in {1..30}; do
-
-      #     if curl -s http://localhost:8081 > /dev/null; then
-      #   echo "Expo Server is UP!"
-      #   exit 0
-      # fi
-      # sleep 2
-      # done
-      # echo "Expo Server failed to start"
-      # exit 1
       - name: Start API Server
         run: |
-          # ログを expo.log に出力するように変更
           pnpm start > expo.log 2>&1 &
-          echo "Waiting for Expo Server on localhost:8081..."
+          echo "Waiting for Expo Server on $EXPO_PUBLIC_API_URL..."
           for i in {1..30}; do
-            if curl -s http://10.0.2.2:8081 > /dev/null; then
+            if curl -s $EXPO_PUBLIC_API_URL > /dev/null; then
               echo "Expo Server is UP!"
-              # サーバーが認識している環境変数を念のため直接叩いて確認（もしdebug用APIがあれば）
               exit 0
             fi
             sleep 2
           done
           echo "Expo Server failed to start"
-          cat expo.log # 失敗した場合はログを表示
+          cat expo.log
           exit 1
 
       - name: Download APK
@@ -197,6 +156,7 @@ jobs:
         run: |
           curl -Ls "https://get.maestro.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
       - name: Run Maestro tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -205,24 +165,16 @@ jobs:
           arch: x86_64
           profile: Nexus 6
           script: |
-            # 1. Force install Maestro to be 100% sure it exists.
-            curl -fsSL "https://get.maestro.mobile.dev" | bash
-            # 2. Add to PATH for this session
             export PATH="$PATH:$HOME/.maestro/bin"
-            # 3. Verify installation
             maestro --version
-            # 4. Wait for emulator boot
             adb wait-for-device
             adb reverse tcp:8081 tcp:8081
-            # 5. Install the APK
             adb install app-release.apk
-            # 6. Push test-assets into emulator internal storage
             adb push util/test-assets /sdcard/Download/test-assets
-            # 7. Launch the app manually (optional, if Maestro needs app to be running)
             adb shell monkey -p com.final_project_winter_2025_eu_nagisa_riegler -c android.intent.category.LAUNCHER 1
             sleep 5
-            # 8. Run Maestro tests
             maestro test .maestro/
+
       - name: Upload Maestro Artifacts
         if: always()
         uses: actions/upload-artifact@v4
