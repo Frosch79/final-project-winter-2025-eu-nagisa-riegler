@@ -95,7 +95,7 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     id: 'edit-country'
 - 'eraseText'
 - inputText:
-    text: 'Austria'
+    text: 'Japan'
 - 'hideKeyboard'
 - tapOn:
     id: 'edit-description'
