@@ -57,7 +57,7 @@ export async function uploadImage(uri: string): Promise<string> {
       body: formData,
     },
   );
-
+  console.log(await uploadRes);
   const data: CloudinaryUploadResponse = await uploadRes.json();
 
   return data.secure_url;

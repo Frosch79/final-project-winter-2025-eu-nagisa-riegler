@@ -165,6 +165,7 @@ jobs:
           arch: x86_64
           profile: Nexus 6
           script: |
+            curl -fsSL "https://get.maestro.mobile.dev" | bash
             export PATH="$PATH:$HOME/.maestro/bin"
             maestro --version
             adb wait-for-device
