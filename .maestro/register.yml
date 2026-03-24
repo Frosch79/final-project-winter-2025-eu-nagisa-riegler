@@ -54,7 +54,10 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 
 - tapOn:
     id: register
+- assertVisible:
+    id: 'avatar'
 
+- tapOn: 'logout'
 - tapOn:
     id: 'input-email'
 - inputText:
