@@ -10,7 +10,7 @@ export const postgresConfig = {
 };
 
 export function setEnvironmentVariables() {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production' || process.env.CI) {
     // Set standard environment variables for Postgres.js from
     // Vercel environment variables
     if (process.env.POSTGRES_URL) {
@@ -18,6 +18,7 @@ export function setEnvironmentVariables() {
       process.env.PGDATABASE = process.env.POSTGRES_DATABASE;
       process.env.PGUSERNAME = process.env.POSTGRES_USER;
       process.env.PGPASSWORD = process.env.POSTGRES_PASSWORD;
+      process.env.EXPOPUBLICAPIURL = process.env.EXPO_PUBLIC_API_URL;
     }
     return;
   }
