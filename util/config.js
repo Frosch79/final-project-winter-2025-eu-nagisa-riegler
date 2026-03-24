@@ -18,7 +18,6 @@ export function setEnvironmentVariables() {
       process.env.PGDATABASE = process.env.POSTGRES_DATABASE;
       process.env.PGUSERNAME = process.env.POSTGRES_USER;
       process.env.PGPASSWORD = process.env.POSTGRES_PASSWORD;
-      process.env.EXPOPUBLICAPIURL = process.env.EXPO_PUBLIC_API_URL;
     }
     return;
   }
