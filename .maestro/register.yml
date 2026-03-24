@@ -73,3 +73,31 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - hideKeyboard
 - assertVisible:
     id: user-page
+- tapOn:
+    id: follower-text
+- assertVisible: Follower
+- tapOn:
+    id: close-button
+- tapOn:
+    id: followed
+- assertVisible: Followed
+- tapOn:
+    id: close-button
+- tapOn:
+    id: edit
+- assertVisible: Edit Account
+- tapOn:
+    id: edit-name
+- inputText:
+    text: EditUser
+- hideKeyboard
+- tapOn:
+    id: edit-country
+- inputText:
+    text: Austria
+- hideKeyboard
+- tapOn:
+    id: edit-description
+- inputText:
+    text: This is edited user.
+- hideKeyboard
