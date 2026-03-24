@@ -10,7 +10,7 @@ export const postgresConfig = {
 };
 
 export function setEnvironmentVariables() {
-  if (process.env.NODE_ENV === 'production' || process.env.CI) {
+  if (process.env.NODE_ENV === 'production') {
     // Set standard environment variables for Postgres.js from
     // Vercel environment variables
     if (process.env.POSTGRES_URL) {
