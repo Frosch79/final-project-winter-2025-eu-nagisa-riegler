@@ -151,20 +151,36 @@ jobs:
       - name: Reset DB
         run: pnpm migrate up
 
+      # - name: Start API Server
+      # run: |
+      #   pnpm start &
+      #    echo "Waiting for Expo Server on localhost:8081..."
+      #    for i in {1..30}; do
+
+      #     if curl -s http://localhost:8081 > /dev/null; then
+      #   echo "Expo Server is UP!"
+      #   exit 0
+      # fi
+      # sleep 2
+      # done
+      # echo "Expo Server failed to start"
+      # exit 1
       - name: Start API Server
         run: |
-          pnpm start &
-           echo "Waiting for Expo Server on localhost:8081..."
-           for i in {1..30}; do
-
-           if curl -s http://localhost:8081 > /dev/null; then
-             echo "Expo Server is UP!"
-             exit 0
-           fi
-           sleep 2
-           done
-           echo "Expo Server failed to start"
-           exit 1
+          # ログを expo.log に出力するように変更
+          pnpm start > expo.log 2>&1 &
+          echo "Waiting for Expo Server on localhost:8081..."
+          for i in {1..30}; do
+            if curl -s http://localhost:8081 > /dev/null; then
+              echo "Expo Server is UP!"
+              # サーバーが認識している環境変数を念のため直接叩いて確認（もしdebug用APIがあれば）
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Expo Server failed to start"
+          cat expo.log # 失敗した場合はログを表示
+          exit 1
 
       - name: Download APK
         uses: actions/download-artifact@v4
@@ -208,6 +224,14 @@ jobs:
         with:
           name: maestro-artifacts
           path: ~/.maestro/tests
+
+      - name: Print API Server Logs for Debugging
+        if: always()
+        run: |
+          echo "--- START OF EXPO LOG ---"
+          cat expo.log
+          echo "--- END OF EXPO LOG ---"
+
       - name: Tear down database
         if: always()
         run: pnpm migrate down --all
