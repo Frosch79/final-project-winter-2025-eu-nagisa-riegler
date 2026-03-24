@@ -41,10 +41,10 @@ export async function uploadImage(uri: string): Promise<string> {
 
   const sigRes = await fetch('/api/cloudinary/sign');
   const { timestamp, signature, cloudName, apiKey } = await sigRes.json();
-
+  const fileName = uri.split('/').pop() || 'upload.jpg';
   const formData = new FormData();
 
-  formData.append('file', uploadBlob, 'upload.jpg');
+  formData.append('file', uploadBlob, fileName);
   formData.append('api_key', apiKey);
   formData.append('timestamp', timestamp);
   formData.append('signature', signature);
@@ -57,7 +57,7 @@ export async function uploadImage(uri: string): Promise<string> {
       body: formData,
     },
   );
-  console.log(await uploadRes);
+
   const data: CloudinaryUploadResponse = await uploadRes.json();
 
   return data.secure_url;
