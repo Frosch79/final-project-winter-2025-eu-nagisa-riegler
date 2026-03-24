@@ -11,6 +11,7 @@ jobs:
       PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
       PGUSERNAME: final_project_eu_nagisa_riegler_winter_2025
       PGPASSWORD: final_project_eu_nagisa_riegler_winter_2025
+      EXPOPUBLICAPIURL: 'http://10.0.2.2:8081'
       CLOUDINARY_API_SECRET: dummy
       CLOUDINARY_CLOUD_NAME: dummy
       CLOUDINARY_API_KEY: dummy
@@ -118,6 +119,7 @@ jobs:
       PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
       PGUSERNAME: final_project_eu_nagisa_riegler_winter_2025
       PGPASSWORD: final_project_eu_nagisa_riegler_winter_2025
+      EXPOPUBLICAPIURL: 'http://10.0.2.2:8081'
       CLOUDINARY_API_SECRET: dummy
       CLOUDINARY_CLOUD_NAME: dummy
       CLOUDINARY_API_KEY: dummy
