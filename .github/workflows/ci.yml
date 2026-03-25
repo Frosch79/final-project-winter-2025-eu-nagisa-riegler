@@ -17,7 +17,8 @@ jobs:
         with:
           node-version: lts/*
           cache: pnpm
-
+      - name: Setup .env
+        run: cp .env.example .env
       - run: pnpm install --frozen-lockfile
       - run: pnpm tsc
       - run: pnpm eslint . --max-warnings 0
