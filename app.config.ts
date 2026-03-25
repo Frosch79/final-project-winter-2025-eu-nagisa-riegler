@@ -28,7 +28,6 @@ const config: ExpoConfig = {
     [
       'expo-router',
       {
-        // origin: 'https://final-project-winter-2025-eu-nagisa.vercel.app/',
         origin: process.env.EXPO_PUBLIC_API_URL,
       },
     ],

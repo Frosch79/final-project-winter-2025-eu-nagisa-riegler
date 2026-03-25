@@ -105,9 +105,8 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - 'hideKeyboard'
 - tapOn: 'EDIT'
 - assertVisible: 'EditUser'
-- tapOn: 'This is a test user.This is edited user.'
-- assertVisible:
-    id: 'country'
+- assertVisible: 'This is edited user.'
+- assertVisible: 'Japan'
 - tapOn:
     id: 'write-album'
 - assertVisible: 'Create Album'

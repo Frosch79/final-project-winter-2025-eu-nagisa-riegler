@@ -1,11 +1,32 @@
 name: CI
-on: push
+
+on:
+  push:
+  pull_request:
 
 jobs:
-  ci:
-    name: Type Checking, Linting, Jest
+  quality:
+    name: Lint & Type Check
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm tsc
+      - run: pnpm eslint . --max-warnings 0
+
+  test:
+    name: Unit & Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
     env:
       PGHOST: localhost
       PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
@@ -16,81 +37,73 @@ jobs:
       CLOUDINARY_CLOUD_NAME: dummy
       CLOUDINARY_API_KEY: dummy
 
-      ANDROID_EMULATOR: false
       EXPO_PUBLIC_API_URL: http://localhost:8081
 
     steps:
-      - name: Start preinstalled PostgreSQL
-        run: |
-          sudo systemctl start postgresql.service
-          pg_isready
-      - name: Create database user
-        run: |
-          sudo -u postgres psql --command="CREATE USER $PGUSERNAME PASSWORD '$PGPASSWORD'" --command="\du"
-      - name: Create database
-        run: |
-          sudo -u postgres createdb --owner=$PGUSERNAME $PGDATABASE
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+
+      - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm install
+          node-version: lts/*
+          cache: pnpm
+
+      - name: Start PostgreSQL
+        run: |
+          sudo systemctl start postgresql.service
+          sudo -u postgres psql --command="CREATE USER $PGUSERNAME PASSWORD '$PGPASSWORD'" || true
+          sudo -u postgres createdb --owner=$PGUSERNAME $PGDATABASE || true
+
+      - run: pnpm install --frozen-lockfile
+
       - name: Reset DB
         run: |
           pnpm migrate down --all
           pnpm migrate up
-      - name: Check TypeScript types
-        run: pnpm tsc
-      - name: Lint with ESLint
-        run: pnpm eslint . --max-warnings 0
-      - name: Run Jest tests
-        run: pnpm test:ci
 
-  build-apk:
+      - run: pnpm test:ci
+
+  build:
+    name: Build Android APK
     runs-on: ubuntu-latest
-    outputs:
-      apk-path: android/app/build/outputs/apk/release/app-release.apk
+    needs: [quality, test]
+
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: lts/*
+          cache: pnpm
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile
+
       - uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'temurin'
-          cache: 'gradle'
-      - name: Make gradlew executable
-        run: chmod +x android/gradlew
+          distribution: temurin
+          cache: gradle
+
+      - run: chmod +x android/gradlew
+
       - name: Build Release APK
-        run: ./gradlew assembleRelease
         working-directory: android
+        run: ./gradlew assembleRelease
         env:
           EXPO_PUBLIC_API_URL: http://10.0.2.2:8081
-          MAESTRO: 'true'
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+
+      - uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
           path: android/app/build/outputs/apk/release/app-release.apk
-      - name: Debug APK API URL
-        run: |
-          unzip android/app/build/outputs/apk/release/app-release.apk -d apk_contents
-          echo "===== SEARCHING FOR URL ====="
-          grep -r "http" apk_contents || true
 
-  maestro-test:
-    needs: build-apk
+  e2e:
+    name: E2E Tests (Maestro)
     runs-on: ubuntu-latest
+    needs: build
     timeout-minutes: 30
+
     env:
       PGHOST: localhost
       PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
@@ -101,7 +114,6 @@ jobs:
       CLOUDINARY_CLOUD_NAME: dummy
       CLOUDINARY_API_KEY: dummy
 
-      ANDROID_EMULATOR: true
       EXPO_PUBLIC_API_URL: http://localhost:8081
 
     steps:
@@ -109,95 +121,51 @@ jobs:
 
       - name: Enable KVM
         run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666"' | sudo tee /etc/udev/rules.d/99-kvm.rules
           sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
+          sudo udevadm trigger
 
       - name: Start PostgreSQL
         run: |
           sudo systemctl start postgresql.service
-          pg_isready
-          sudo -u postgres psql --command="CREATE USER $PGUSERNAME PASSWORD '$PGPASSWORD'"
-          sudo -u postgres createdb --owner=$PGUSERNAME $PGDATABASE
+          sudo -u postgres psql --command="CREATE USER $PGUSERNAME PASSWORD '$PGPASSWORD'" || true
+          sudo -u postgres createdb --owner=$PGUSERNAME $PGDATABASE || true
 
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: lts/*
+          cache: pnpm
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile
 
-      - name: Clean build
-        run: rm -rf dist
-
-      - name: Build API
-        run: pnpm build
+      - run: pnpm build
 
       - name: Reset DB
         run: |
           pnpm migrate down --all
           pnpm migrate up
 
-      - name: Start API Server
+      - name: Start API
         run: |
-          pnpm start > expo.log 2>&1 &
-          echo "Waiting for Expo Server on $EXPO_PUBLIC_API_URL..."
-          for i in {1..30}; do
-            if curl -s $EXPO_PUBLIC_API_URL > /dev/null; then
-              echo "Expo Server is UP!"
-              exit 0
-            fi
-            sleep 2
-          done
-          echo "Expo Server failed to start"
-          cat expo.log
-          exit 1
+          pnpm start > server.log 2>&1 &
+          sleep 10
 
-      - name: Download APK
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: app-release-apk
-          path: .
 
-      - name: Install Maestro CLI
-        run: |
-          curl -Ls "https://get.maestro.dev" | bash
-          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
-
-      - name: Run Maestro tests
+      - name: Run Maestro
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
-          target: google_apis
-          arch: x86_64
-          profile: Nexus 6
           script: |
-            curl -fsSL "https://get.maestro.mobile.dev" | bash
-            export PATH="$PATH:$HOME/.maestro/bin"
-            maestro --version
-            adb wait-for-device
             adb reverse tcp:8081 tcp:8081
             adb install app-release.apk
-            adb push util/test-assets /sdcard/Download/test-assets
-            adb shell monkey -p com.final_project_winter_2025_eu_nagisa_riegler -c android.intent.category.LAUNCHER 1
-            sleep 5
             maestro test .maestro/
 
-      - name: Upload Maestro Artifacts
+      - uses: actions/upload-artifact@v4
         if: always()
-        uses: actions/upload-artifact@v4
         with:
           name: maestro-artifacts
           path: ~/.maestro/tests
-
-      - name: Print API Server Logs for Debugging
-        if: always()
-        run: |
-          echo "--- START OF EXPO LOG ---"
-          cat expo.log
-          echo "--- END OF EXPO LOG ---"
-
-      - name: Tear down database
-        if: always()
-        run: pnpm migrate down --all
