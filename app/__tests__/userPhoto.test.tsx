@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { render, waitFor } from '@testing-library/react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import UserPhotoCard from '../../components/UserPhotoCard';
 import { mockReplace } from '../../jest.setup';
 import { paperMock } from '../../util/__tests__/__mock__/paperMock';
@@ -29,9 +30,12 @@ describe('UserPhoto screen', () => {
       replace: mockReplace,
     });
 
-    (useFocusEffect as jest.Mock).mockImplementation((callback: any) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      callback();
+    (useFocusEffect as jest.Mock).mockImplementation((callback: unknown) => {
+      useEffect(() => {
+        if (typeof callback === 'function') {
+          (callback as () => void)();
+        }
+      }, [callback]);
     });
   });
 
@@ -40,15 +44,15 @@ describe('UserPhoto screen', () => {
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ error: 'Not logged in' }),
+
+          json: () => Promise.resolve({ error: 'Not logged in' }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({}),
+
+          json: () => Promise.resolve({}),
         } as Response),
       );
 
@@ -66,17 +70,18 @@ describe('UserPhoto screen', () => {
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ mockFullUser }),
+
+          json: () => Promise.resolve({ mockFullUser }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({
-            photo: mockUserPhoto,
-          }),
+
+          json: () =>
+            Promise.resolve({
+              photo: mockUserPhoto,
+            }),
         } as Response),
       );
 
@@ -102,15 +107,15 @@ describe('UserPhoto screen', () => {
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ mockFullUser }),
+
+          json: () => Promise.resolve({ mockFullUser }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ error: 'Photo not found' }),
+
+          json: () => Promise.resolve({ error: 'Photo not found' }),
         } as Response),
       );
 

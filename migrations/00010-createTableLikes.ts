@@ -21,12 +21,13 @@ export type LikeUsers = {
 
 export async function up(sql: Sql) {
   await sql`
-  CREATE TABLE likes(
-id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-album_id integer NOT NULL REFERENCES albums (id) ON DELETE CASCADE,
-user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-created_date timestamp NOT NULL DEFAULT now()
-  )`;
+    CREATE TABLE likes (
+      id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+      album_id integer NOT NULL REFERENCES albums (id) ON DELETE CASCADE,
+      user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+      created_date timestamp NOT NULL DEFAULT now()
+    )
+  `;
 }
 
 export async function down(sql: Sql) {

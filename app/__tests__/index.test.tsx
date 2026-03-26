@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { render, waitFor } from '@testing-library/react-native';
 import { Redirect, useFocusEffect } from 'expo-router';
+import { useEffect } from 'react';
 import Index from '../index';
 
 jest.mock('expo-router', () => ({
@@ -11,6 +12,13 @@ jest.mock('expo-router', () => ({
 describe('Index redirect test', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (useFocusEffect as jest.Mock).mockImplementation((callback: unknown) => {
+      useEffect(() => {
+        if (typeof callback === 'function') {
+          (callback as () => void)();
+        }
+      }, [callback]);
+    });
   });
 
   test('redirects to user page when logged in', async () => {
@@ -18,12 +26,6 @@ describe('Index redirect test', () => {
     (global.fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue({
       json: () => ({ id: 1, name: 'test' }),
     } as any);
-
-    // useFocusEffect
-    (useFocusEffect as jest.Mock).mockImplementation((callback: any) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      callback();
-    });
 
     render(<Index />);
 
@@ -44,11 +46,6 @@ describe('Index redirect test', () => {
     (global.fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue({
       json: () => ({ error: 'User not found' }),
     } as any);
-
-    (useFocusEffect as jest.Mock).mockImplementation((callback: any) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      callback();
-    });
 
     render(<Index />);
 

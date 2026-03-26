@@ -19,14 +19,10 @@ export async function up(sql: Sql) {
   for (const visibility of visibilities) {
     await sql`
       INSERT INTO
-        visibilities(
-        name
-    )
+        visibilities (name)
       VALUES
         (
           ${visibility.name}
-
-
         )
     `;
   }

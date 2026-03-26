@@ -99,13 +99,13 @@ export async function up(sql: Sql) {
     await sql`
       INSERT INTO
         users (
-        name,
-        birthday,
-        country,
-        account_description,
-        email,
-        password_hash
-    )
+          name,
+          birthday,
+          country,
+          account_description,
+          email,
+          password_hash
+        )
       VALUES
         (
           ${user.name},

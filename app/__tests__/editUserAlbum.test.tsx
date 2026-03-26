@@ -1,7 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/require-await */
-
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
@@ -33,8 +29,12 @@ describe('EditAlbum screen', () => {
       navigate: mockNavigate,
     });
 
-    (useFocusEffect as jest.Mock).mockImplementation((callback: any) => {
-      useEffect(callback, []);
+    (useFocusEffect as jest.Mock).mockImplementation((callback: unknown) => {
+      useEffect(() => {
+        if (typeof callback === 'function') {
+          (callback as () => void)();
+        }
+      }, [callback]);
     });
   });
 
@@ -43,14 +43,14 @@ describe('EditAlbum screen', () => {
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          json: async () => ({ error: 'Not logged in' }),
+          json: () => Promise.resolve({ error: 'Not logged in' }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
 
-          json: async () => ({}),
+          json: () => Promise.resolve({}),
         } as Response),
       );
     render(<EditAlbum />);
@@ -65,12 +65,12 @@ describe('EditAlbum screen', () => {
     (global.fetch as jest.Mock)
       .mockImplementationOnce(() =>
         Promise.resolve({
-          json: async () => ({ user: mockAlbum.userId }),
+          json: () => Promise.resolve({ user: mockAlbum.userId }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
-          json: async () => ({ album: mockAlbum }),
+          json: () => Promise.resolve({ album: mockAlbum }),
         } as Response),
       );
 
@@ -92,12 +92,12 @@ describe('EditAlbum screen', () => {
     (global.fetch as jest.Mock)
       .mockImplementationOnce(() =>
         Promise.resolve({
-          json: async () => ({ user: totoro }),
+          json: () => Promise.resolve({ user: totoro }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
-          json: async () => ({ error: 'Album not found' }),
+          json: () => Promise.resolve({ error: 'Album not found' }),
         } as Response),
       );
 
@@ -112,12 +112,12 @@ describe('EditAlbum screen', () => {
     (global.fetch as jest.Mock)
       .mockImplementationOnce(() =>
         Promise.resolve({
-          json: async () => ({ user: totoro }),
+          json: () => Promise.resolve({ user: totoro }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
-          json: async () => ({ album: mockAlbum }),
+          json: () => Promise.resolve({ album: mockAlbum }),
         } as Response),
       );
 
@@ -131,32 +131,43 @@ describe('EditAlbum screen', () => {
   });
 
   test('PUT sends correct body and redirects on success', async () => {
-    (global.fetch as jest.Mock).mockImplementation((url: any, options: any) => {
-      if (url === '/api/user') {
-        return Promise.resolve({
-          json: async () => ({ user: totoro }),
-        });
-      }
+    (global.fetch as jest.Mock).mockImplementation(
+      (input: unknown, options?: unknown) => {
+        const url =
+          typeof input === 'string'
+            ? input
+            : input instanceof Request
+              ? input.url
+              : '';
 
-      if (url === '/api/albums/123' && !options) {
-        return Promise.resolve({
-          json: async () => ({ album: mockAlbum }),
-        });
-      }
+        const init = options as { method?: string } | undefined;
+        if (url === '/api/user') {
+          return Promise.resolve({
+            json: () => Promise.resolve({ user: totoro }),
+          });
+        }
 
-      if (url === '/api/albums/123' && options?.method === 'PUT') {
-        return Promise.resolve({
-          ok: true,
-          json: async () => ({
-            album: { ...mockAlbum, id: 123 },
-          }),
-        });
-      }
+        if (url === '/api/albums/123' && !options) {
+          return Promise.resolve({
+            json: () => Promise.resolve({ album: mockAlbum }),
+          });
+        }
 
-      return Promise.reject(new Error('Unknown URL'));
-    });
+        if (url === '/api/albums/123' && init?.method === 'PUT') {
+          return Promise.resolve({
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                album: { ...mockAlbum, id: 123 },
+              }),
+          });
+        }
 
-    const { getByTestId, getByText } = render(<EditAlbum />);
+        return Promise.reject(new Error('Unknown URL'));
+      },
+    );
+
+    const { getByTestId, getByText, getByDisplayValue } = render(<EditAlbum />);
 
     await waitFor(() => expect(getByText('Edit Album')).toBeTruthy());
 
@@ -170,12 +181,11 @@ describe('EditAlbum screen', () => {
     fireEvent.changeText(locationEdit, 'My Location');
     fireEvent.press(visibility);
 
-    expect(titleEdit.props.value).toBe('My Album');
-    expect(descriptionEdit.props.value).toBe('My description');
-    expect(locationEdit.props.value).toBe('My Location');
+    expect(getByDisplayValue('My Album')).toBeTruthy();
+    expect(getByDisplayValue('My description')).toBeTruthy();
+    expect(getByDisplayValue('My Location')).toBeTruthy();
 
     fireEvent.press(getByText('EDIT'));
-
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/albums/123',
@@ -194,23 +204,23 @@ describe('EditAlbum screen', () => {
     (global.fetch as jest.Mock)
       .mockImplementationOnce(() =>
         Promise.resolve({
-          json: async () => ({ user: totoro }),
+          json: () => Promise.resolve({ user: totoro }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
-          json: async () => ({ album: mockAlbum }),
+          json: () => Promise.resolve({ album: mockAlbum }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: false,
 
-          json: async () => ({ error: 'Update failed' }),
+          json: () => Promise.resolve({ error: 'Update failed' }),
         } as Response),
       );
 
-    const { getByText, getByTestId } = render(<EditAlbum />);
+    const { getByText, getByTestId, getByDisplayValue } = render(<EditAlbum />);
 
     await waitFor(() => {
       expect(getByText('Edit Album')).toBeTruthy();
@@ -226,13 +236,11 @@ describe('EditAlbum screen', () => {
     fireEvent.changeText(locationEdit, 'My Location');
     fireEvent.press(visibility);
 
-    expect(titleEdit.props.value).toBe('My Album');
+    expect(getByDisplayValue('My Album')).toBeTruthy();
+    expect(getByDisplayValue('My description')).toBeTruthy();
+    expect(getByDisplayValue('My Location')).toBeTruthy();
 
-    expect(descriptionEdit.props.value).toBe('My description');
-
-    expect(locationEdit.props.value).toBe('My Location');
     fireEvent.press(getByText('EDIT'));
-
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/albums/123',
@@ -248,21 +256,22 @@ describe('EditAlbum screen', () => {
     (global.fetch as jest.Mock)
       .mockImplementationOnce(() =>
         Promise.resolve({
-          json: async () => ({ user: totoro }),
+          json: () => Promise.resolve({ user: totoro }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
-          json: async () => ({
-            album: mockAlbum,
-          }),
+          json: () =>
+            Promise.resolve({
+              album: mockAlbum,
+            }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
 
-          json: async () => ({}),
+          json: () => Promise.resolve({}),
         } as Response),
       );
 
@@ -279,19 +288,19 @@ describe('EditAlbum screen', () => {
     (global.fetch as jest.Mock)
       .mockImplementationOnce(() =>
         Promise.resolve({
-          json: async () => ({ user: totoro }),
+          json: () => Promise.resolve({ user: totoro }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
-          json: async () => ({ album: mockAlbum }),
+          json: () => Promise.resolve({ album: mockAlbum }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: false,
 
-          json: async () => ({ error: 'Delete failed' }),
+          json: () => Promise.resolve({ error: 'Delete failed' }),
         } as Response),
       );
 
@@ -318,14 +327,15 @@ describe('EditAlbum screen', () => {
     (global.fetch as jest.Mock)
       .mockImplementationOnce(() =>
         Promise.resolve({
-          json: async () => ({ user: totoro }),
+          json: () => Promise.resolve({ user: totoro }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
-          json: async () => ({
-            album: mockAlbum,
-          }),
+          json: () =>
+            Promise.resolve({
+              album: mockAlbum,
+            }),
         } as Response),
       );
 

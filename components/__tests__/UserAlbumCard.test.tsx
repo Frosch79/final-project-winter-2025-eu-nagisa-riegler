@@ -1,5 +1,10 @@
 import { expect, jest } from '@jest/globals';
-import { fireEvent, render, waitFor } from '@testing-library/react-native';
+import {
+  fireEvent,
+  render,
+  waitFor,
+  within,
+} from '@testing-library/react-native';
 import { Text } from 'react-native';
 import * as Paper from 'react-native-paper';
 import { mockNavigate } from '../../jest.setup';
@@ -28,15 +33,19 @@ const modal: React.FC<any> = (onDismiss) => {
 };
 
 jest.mock('../ModalLike', () => {
-  return jest.fn(({ visible, onDismiss }) => {
-    return visible ? modal(onDismiss) : null;
-  });
+  return jest.fn(
+    ({ visible, onDismiss }: { visible: boolean; onDismiss: boolean }) => {
+      return visible ? modal(onDismiss) : null;
+    },
+  );
 });
 
 jest.mock('../ModalComment', () => {
-  return jest.fn(({ visible, onDismiss }) => {
-    return visible ? modal(onDismiss) : null;
-  });
+  return jest.fn(
+    ({ visible, onDismiss }: { visible: boolean; onDismiss: boolean }) => {
+      return visible ? modal(onDismiss) : null;
+    },
+  );
 });
 
 // import paper mock
@@ -76,18 +85,18 @@ describe('UserAlbumCard', () => {
       </Paper.PaperProvider>,
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(getByTestId('album-title').props.children).toBe(
-      baseProps.album.title,
-    );
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(getByTestId('album-description').props.children).toBe(
-      baseProps.album.description,
-    );
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(getByTestId('album-location').props.children).toBe(
-      baseProps.album.location,
-    );
+    const title = getByTestId('album-title');
+    expect(within(title).getByText(baseProps.album.title)).toBeTruthy();
+
+    const description = getByTestId('album-description');
+    expect(
+      within(description).getByText(baseProps.album.description ?? ''),
+    ).toBeTruthy();
+
+    const location = getByTestId('album-location');
+    expect(
+      within(location).getByText(baseProps.album.location ?? ''),
+    ).toBeTruthy();
   });
 
   test('shows correct like and comment counts', () => {
@@ -97,14 +106,15 @@ describe('UserAlbumCard', () => {
       </Paper.PaperProvider>,
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(getByTestId('likes-count').props.children).toBe(
-      baseProps.albumLikes.length,
-    );
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(getByTestId('comment-count').props.children).toBe(
-      baseProps.albumComments.length,
-    );
+    const likesCount = getByTestId('likes-count');
+    expect(
+      within(likesCount).getByText(`${baseProps.albumLikes.length}`),
+    ).toBeTruthy();
+
+    const commentCount = getByTestId('comment-count');
+    expect(
+      within(commentCount).getByText(`${baseProps.albumComments.length}`),
+    ).toBeTruthy();
   });
 
   test('opens like modal when pressing show likes button', () => {
@@ -140,10 +150,12 @@ describe('UserAlbumCard', () => {
     fireEvent.press(getByTestId('likes-icon-button'));
 
     await waitFor(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(getByTestId('likes-count').props.children).toBe(
-        baseProps.albumLikes.length + 1,
+      const likesCount = getByTestId('likes-count');
+      const likesText = within(likesCount).getByText(
+        `${baseProps.albumLikes.length + 1}`,
       );
+      expect(likesText).toBeTruthy();
+
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/likes',
         expect.objectContaining({
@@ -176,10 +188,11 @@ describe('UserAlbumCard', () => {
     fireEvent.press(getByTestId('likes-icon-button'));
 
     await waitFor(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(getByTestId('likes-count').props.children).toBe(
-        albumLiked.length - 1,
+      const likesCount = getByTestId('likes-count');
+      const likesText = within(likesCount).getByText(
+        `${albumLiked.length - 1}`,
       );
+      expect(likesText).toBeTruthy();
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/likes',
         expect.objectContaining({
@@ -219,10 +232,22 @@ describe('UserAlbumCard edge case', () => {
         <UserAlbumCard {...edgeProps} />
       </Paper.PaperProvider>,
     );
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(queryByTestId('album-description').props.children).toBe('');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(queryByTestId('album-location').props.children).toBe('');
+
+    const descriptionContainer = queryByTestId('album-description');
+    expect(descriptionContainer).not.toBeNull();
+
+    if (descriptionContainer) {
+      const description = within(descriptionContainer).getByText('');
+      expect(description).toBeTruthy();
+    }
+
+    const locationContainer = queryByTestId('album-location');
+    expect(locationContainer).not.toBeNull();
+
+    if (locationContainer) {
+      const location = within(locationContainer).getByText('');
+      expect(location).toBeTruthy();
+    }
   });
 
   test('shows correct like and comment counts if nobody liked or commented', () => {
@@ -232,10 +257,19 @@ describe('UserAlbumCard edge case', () => {
       </Paper.PaperProvider>,
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(queryByTestId('likes-count').props.children).toBe(0);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(queryByTestId('comment-count').props.children).toBe(0);
+    const likesCount = queryByTestId('likes-count');
+    expect(likesCount).not.toBeNull();
+    if (likesCount) {
+      const likesText = within(likesCount).getByText('0');
+      expect(likesText).toBeTruthy();
+    }
+
+    const commentCount = queryByTestId('comment-count');
+    expect(commentCount).not.toBeNull();
+    if (commentCount) {
+      const commentText = within(commentCount).getByText('0');
+      expect(commentText).toBeTruthy();
+    }
   });
 
   test('navigation to user page', () => {
@@ -278,11 +312,10 @@ describe('UserAlbumCard fail cases', () => {
     fireEvent.press(getByTestId('likes-icon-button'));
 
     await waitFor(() => {
-      expect(getByTestId('error-text')).toBeTruthy();
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(getByTestId('error-text').props.children).toBe(
+      const errorText = within(getByTestId('error-text')).getByText(
         'Error updating like',
       );
+      expect(errorText).toBeTruthy();
     });
 
     // onUpdateLike is not called
@@ -297,15 +330,16 @@ describe('UserAlbumCard fail cases', () => {
       album: { ...baseProps.album, location: '' },
     };
 
-    const { queryByTestId } = render(
+    const { getByTestId } = render(
       <Paper.PaperProvider>
         <UserAlbumCard {...edgePropsEmpty} />
       </Paper.PaperProvider>,
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(queryByTestId('likes-count').props.children).toBe(0);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(queryByTestId('comment-count').props.children).toBe(0);
+    const likesCount = within(getByTestId('likes-count')).getByText('0');
+    expect(likesCount).toBeTruthy();
+
+    const commentCount = within(getByTestId('comment-count')).getByText('0');
+    expect(commentCount).toBeTruthy();
   });
 });

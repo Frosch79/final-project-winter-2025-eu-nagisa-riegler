@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { mockNavigate, mockReplace } from '../../jest.setup';
 import { paperMock } from '../../util/__tests__/__mock__/paperMock';
 import { mockFailUser } from '../../util/__tests__/__mock__/testUser';
@@ -22,9 +23,12 @@ describe('PostMyAlbum screen', () => {
       navigate: mockNavigate,
     });
 
-    (useFocusEffect as jest.Mock).mockImplementation((callback: any) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      callback();
+    (useFocusEffect as jest.Mock).mockImplementation((callback: unknown) => {
+      useEffect(() => {
+        if (typeof callback === 'function') {
+          (callback as () => void)();
+        }
+      }, [callback]);
     });
   });
 
@@ -32,8 +36,8 @@ describe('PostMyAlbum screen', () => {
     (global.fetch as jest.Mock).mockImplementationOnce(() =>
       Promise.resolve({
         ok: false,
-        // eslint-disable-next-line @typescript-eslint/require-await
-        json: async () => ({ error: 'Not logged in' }),
+
+        json: () => Promise.resolve({ error: 'Not logged in' }),
       } as Response),
     );
 
@@ -56,25 +60,29 @@ describe('PostMyAlbum screen', () => {
   });
 
   test('creates album successfully and navigates', async () => {
-    (global.fetch as jest.Mock).mockImplementation((url) => {
+    (global.fetch as jest.Mock).mockImplementation((input: unknown) => {
+      const url = typeof input === 'string' ? input : '';
       if (url === '/api/user') {
         return Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ id: 'user123' }),
+
+          json: () => Promise.resolve({ id: 'user123' }),
         } as Response);
       }
       if (url === '/api/albums') {
         return Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ album: { id: '123' } }),
+
+          json: () => Promise.resolve({ album: { id: '123' } }),
         } as Response);
       }
       return Promise.reject(new Error('Unknown URL'));
     });
 
-    const { getByTestId, getByText } = render(<PostMyAlbum />);
+    const { getByTestId, getByText, getByDisplayValue } = render(
+      <PostMyAlbum />,
+    );
+
     const titleInput = getByTestId('input-album-title');
     const descriptionInput = getByTestId('input-description');
     const location = getByTestId('input-location');
@@ -83,15 +91,11 @@ describe('PostMyAlbum screen', () => {
     fireEvent.changeText(titleInput, 'My Album');
     fireEvent.changeText(descriptionInput, 'My description');
     fireEvent.changeText(location, 'My Location');
-
     fireEvent.press(visibility);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(titleInput.props.value).toBe('My Album');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(descriptionInput.props.value).toBe('My description');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(location.props.value).toBe('My Location');
+    expect(getByDisplayValue('My Album')).toBeTruthy();
+    expect(getByDisplayValue('My description')).toBeTruthy();
+    expect(getByDisplayValue('My Location')).toBeTruthy();
 
     fireEvent.press(getByText('Ok'));
 
@@ -113,8 +117,8 @@ describe('PostMyAlbum screen', () => {
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ mockFailUser }),
+
+          json: () => Promise.resolve({ mockFailUser }),
         } as Response),
       )
 
@@ -122,8 +126,8 @@ describe('PostMyAlbum screen', () => {
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: false,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ error: 'Failed to create' }),
+
+          json: () => Promise.resolve({ error: 'Failed to create' }),
         } as Response),
       );
 

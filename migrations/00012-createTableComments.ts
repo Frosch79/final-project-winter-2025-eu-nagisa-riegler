@@ -15,13 +15,14 @@ export type Comment = {
 };
 export async function up(sql: Sql) {
   await sql`
-  CREATE TABLE comments(
-id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-album_id integer NOT NULL REFERENCES albums (id) ON DELETE CASCADE,
-user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-content TEXT NOT NULL,
-created_date timestamp NOT NULL DEFAULT now()
-  )`;
+    CREATE TABLE comments (
+      id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+      album_id integer NOT NULL REFERENCES albums (id) ON DELETE CASCADE,
+      user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+      content text NOT NULL,
+      created_date timestamp NOT NULL DEFAULT now()
+    )
+  `;
 }
 
 export async function down(sql: Sql) {

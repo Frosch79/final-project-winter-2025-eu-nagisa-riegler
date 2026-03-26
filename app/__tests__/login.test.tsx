@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable react-hooks/exhaustive-deps */
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect } from 'react';
@@ -19,17 +17,21 @@ describe('Login screen', () => {
   const mockReplace = jest.fn();
 
   beforeEach(() => {
+    jest.clearAllMocks();
     (useRouter as jest.Mock).mockReturnValue({
       replace: mockReplace,
     });
     (useLocalSearchParams as jest.Mock).mockReturnValue({});
-    (useFocusEffect as jest.Mock).mockImplementation((callback: any) => {
-      useEffect(callback, []);
+    (useFocusEffect as jest.Mock).mockImplementation((callback: unknown) => {
+      useEffect(() => {
+        if (typeof callback === 'function') {
+          (callback as () => void)();
+        }
+      }, [callback]);
     });
-    jest.clearAllMocks();
   });
 
-  test('cannot press login button if fields are empty', async () => {
+  test('cannot press login button if fields are empty', () => {
     const { getByTestId } = render(<Login />);
     const loginButton = getByTestId('login-button');
 
@@ -42,11 +44,11 @@ describe('Login screen', () => {
       if (url === '/api/login') {
         return Promise.resolve({
           ok: false,
-          json: async () => ({ error: 'Email or password invalid' }),
+          json: () => Promise.resolve({ error: 'Email or password invalid' }),
         });
       }
       if (url === '/api/user') {
-        return Promise.resolve({ ok: true, json: async () => ({}) });
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
       }
     });
 
@@ -68,11 +70,11 @@ describe('Login screen', () => {
       if (url === '/api/login') {
         return Promise.resolve({
           ok: true,
-          json: async () => ({ user: { ...loginUserSuccess, id: 1 } }),
+          json: () => Promise.resolve({ user: { ...loginUserSuccess, id: 1 } }),
         });
       }
       if (url === '/api/user') {
-        return Promise.resolve({ ok: true, json: async () => ({}) });
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
       }
     });
 
@@ -100,11 +102,11 @@ describe('Login screen', () => {
       if (url === '/api/login') {
         return Promise.resolve({
           ok: true,
-          json: async () => ({ user: { ...loginUserSuccess, id: 1 } }),
+          json: () => Promise.resolve({ user: { ...loginUserSuccess, id: 1 } }),
         });
       }
       if (url === '/api/user') {
-        return Promise.resolve({ ok: true, json: async () => ({}) });
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
       }
     });
 

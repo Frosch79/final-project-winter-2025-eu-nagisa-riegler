@@ -12,10 +12,11 @@ export type Visibility = {
 
 export async function up(sql: Sql) {
   await sql`
-  CREATE TABLE visibilities(
-id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-name varchar(25) NOT NULL UNIQUE
-  )`;
+    CREATE TABLE visibilities (
+      id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+      name varchar(25) NOT NULL UNIQUE
+    )
+  `;
 }
 
 export async function down(sql: Sql) {

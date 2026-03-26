@@ -1,7 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/require-await */
-
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -27,15 +23,19 @@ describe('EditAccount screen', () => {
       navigate: mockNavigate,
     });
 
-    (useFocusEffect as jest.Mock).mockImplementation((callback: any) => {
-      useEffect(callback, []);
+    (useFocusEffect as jest.Mock).mockImplementation((callback: unknown) => {
+      useEffect(() => {
+        if (typeof callback === 'function') {
+          (callback as () => void)();
+        }
+      }, [callback]);
     });
   });
 
   test('redirects to login when unauthenticated', async () => {
     (global.fetch as jest.Mock).mockImplementationOnce(() =>
       Promise.resolve({
-        json: async () => ({ error: 'Not logged in' }),
+        json: () => Promise.resolve({ error: 'Not logged in' }),
       } as Response),
     );
 
@@ -51,23 +51,19 @@ describe('EditAccount screen', () => {
   test('sets user data on successful fetch', async () => {
     (global.fetch as jest.Mock).mockImplementationOnce(() =>
       Promise.resolve({
-        json: async () => ({ user: totoro }),
+        json: () => Promise.resolve({ user: totoro }),
       } as Response),
     );
 
-    const { getByTestId } = render(<EditAccount />);
+    const { getByTestId, getByDisplayValue } = render(<EditAccount />);
 
     await waitFor(() => {
       expect(getByTestId('card')).toBeTruthy();
-
-      expect(getByTestId('edit-name').props.value).toBe(totoro.name);
-
-      expect(getByTestId('edit-country').props.value).toBe(totoro.country);
+      expect(getByDisplayValue(totoro.name)).toBeTruthy();
+      expect(getByDisplayValue(totoro.country)).toBeTruthy();
 
       if (totoro.accountDescription) {
-        expect(getByTestId('edit-description').props.value).toBe(
-          totoro.accountDescription,
-        );
+        expect(getByDisplayValue(totoro.accountDescription)).toBeTruthy();
       }
     });
   });
@@ -75,7 +71,7 @@ describe('EditAccount screen', () => {
   test('shows error if name or country is empty', async () => {
     (global.fetch as jest.Mock).mockImplementationOnce(() =>
       Promise.resolve({
-        json: async () => ({ user: totoro }),
+        json: () => Promise.resolve({ user: totoro }),
       } as Response),
     );
 
@@ -89,26 +85,39 @@ describe('EditAccount screen', () => {
   });
 
   test('PUT sends correct body and redirects on success', async () => {
-    (global.fetch as jest.Mock).mockImplementation((url: any, options: any) => {
-      if (url === '/api/user/' && !options) {
-        return Promise.resolve({
-          json: async () => ({ user: totoro }),
-        });
-      }
+    (global.fetch as jest.Mock).mockImplementation(
+      (input: unknown, options?: unknown) => {
+        const url =
+          typeof input === 'string'
+            ? input
+            : input instanceof Request
+              ? input.url
+              : '';
 
-      if (url === '/api/user/' && options?.method === 'PUT') {
-        return Promise.resolve({
-          ok: true,
-          json: async () => ({
-            user: { ...totoro },
-          }),
-        });
-      }
+        const init = options as { method?: string } | undefined;
+        if (url === '/api/user/' && !options) {
+          return Promise.resolve({
+            json: () => Promise.resolve({ user: totoro }),
+          });
+        }
 
-      return Promise.reject(new Error('Unknown URL'));
-    });
+        if (url === '/api/user/' && init?.method === 'PUT') {
+          return Promise.resolve({
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                user: { ...totoro },
+              }),
+          });
+        }
 
-    const { getByTestId, getByText } = render(<EditAccount />);
+        return Promise.reject(new Error('Unknown URL'));
+      },
+    );
+
+    const { getByTestId, getByText, getByDisplayValue } = render(
+      <EditAccount />,
+    );
 
     await waitFor(() => {
       expect(getByTestId('card')).toBeTruthy();
@@ -122,9 +131,11 @@ describe('EditAccount screen', () => {
     fireEvent.changeText(countryInput, 'Japan');
     fireEvent.changeText(descriptionInput, 'New Description');
 
-    expect(nameInput.props.value).toBe('New Name');
-    expect(countryInput.props.value).toBe('Japan');
-    expect(descriptionInput.props.value).toBe('New Description');
+    expect(getByDisplayValue('New Name')).toBeTruthy();
+    expect(getByDisplayValue('Japan')).toBeTruthy();
+    if (totoro.accountDescription) {
+      expect(getByDisplayValue('New Description')).toBeTruthy();
+    }
 
     fireEvent.press(getByText('EDIT'));
 
@@ -144,13 +155,13 @@ describe('EditAccount screen', () => {
     (global.fetch as jest.Mock)
       .mockImplementationOnce(() =>
         Promise.resolve({
-          json: async () => ({ user: totoro }),
+          json: () => Promise.resolve({ user: totoro }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: false,
-          json: async () => ({ error: 'Update failed' }),
+          json: () => Promise.resolve({ error: 'Update failed' }),
         } as Response),
       );
 
@@ -176,7 +187,7 @@ describe('EditAccount screen', () => {
   test('Cancel button redirects to user page', async () => {
     (global.fetch as jest.Mock).mockImplementationOnce(() =>
       Promise.resolve({
-        json: async () => ({ user: totoro }),
+        json: () => Promise.resolve({ user: totoro }),
       } as Response),
     );
 

@@ -29,9 +29,19 @@ const modal: React.FC<any> = (idSwitch, onDismiss) => {
 };
 
 jest.mock('../ModalShowFollows', () => {
-  return jest.fn(({ visible, idSwitch, onDismiss }) => {
-    return visible ? modal(idSwitch, onDismiss) : null;
-  });
+  return jest.fn(
+    ({
+      visible,
+      idSwitch,
+      onDismiss,
+    }: {
+      visible: boolean;
+      idSwitch: boolean;
+      onDismiss: boolean;
+    }) => {
+      return visible ? modal(idSwitch, onDismiss) : null;
+    },
+  );
 });
 
 export const baseProps = {

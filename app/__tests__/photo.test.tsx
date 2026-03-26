@@ -1,6 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/require-await */
-
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
@@ -25,15 +22,19 @@ jest.mock('expo-image-picker', () => ({
 
 describe('PostMyPhotos screen', () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
 
     (useRouter as jest.Mock).mockReturnValue({ replace: mockReplace });
 
     (useLocalSearchParams as jest.Mock).mockReturnValue({ albumId: '1' });
 
-    (useFocusEffect as jest.Mock).mockImplementation((callback: any) =>
-      useEffect(callback, []),
-    );
+    (useFocusEffect as jest.Mock).mockImplementation((callback: unknown) => {
+      useEffect(() => {
+        if (typeof callback === 'function') {
+          (callback as () => void)();
+        }
+      }, [callback]);
+    });
   });
 
   test('redirects to login if user fetch fails', async () => {
@@ -41,10 +42,10 @@ describe('PostMyPhotos screen', () => {
       if (url === '/api/user') {
         return Promise.resolve({
           ok: false,
-          json: async () => ({ error: 'Not logged in' }),
+          json: () => Promise.resolve({ error: 'Not logged in' }),
         });
       }
-      return Promise.resolve({ ok: true, json: async () => ({}) });
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
     });
 
     render(<PostMyPhotos />);
@@ -78,18 +79,19 @@ describe('PostMyPhotos screen', () => {
       if (url === '/api/user') {
         return Promise.resolve({
           ok: true,
-          json: async () => ({ id: 1 }),
+          json: () => Promise.resolve({ id: 1 }),
         });
       }
       if (url === '/api/albums/1') {
         return Promise.resolve({
           ok: true,
-          json: async () => ({
-            album: { id: 1, title: 'My Album', description: 'Desc' },
-          }),
+          json: () =>
+            Promise.resolve({
+              album: { id: 1, title: 'My Album', description: 'Desc' },
+            }),
         });
       }
-      return Promise.resolve({ ok: true, json: async () => ({}) });
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
     });
 
     const { getByText, getByTestId } = render(<PostMyPhotos />);
@@ -107,18 +109,19 @@ describe('PostMyPhotos screen', () => {
       if (url === '/api/user') {
         return Promise.resolve({
           ok: true,
-          json: async () => ({ id: 1 }),
+          json: () => Promise.resolve({ id: 1 }),
         });
       }
       if (url === '/api/albums/1') {
         return Promise.resolve({
           ok: true,
-          json: async () => ({
-            album: { id: 1, title: 'My Album', description: 'Desc' },
-          }),
+          json: () =>
+            Promise.resolve({
+              album: { id: 1, title: 'My Album', description: 'Desc' },
+            }),
         });
       }
-      return Promise.resolve({ ok: true, json: async () => ({}) });
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
     });
 
     const { getByTestId } = render(<PostMyPhotos />);

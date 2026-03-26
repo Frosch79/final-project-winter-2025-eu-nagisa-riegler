@@ -1,4 +1,4 @@
-import { expect, jest } from '@jest/globals';
+import { describe, expect, test } from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react-native';
 import * as Paper from 'react-native-paper';
 import { mockNavigate } from '../../jest.setup';
@@ -19,14 +19,13 @@ describe('ModalLike', () => {
   });
 
   test('renders modal title and like users', () => {
-    const { getByTestId, getByText } = render(
+    const { getByText } = render(
       <Paper.PaperProvider>
         <ModalLike {...baseProps} />
       </Paper.PaperProvider>,
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(getByTestId('modal-title').props.children).toBe('Likes');
+    expect(getByText('Likes')).toBeTruthy();
 
     for (const user of likes) {
       expect(getByText(user.name)).toBeTruthy();
