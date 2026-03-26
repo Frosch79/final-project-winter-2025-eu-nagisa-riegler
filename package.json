@@ -103,5 +103,13 @@
       "unrs-resolver"
     ]
   },
+  "eslintConfig": {
+    "extends": [
+      "some-other-config-if-any"
+    ],
+    "rules": {
+      "@ts-safeql/check-sql": "off"
+    }
+  },
   "private": true
 }
