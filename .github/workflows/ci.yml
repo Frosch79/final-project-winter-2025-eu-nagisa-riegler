@@ -160,9 +160,19 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
+          target: google_apis
+          arch: x86_64
+          profile: Nexus 6
           script: |
+            curl -fsSL "https://get.maestro.mobile.dev" | bash
+            export PATH="$PATH:$HOME/.maestro/bin"
+            maestro --version
+            adb wait-for-device
             adb reverse tcp:8081 tcp:8081
             adb install app-release.apk
+            adb push util/test-assets /sdcard/Download/test-assets
+            adb shell monkey -p com.final_project_winter_2025_eu_nagisa_riegler -c android.intent.category.LAUNCHER 1
+            sleep 5
             maestro test .maestro/
 
       - uses: actions/upload-artifact@v4
