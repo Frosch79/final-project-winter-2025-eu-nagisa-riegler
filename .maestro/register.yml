@@ -125,9 +125,6 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - inputText:
     text: 'Album location'
 - hideKeyboard
-- tapOn:
-    id: 'button'
-    index: 1
 - tapOn: 'Ok'
 - assertVisible: 'Album title'
 - assertVisible: 'Album description'
@@ -154,9 +151,7 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - inputText:
     text: 'Edit location'
 - hideKeyboard
-- tapOn:
-    id: 'button'
-    index: 1
+
 - tapOn: 'EDIT'
 - assertVisible: 'Edit title'
 - assertVisible: 'Edit description'

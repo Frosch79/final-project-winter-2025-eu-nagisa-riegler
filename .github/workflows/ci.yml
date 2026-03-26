@@ -101,10 +101,9 @@ jobs:
 
   e2e:
     name: E2E Tests (Maestro)
-    runs-on: ubuntu-latest
     needs: build
+    runs-on: ubuntu-latest
     timeout-minutes: 30
-
     env:
       PGHOST: localhost
       PGDATABASE: final_project_eu_nagisa_riegler_winter_2025
@@ -115,6 +114,7 @@ jobs:
       CLOUDINARY_CLOUD_NAME: dummy
       CLOUDINARY_API_KEY: dummy
 
+      ANDROID_EMULATOR: true
       EXPO_PUBLIC_API_URL: http://localhost:8081
 
     steps:
@@ -122,41 +122,58 @@ jobs:
 
       - name: Enable KVM
         run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666"' | sudo tee /etc/udev/rules.d/99-kvm.rules
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
-          sudo udevadm trigger
-
+          sudo udevadm trigger --name-match=kvm
       - name: Start PostgreSQL
         run: |
           sudo systemctl start postgresql.service
-          sudo -u postgres psql --command="CREATE USER $PGUSERNAME PASSWORD '$PGPASSWORD'" || true
-          sudo -u postgres createdb --owner=$PGUSERNAME $PGDATABASE || true
-
+          pg_isready
+          sudo -u postgres psql --command="CREATE USER $PGUSERNAME PASSWORD '$PGPASSWORD'"
+          sudo -u postgres createdb --owner=$PGUSERNAME $PGDATABASE
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
-          cache: pnpm
+          node-version: 'lts/*'
 
-      - run: pnpm install --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      - run: pnpm build
+      - name: Clean build
+        run: rm -rf dist
+
+      - name: Build API
+        run: pnpm build
 
       - name: Reset DB
         run: |
           pnpm migrate down --all
           pnpm migrate up
-
-      - name: Start API
+      - name: Start API Server
         run: |
-          pnpm start > server.log 2>&1 &
-          sleep 10
-
-      - uses: actions/download-artifact@v4
+          pnpm start > expo.log 2>&1 &
+          echo "Waiting for Expo Server on $EXPO_PUBLIC_API_URL..."
+          for i in {1..30}; do
+            if curl -s $EXPO_PUBLIC_API_URL > /dev/null; then
+              echo "Expo Server is UP!"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Expo Server failed to start"
+          cat expo.log
+          exit 1
+      - name: Download APK
+        uses: actions/download-artifact@v4
         with:
           name: app-release-apk
+          path: .
 
-      - name: Run Maestro
+      - name: Install Maestro CLI
+        run: |
+          curl -Ls "https://get.maestro.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+      - name: Run Maestro tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
@@ -174,9 +191,9 @@ jobs:
             adb shell monkey -p com.final_project_winter_2025_eu_nagisa_riegler -c android.intent.category.LAUNCHER 1
             sleep 5
             maestro test .maestro/
-
-      - uses: actions/upload-artifact@v4
+      - name: Upload Maestro Artifacts
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: maestro-artifacts
           path: ~/.maestro/tests
