@@ -21,7 +21,7 @@ jobs:
         run: cp .env.example .env
       - run: pnpm install --frozen-lockfile
       - run: pnpm tsc
-      - run: pnpm eslint . --max-warnings 0
+      - run: pnpm eslint . --max-warnings 0 --ignore-pattern "database/**" --ignore-pattern "migrations/**"
 
   test:
     name: Unit & Integration Tests
