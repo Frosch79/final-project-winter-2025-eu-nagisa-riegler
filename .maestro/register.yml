@@ -161,3 +161,30 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     index: 2
 - tapOn:
     id: 'select-photo'
+- inputText:
+    text: Photo title
+- hideKeyboard
+
+- tapOn: Description
+- inputText:
+    text: Photo description
+- hideKeyboard
+
+- tapOn: Location
+- inputText:
+    text: Photo location
+- hideKeyboard
+
+- tapOn: Ok
+- assertVisible:
+    id: photo-16
+- tapOn:
+    id: photo-16
+- assertVisible:
+    id: photo-image
+- tapOn:
+    id: button
+- assertVisible: Album
+- tapOn:
+    id: icon-button
+    index: 0

@@ -120,7 +120,6 @@ export default function UserAlbum() {
   const renderUserPhotos = ({ item }: { item: Photo }) => {
     return (
       <View
-        testID={`photo-${item.id.toString()}`}
         style={{ width: cardSize, height: cardSize, marginBottom: spacing.sm }}
       >
         <Button
