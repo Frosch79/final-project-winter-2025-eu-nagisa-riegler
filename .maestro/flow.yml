@@ -7,9 +7,11 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 
   # --- Login page to register page ---
 - assertVisible: PixVault
+
 - tapOn:
     id: register-button
 
+# --- Input register user data ---
 - tapOn:
     id: input-username
 - inputText:
@@ -57,21 +59,30 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - assertVisible:
     id: 'avatar'
 
+# --- Logout ---
 - tapOn: 'logout'
+
+# --- Login ---
 - tapOn:
     id: 'input-email'
 - inputText:
     text: 'testuser@example.com'
 - 'hideKeyboard'
+
 - tapOn:
     id: 'input-password'
 - inputText:
     text: 'Password123'
 - 'hideKeyboard'
+
 - tapOn:
     id: 'login-button'
+
+# --- Login success ---
 - assertVisible:
     id: 'user-page'
+
+# --- Check user page---
 - tapOn:
     id: 'follower-text'
 - assertVisible: 'Follower'
@@ -89,7 +100,7 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     id: 'edit-name'
 - 'eraseText'
 - inputText:
-    text: 'EditUser'
+    text: 'Edit User'
 - 'hideKeyboard'
 - tapOn:
     id: 'edit-country'
@@ -101,12 +112,13 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     id: 'edit-description'
 - 'eraseText'
 - inputText:
-    text: 'This is edited user.'
+    text: 'This is edit user.'
 - 'hideKeyboard'
 - tapOn: 'EDIT'
-- assertVisible: 'EditUser'
-- assertVisible: 'This is edited user.'
-- assertVisible: 'Japan'
+
+- assertVisible: 'Edit User'
+- assertVisible: 'This is edit user.'
+- assertVisible: 'Country: Japan'
 - tapOn:
     id: 'write-album'
 - assertVisible: 'Create Album'
@@ -128,10 +140,10 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - tapOn: 'Ok'
 - assertVisible: 'Album title'
 - assertVisible: 'Album description'
-- tapOn: 'Album location'
+
 - tapOn:
-    id: 'icon-button'
-    index: 1
+    id: 'album-edit'
+
 - assertVisible: 'Edit Album'
 - tapOn:
     id: 'edit-album-title'
@@ -153,14 +165,25 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - hideKeyboard
 
 - tapOn: 'EDIT'
+
 - assertVisible: 'Edit title'
 - assertVisible: 'Edit description'
 - assertVisible: 'Edit location'
+
+# --- Upload images ---
+
 - tapOn:
-    id: 'icon-button'
-    index: 2
+    id: 'photo-create'
+- addMedia:
+    - /sdcard/Download/test-assets
+
 - tapOn:
     id: 'select-photo'
+- tapOn: 'test_image1.jpg'
+- assertVisible:
+    id: 'upload-photo'
+
+- tapOn: Photo title
 - inputText:
     text: Photo title
 - hideKeyboard
@@ -175,16 +198,19 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     text: Photo location
 - hideKeyboard
 
-- tapOn: Ok
-- assertVisible:
-    id: photo-16
 - tapOn:
-    id: photo-16
+    id: continue-button
+
+- assertVisible:
+    id: 'photo'
+    index: 0
+- tapOn:
+    id: 'photo'
+    index: 0
 - assertVisible:
     id: photo-image
 - tapOn:
-    id: button
+    id: back-button
 - assertVisible: Album
 - tapOn:
-    id: icon-button
-    index: 0
+    id: 'exit-album'

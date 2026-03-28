@@ -123,6 +123,7 @@ export default function UserAlbum() {
         style={{ width: cardSize, height: cardSize, marginBottom: spacing.sm }}
       >
         <Button
+          testID="photo"
           style={{ padding: 0, margin: 0, width: '100%', height: '100%' }}
           onPress={() =>
             router.navigate({
@@ -218,6 +219,7 @@ export default function UserAlbum() {
                 }}
               >
                 <IconButton
+                  testID="exit-album"
                   mode="contained-tonal"
                   icon="close-thick"
                   size={30}
@@ -227,6 +229,7 @@ export default function UserAlbum() {
                 {user && album && user.id === album.userId && (
                   <>
                     <IconButton
+                      testID="album-edit"
                       mode="contained-tonal"
                       icon="file-edit"
                       size={30}
@@ -238,6 +241,7 @@ export default function UserAlbum() {
                       }
                     />
                     <IconButton
+                      testID="photo-create"
                       mode="contained-tonal"
                       icon="camera"
                       size={30}

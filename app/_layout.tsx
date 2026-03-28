@@ -7,7 +7,7 @@ import { theme } from '../constants/Theme';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#072623', // アプリ全体背景
+    backgroundColor: '#072623',
   },
   header: {
     width: '100%',

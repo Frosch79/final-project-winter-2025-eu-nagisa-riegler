@@ -92,7 +92,7 @@ export default function UserAlbumCard(props: Props) {
                 marginRight: spacing.lg,
               }}
               mode="outlined"
-              testID="route"
+              testID="route-user-page"
               onPress={() =>
                 router.navigate({
                   pathname:
