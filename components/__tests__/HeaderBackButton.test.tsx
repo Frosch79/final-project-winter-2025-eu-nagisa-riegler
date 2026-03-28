@@ -4,7 +4,7 @@ import HeaderBackButton from '../HeaderBackButton';
 
 test('calls router.back on press', () => {
   const { getByTestId } = render(<HeaderBackButton />);
-  fireEvent.press(getByTestId('button'));
+  fireEvent.press(getByTestId('back-button'));
 
   expect(mockBack).toHaveBeenCalled();
 });

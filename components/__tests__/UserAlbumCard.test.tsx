@@ -211,7 +211,7 @@ describe('UserAlbumCard', () => {
         <UserAlbumCard {...baseProps} />
       </Paper.PaperProvider>,
     );
-    fireEvent.press(getByTestId('route'));
+    fireEvent.press(getByTestId('route-user-page'));
 
     expect(mockNavigate).toHaveBeenCalledWith({
       params: { userId: baseProps.album.userId },
@@ -278,7 +278,7 @@ describe('UserAlbumCard edge case', () => {
         <UserAlbumCard {...edgeProps} />
       </Paper.PaperProvider>,
     );
-    fireEvent.press(getByTestId('route'));
+    fireEvent.press(getByTestId('route-user-page'));
 
     expect(mockNavigate).toHaveBeenCalledWith({
       params: { userId: edgeProps.album.userId },
