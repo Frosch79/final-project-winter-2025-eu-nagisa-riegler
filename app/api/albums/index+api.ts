@@ -36,9 +36,14 @@ export async function POST(
   const token = cookies.sessionToken;
 
   if (!token) {
-    return ExpoApiResponse.json({
-      error: 'No session token found',
-    });
+    return ExpoApiResponse.json(
+      {
+        error: 'No session token found',
+      },
+      {
+        status: 401,
+      },
+    );
   }
 
   const albumData = result.data;

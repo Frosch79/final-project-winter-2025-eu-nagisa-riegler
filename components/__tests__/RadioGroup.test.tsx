@@ -13,15 +13,12 @@ describe('VisibilitySelector', () => {
       <VisibilitySelector value="public" onChange={onChangeMock} />,
     );
 
-    // 親コンテナー
     expect(getByTestId('button-parent')).toBeTruthy();
 
-    // 各選択肢のテキストコンテナー（動的な testID を直接指定）
     expect(getByTestId('button-text-public')).toBeTruthy();
     expect(getByTestId('button-text-followersOnly')).toBeTruthy();
     expect(getByTestId('button-text-private')).toBeTruthy();
 
-    // 各ラジオボタン
     expect(getByTestId('button-public')).toBeTruthy();
     expect(getByTestId('button-followersOnly')).toBeTruthy();
     expect(getByTestId('button-private')).toBeTruthy();

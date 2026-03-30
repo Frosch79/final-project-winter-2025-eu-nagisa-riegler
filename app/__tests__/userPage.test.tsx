@@ -116,7 +116,7 @@ describe('UserPage screen', () => {
 
       if (url.includes('/api/follower')) {
         return Promise.resolve({
-          ok: true,
+          ok: false,
           json: () => Promise.resolve({ error: 'Follower error' }),
         });
       }
@@ -129,11 +129,10 @@ describe('UserPage screen', () => {
       }
     });
 
-    const { findByText } = render(<UserPage />);
+    const { getByTestId } = render(<UserPage />);
     await waitFor(() => {
-      const name = findByText(mockFullUser.name);
-
-      expect(name).toBeTruthy();
+      const userPage = getByTestId('user-page');
+      expect(userPage).toBeTruthy();
     });
   });
 
@@ -178,8 +177,8 @@ describe('UserPage screen', () => {
       throw new Error(`Unhandled URL: ${url}`);
     });
     const { getByTestId, findByText } = render(<UserPage />);
-    await waitFor(() => {
-      expect(findByText(mockFullUser.name)).toBeTruthy();
+    await waitFor(async () => {
+      expect(await findByText(mockFullUser.name)).toBeTruthy();
     });
     fireEvent.press(getByTestId('logout-button'));
     await waitFor(() => {
@@ -231,8 +230,8 @@ describe('UserPage screen', () => {
     });
 
     const { getByTestId, findByText } = render(<UserPage />);
-    await waitFor(() => {
-      expect(findByText(mockFullUser.name)).toBeTruthy();
+    await waitFor(async () => {
+      expect(await findByText(mockFullUser.name)).toBeTruthy();
     });
     fireEvent.press(getByTestId('logout-button'));
 

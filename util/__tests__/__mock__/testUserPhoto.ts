@@ -11,7 +11,6 @@ export const mockUserPhoto: UserPhoto = {
   createdDate: new Date('2025-07-20T18:30:00Z'),
 };
 
-// Edge case: null fields
 export const mockUserPhotoEdge: UserPhoto = {
   id: null,
   albumId: null,

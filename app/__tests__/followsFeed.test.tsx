@@ -96,7 +96,7 @@ describe('Follows Feed screen', () => {
         });
       }
 
-      // public feed (別テストで混ぜる想定)
+      // public feed
       if (url.includes('/api/feed?visibility=public')) {
         return Promise.resolve({
           json: () => Promise.resolve({ feedAlbum: otherUserAlbums }),
