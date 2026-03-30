@@ -186,8 +186,9 @@ jobs:
             maestro --version
             adb wait-for-device
             adb reverse tcp:8081 tcp:8081
-            adb install app-release.apk
-            adb push util/test-assets /sdcard/Download/test-assets
+            adb install -r app-release.apk
+            adb wait-for-device
+            adb push .maestro/assets /sdcard/Download/test-assets
             adb shell monkey -p com.final_project_winter_2025_eu_nagisa_riegler -c android.intent.category.LAUNCHER 1
             sleep 5
             maestro test .maestro/

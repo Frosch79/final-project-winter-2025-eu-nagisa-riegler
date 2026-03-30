@@ -175,7 +175,7 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - tapOn:
     id: 'photo-create'
 - addMedia:
-    - ./assets/test-assets/image1.jpg
+    - /sdcard/Download/test-assets/image1.jpg
 
 - tapOn:
     id: 'select-photo'
