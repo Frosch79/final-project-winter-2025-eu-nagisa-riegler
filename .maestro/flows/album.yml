@@ -1,0 +1,46 @@
+- tapOn:
+    id: 'write-album'
+- assertVisible: 'Create Album'
+- tapOn:
+    id: 'input-album-title'
+- inputText:
+    text: 'Album title'
+- hideKeyboard
+- tapOn:
+    id: 'input-description'
+- inputText:
+    text: 'Album description'
+- hideKeyboard
+- tapOn:
+    id: 'input-location'
+- inputText:
+    text: 'Album location'
+- hideKeyboard
+- tapOn: 'Ok'
+- assertVisible: 'Album title'
+- assertVisible: 'Album description'
+- tapOn:
+    id: 'album-edit'
+- assertVisible: 'Edit Album'
+- tapOn:
+    id: 'edit-album-title'
+- eraseText
+- inputText:
+    text: 'Edit title'
+- hideKeyboard
+- tapOn:
+    id: 'edit-album-description'
+- eraseText
+- inputText:
+    text: 'Edit description'
+- hideKeyboard
+- tapOn:
+    id: 'edit-album-location'
+- eraseText
+- inputText:
+    text: 'Edit location'
+- hideKeyboard
+- tapOn: 'EDIT'
+- assertVisible: 'Edit title'
+- assertVisible: 'Edit description'
+- assertVisible: 'Edit location'

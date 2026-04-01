@@ -1,0 +1,14 @@
+- tapOn:
+    id: 'input-email'
+- inputText:
+    text: 'testuser@example.com'
+- hideKeyboard
+- tapOn:
+    id: 'input-password'
+- inputText:
+    text: 'Password123'
+- hideKeyboard
+- tapOn:
+    id: 'login-button'
+- assertVisible:
+    id: 'user-page'

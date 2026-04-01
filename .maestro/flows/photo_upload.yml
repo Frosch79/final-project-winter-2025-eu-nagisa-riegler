@@ -1,0 +1,37 @@
+- tapOn:
+    id: 'photo-create'
+- tapOn:
+    id: 'select-photo'
+- addMedia:
+    - assets/test_image1.jpg
+- tapOn:
+    index: 0
+- assertVisible:
+    id: 'upload-photo'
+- tapOn: Photo title
+- inputText:
+    text: Photo title
+- hideKeyboard
+- tapOn: Description
+- inputText:
+    text: Photo description
+- hideKeyboard
+- tapOn: Location
+- inputText:
+    text: Photo location
+- hideKeyboard
+- tapOn:
+    id: continue-button
+- assertVisible:
+    id: 'photo'
+    index: 0
+- tapOn:
+    id: 'photo'
+    index: 0
+- assertVisible:
+    id: photo-image
+- tapOn:
+    id: back-button
+- assertVisible: Album
+- tapOn:
+    id: 'exit-album'

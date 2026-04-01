@@ -1,0 +1,35 @@
+- tapOn:
+    id: 'follower-text'
+- assertVisible: 'Follower'
+- tapOn:
+    id: 'close-button'
+- tapOn:
+    id: 'followed'
+- assertVisible: 'Followed'
+- tapOn:
+    id: 'close-button'
+- tapOn:
+    id: 'edit'
+- assertVisible: 'Edit Account'
+- tapOn:
+    id: 'edit-name'
+- eraseText
+- inputText:
+    text: 'Edit User'
+- hideKeyboard
+- tapOn:
+    id: 'edit-country'
+- eraseText
+- inputText:
+    text: 'Japan'
+- hideKeyboard
+- tapOn:
+    id: 'edit-description'
+- eraseText
+- inputText:
+    text: 'This is edit user.'
+- hideKeyboard
+- tapOn: 'EDIT'
+- assertVisible: 'Edit User'
+- assertVisible: 'This is edit user.'
+- assertVisible: 'Country: Japan'
