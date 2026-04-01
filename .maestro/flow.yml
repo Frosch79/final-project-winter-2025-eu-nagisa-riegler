@@ -1,14 +1,14 @@
 appId: com.final_project_winter_2025_eu_nagisa_riegler
 ---
-- import:
+- runFlow:
     file: flows/registration.yml
-- import:
+- runFlow:
     file: flows/logout.yml
-- import:
+- runFlow:
     file: flows/login.yml
-- import:
+- runFlow:
     file: flows/user_page.yml
-- import:
+- runFlow:
     file: flows/album.yml
-- import:
+- runFlow:
     file: flows/photo_upload.yml
