@@ -174,16 +174,21 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 
 - tapOn:
     id: 'photo-create'
+
 - tapOn:
     id: 'select-photo'
+
 - addMedia:
     - assets/test_image1.jpg
 
-- tapOn: 'test_image1.jpg'
+- tapOn:
+    index: 0
+
 - assertVisible:
     id: 'upload-photo'
 
 - tapOn: Photo title
+
 - inputText:
     text: Photo title
 - hideKeyboard
