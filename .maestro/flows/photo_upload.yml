@@ -11,7 +11,7 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - waitForAnimationToEnd
 
 - tapOn:
-    index: 0
+    index: 1
 - assertVisible:
     id: 'upload-photo'
 - tapOn: Photo title
