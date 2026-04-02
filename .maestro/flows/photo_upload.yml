@@ -7,10 +7,13 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     id: 'photo-create'
 - tapOn:
     id: 'select-photo'
-- addMedia:
-    - ../assets/test_image1.jpg
+
+- tapOn: 'Files'
+
+- tapOn: 'assets'
+
 - tapOn:
-    index: 0
+    text: 'test_image1.jpg'
 - assertVisible:
     id: 'upload-photo'
 - tapOn: Photo title
