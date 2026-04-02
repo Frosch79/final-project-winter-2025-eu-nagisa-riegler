@@ -25,10 +25,12 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     direction: DOWN
     id: 'album-edit'
 - tapOn:
-    id: 'album-edit'
+    element:
+      id: 'album-edit'
 - assertVisible: 'Edit Album'
 - tapOn:
-    id: 'edit-album-title'
+    element:
+      id: 'edit-album-title'
 - eraseText
 - inputText:
     text: 'Edit title'
