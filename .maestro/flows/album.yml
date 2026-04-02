@@ -23,10 +23,10 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - assertVisible: 'Album description'
 - scrollUntilVisible:
     direction: DOWN
-    id: 'album-edit'
-- tapOn:
     element:
       id: 'album-edit'
+- tapOn:
+    id: 'album-edit'
 - assertVisible: 'Edit Album'
 - tapOn:
     element:
