@@ -30,11 +30,11 @@ async function compressBlob(blob: Blob): Promise<Blob> {
 
 export async function uploadImage(uri: string): Promise<string> {
   // For CI test
-  if (process.env.CI) {
+  /*   if (process.env.CI) {
     const fileName = uri.split('/').pop();
     console.log('Mock upload:', fileName);
     return `mock:///${fileName}`;
-  }
+  } */
   const fileToUpload = {
     uri: uri,
     name: 'photo.jpg',
