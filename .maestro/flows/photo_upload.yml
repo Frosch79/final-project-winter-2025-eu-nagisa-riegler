@@ -13,10 +13,13 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     id: 'com.google.android.documentsui:id/icon_thumb'
     index: 0
 
-- tapOn:
-    id: 'com.google.android.documentsui:id/icon_thumb'
-    index: 0
+- stopApp: 'com.google.android.documentsui'
 - waitForAnimationToEnd
+
+- waitForElement:
+    id: 'upload-photo'
+    timeout: 20000
+
 - assertVisible:
     id: 'upload-photo'
 
