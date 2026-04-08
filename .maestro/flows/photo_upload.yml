@@ -10,10 +10,10 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 
 - waitForAnimationToEnd
 - assertVisible:
-    index: 1
+    text: 'test_image1.jpg'
 
 - tapOn:
-    index: 1
+    text: 'test_image1.jpg'
 - waitForAnimationToEnd
 - assertVisible:
     id: 'upload-photo'
