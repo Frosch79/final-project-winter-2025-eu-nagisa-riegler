@@ -10,7 +10,7 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 
 - waitForAnimationToEnd
 - assertVisible:
-    id: 'image-element-id'
+    index: 1
 
 - tapOn:
     index: 1
