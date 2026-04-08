@@ -9,6 +9,8 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     id: 'select-photo'
 
 - waitForAnimationToEnd
+- assertVisible:
+    id: 'image-element-id'
 
 - tapOn:
     index: 1
