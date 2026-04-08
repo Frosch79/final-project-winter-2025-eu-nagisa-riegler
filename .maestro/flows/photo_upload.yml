@@ -10,10 +10,12 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 
 - waitForAnimationToEnd
 - assertVisible:
-    text: 'test_image1.jpg'
+    id: 'com.google.android.documentsui:id/icon_thumb'
+    index: 0
 
 - tapOn:
-    text: 'test_image1.jpg'
+    id: 'com.google.android.documentsui:id/icon_thumb'
+    index: 0
 - waitForAnimationToEnd
 - assertVisible:
     id: 'upload-photo'
