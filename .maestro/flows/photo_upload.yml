@@ -13,7 +13,6 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     id: 'com.google.android.documentsui:id/icon_thumb'
     index: 0
 
-- stopApp: 'com.google.android.documentsui'
 - waitForAnimationToEnd
 
 - assertVisible:
