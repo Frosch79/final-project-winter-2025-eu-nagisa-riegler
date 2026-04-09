@@ -116,6 +116,7 @@ jobs:
 
       ANDROID_EMULATOR: true
       EXPO_PUBLIC_API_URL: http://localhost:8081
+      CI: true
 
     steps:
       - uses: actions/checkout@v4

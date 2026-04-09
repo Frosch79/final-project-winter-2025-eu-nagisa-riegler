@@ -14,10 +14,8 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     index: 0
 
 - stopApp: 'com.google.android.documentsui'
-- waitUntil:
-    visible:
-      id: 'upload-photo'
-    timeout: 20000
+- waitForAnimationToEnd
+
 - assertVisible:
     id: 'upload-photo'
 
