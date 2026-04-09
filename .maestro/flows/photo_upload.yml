@@ -32,6 +32,9 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - hideKeyboard
 - tapOn:
     id: continue-button
+- scrollUntilVisible:
+    element:
+      id: 'photo'
 - assertVisible:
     id: 'photo'
     index: 0

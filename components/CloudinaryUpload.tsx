@@ -34,13 +34,9 @@ export async function uploadImage(uri: string): Promise<string> {
     process.env.CI === 'true' || process.env.EXPO_PUBLIC_CI === 'true';
 
   if (isCI) {
-    console.log('Mocking upload for CI');
     return `mock:///test`;
   }
-  /* if (process.env.CI) {
-    console.log('CI Mode:', process.env.CI);
-    return `mock:///test`;
-  }*/
+
   const fileToUpload = {
     uri: uri,
     name: 'photo.jpg',
