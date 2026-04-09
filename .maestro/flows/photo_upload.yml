@@ -9,14 +9,13 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     id: 'select-photo'
 
 - waitForAnimationToEnd
-- assertVisible:
+
+- tapOn:
     id: 'com.google.android.documentsui:id/icon_thumb'
     index: 0
-
-- waitForAnimationToEnd
-
 - assertVisible:
     id: 'upload-photo'
+    timeout: 30000
 
 - tapOn: Photo title
 - inputText:
