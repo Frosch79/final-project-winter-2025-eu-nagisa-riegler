@@ -12,7 +12,8 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     text: 'Pazu'
 - scrollUntilVisible:
     text: 'Mining Town Views'
-- tapOn: 'public'
+- tapOn:
+    text: 'public'
 - scrollUntilVisible:
     text: 'Edit User'
 - scrollUntilVisible:
@@ -33,7 +34,8 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     text: 'Sophie Hatter'
 - scrollUntilVisible:
     text: 'Chipping Inspirations'
-- tapOn: 'Profile'
+- tapOn:
+    text: 'Profile'
 - assertVisible:
     text: 'Edit User'
     index: 0

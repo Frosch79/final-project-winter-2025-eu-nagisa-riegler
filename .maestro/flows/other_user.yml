@@ -3,20 +3,24 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - scrollUntilVisible:
     text: 'Pazu'
 - assertVisible:
-    "Mining Town Views, Rustic mining towns that resemble my home., Tomonoura,\
-    \ Hiroshima, Japan"
+    text:
+      "Mining Town Views, Rustic mining towns that resemble my home., Tomonoura,\
+      \ Hiroshima, Japan"
 - tapOn:
-    "Mining Town Views, Rustic mining towns that resemble my home., Tomonoura,\
-    \ Hiroshima, Japan"
+    text:
+      "Mining Town Views, Rustic mining towns that resemble my home., Tomonoura,\
+      \ Hiroshima, Japan"
 
 - tapOn:
     id: 'route-user-page'
 - tapOn:
     id: 'follow-button'
-- assertVisible: 'FOLLOWED'
+- assertVisible:
+    text: 'FOLLOWED'
 - tapOn:
     id: 'follow-button'
-- assertVisible: 'FOLLOW'
+- assertVisible:
+    text: 'FOLLOW'
 - tapOn:
     id: 'follow-button'
 - tapOn:
@@ -34,7 +38,8 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     id: 'user-nav'
     index: 0
 - tapOn: 'FOLLOW'
-- assertVisible: 'Follower (4)'
+- assertVisible:
+    text: 'Follower (4)'
 - tapOn:
     id: 'follower'
 

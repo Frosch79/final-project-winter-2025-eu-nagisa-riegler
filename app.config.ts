@@ -9,10 +9,17 @@ const config: ExpoConfig = {
   scheme: 'myapp',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
+  updates: {
+    url: 'https://u.expo.dev/e2cda16f-21b8-40e6-83bb-58958c5867ca',
+  },
   ios: {
     supportsTablet: true,
+    runtimeVersion: {
+      policy: 'appVersion',
+    },
   },
   android: {
+    runtimeVersion: '1.0.0',
     package: 'com.final_project_winter_2025_eu_nagisa_riegler',
     adaptiveIcon: {
       foregroundImage: './assets/images/icon-shutter.png',
