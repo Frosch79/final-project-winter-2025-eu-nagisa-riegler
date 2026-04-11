@@ -109,14 +109,11 @@ describe('OtherUserPage screen', () => {
   });
 
   test('can follow and unfollow other user', async () => {
+    let isFollowing = false;
+
     (global.fetch as jest.Mock).mockImplementation(
       (input: unknown, options?: unknown) => {
-        const url =
-          typeof input === 'string'
-            ? input
-            : input instanceof Request
-              ? input.url
-              : '';
+        const url = typeof input === 'string' ? input : '';
 
         const init = options as { method?: string } | undefined;
         if (url === '/api/user') {
@@ -142,7 +139,7 @@ describe('OtherUserPage screen', () => {
         if (url === `/api/followed/${otherUserId}`) {
           return Promise.resolve({
             ok: true,
-            json: () => Promise.resolve({ result: false }),
+            json: () => Promise.resolve({ result: isFollowing }),
           });
         }
         if (url === `/api/follower?userId=${otherUserId}`) {
@@ -158,6 +155,7 @@ describe('OtherUserPage screen', () => {
           });
         }
         if (url === '/api/followed' && init?.method === 'POST') {
+          isFollowing = true;
           return Promise.resolve({
             ok: true,
             json: () =>
@@ -173,6 +171,7 @@ describe('OtherUserPage screen', () => {
         }
 
         if (url === '/api/followed' && init?.method === 'DELETE') {
+          isFollowing = false;
           return Promise.resolve({
             ok: true,
             json: () => Promise.resolve({ success: true }),

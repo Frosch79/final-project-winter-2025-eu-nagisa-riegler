@@ -93,7 +93,6 @@ jobs:
         run: ./gradlew assembleRelease
         env:
           EXPO_PUBLIC_API_URL: http://10.0.2.2:8081
-          CI: true
           EXPO_PUBLIC_CI: true
 
       - uses: actions/upload-artifact@v4
@@ -118,7 +117,6 @@ jobs:
 
       ANDROID_EMULATOR: true
       EXPO_PUBLIC_API_URL: http://localhost:8081
-      CI: true
       EXPO_PUBLIC_CI: true
 
     steps:

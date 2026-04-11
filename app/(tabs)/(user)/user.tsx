@@ -120,6 +120,7 @@ export default function UserPage() {
                 editMyAccount={() =>
                   router.navigate('/(tabs)/(user)/(editAccount)/editAccount')
                 }
+                myId={user.id}
               />
             ) : null}
 

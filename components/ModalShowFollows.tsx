@@ -32,14 +32,15 @@ export default function ModalShowFollows({
       <View style={{ marginBottom: spacing.xs }}>
         <Button
           testID="user-nav"
-          onPress={() =>
+          onPress={() => {
+            onDismiss();
             router.navigate({
               pathname: isMyPage
                 ? '/(tabs)/(user)/user'
                 : '/(tabs)/(user)/[userId]',
               params: { userId: targetUserId },
-            })
-          }
+            });
+          }}
         >
           <Text
             testID={`user-name-${item.userName}`}

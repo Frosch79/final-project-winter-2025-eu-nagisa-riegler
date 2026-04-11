@@ -17,6 +17,7 @@ import ModalShowFollows from './ModalShowFollows';
 
 type Props = {
   userData: FullUser;
+  myId: number;
   editMyAccount:
     | (((event: GestureResponderEvent) => void) &
         ((e: GestureResponderEvent) => void))
@@ -53,6 +54,7 @@ export default function UserCard(props: Props) {
     isFollow,
     followedUsersItem,
     followerUsersItem,
+    myId,
   } = props;
 
   const leftContent = () => (
@@ -205,7 +207,7 @@ export default function UserCard(props: Props) {
           onDismiss={() => setIsFollowerModalVisible(false)}
           items={followerUsersItem}
           idSwitch={idSwitch}
-          userId={userData.id}
+          userId={myId}
         />
       </Portal>
       <Portal>
@@ -215,7 +217,7 @@ export default function UserCard(props: Props) {
           onDismiss={() => setIsFollowedModalVisible(false)}
           items={followedUsersItem}
           idSwitch={idSwitch}
-          userId={userData.id}
+          userId={myId}
         />
       </Portal>
     </SafeAreaView>

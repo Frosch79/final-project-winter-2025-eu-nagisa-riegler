@@ -1,2 +1,17 @@
 appId: com.final_project_winter_2025_eu_nagisa_riegler
 ---
+- tapOn:
+    id: 'comment-modal-icon-button'
+- assertVisible: 'No comments'
+- tapOn:
+    id: 'comment-input'
+- inputText: 'This is test comment'
+- hideKeyboard
+- tapOn:
+    id: 'send-button'
+- assertVisible: 'This is test comment'
+- tapOn:
+    id: 'delete-button'
+- assertVisible: 'No comments'
+- tapOn:
+    id: 'close-button'
