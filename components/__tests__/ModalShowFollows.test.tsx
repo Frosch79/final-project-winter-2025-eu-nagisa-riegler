@@ -1,4 +1,4 @@
-import { describe, expect, test } from '@jest/globals';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react-native';
 import * as Paper from 'react-native-paper';
 import { mockNavigate } from '../../jest.setup';

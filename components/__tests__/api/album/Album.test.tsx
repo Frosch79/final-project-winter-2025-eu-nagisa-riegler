@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import {
@@ -55,8 +56,8 @@ describe('POST /api/albums', () => {
     jest.clearAllMocks();
   });
 
-  it('creates album successfully', async () => {
-    (createAlbum as jest.Mock).mockResolvedValue({
+  test('creates album successfully', async () => {
+    (createAlbum as jest.Mock<any>).mockResolvedValue({
       id: 1,
       userId: 1,
       title: 'trip',
@@ -82,7 +83,7 @@ describe('POST /api/albums', () => {
     });
   });
 
-  it('returns 400 if body is invalid', async () => {
+  test('returns 400 if body is invalid', async () => {
     const res = await request(app)
       .post('/api/albums')
       .set('Cookie', 'sessionToken=valid-token')
@@ -97,7 +98,7 @@ describe('POST /api/albums', () => {
     expect(Array.isArray(body.errorIssues)).toBe(true);
   });
 
-  it('returns 401 if no token', async () => {
+  test('returns 401 if no token', async () => {
     const res = await request(app)
       .post('/api/albums')
       .send(validBody)
@@ -106,8 +107,8 @@ describe('POST /api/albums', () => {
     expect(body.error).toBe('No session token found');
   });
 
-  it('returns 500 if DB fails', async () => {
-    (createAlbum as jest.Mock).mockResolvedValue(undefined);
+  test('returns 500 if DB fails', async () => {
+    (createAlbum as jest.Mock<any>).mockResolvedValue(undefined);
 
     const res = await request(app)
       .post('/api/albums')

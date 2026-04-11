@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import {
@@ -53,9 +54,9 @@ describe('DELETE /api/comments/:commentId', () => {
     jest.clearAllMocks();
   });
 
-  it('deletes a comment successfully', async () => {
-    (selectCommentExists as jest.Mock).mockResolvedValue(true);
-    (deleteComment as jest.Mock).mockResolvedValue([mockComment]);
+  test('deletes a comment successfully', async () => {
+    (selectCommentExists as jest.Mock<any>).mockResolvedValue(true);
+    (deleteComment as jest.Mock<any>).mockResolvedValue([mockComment]);
 
     const res = await request(app)
       .delete('/api/comments/1')
@@ -70,14 +71,14 @@ describe('DELETE /api/comments/:commentId', () => {
     ]);
   });
 
-  it('returns 401 if no token', async () => {
+  test('returns 401 if no token', async () => {
     const res = await request(app).delete('/api/comments/1').expect(401);
     const body = res.body as { error: AlbumCommentResponseBodyDelete };
     expect(body.error).toBe('No session token found');
   });
 
-  it('returns 404 if comment does not exist', async () => {
-    (selectCommentExists as jest.Mock).mockResolvedValue(false);
+  test('returns 404 if comment does not exist', async () => {
+    (selectCommentExists as jest.Mock<any>).mockResolvedValue(false);
     const res = await request(app)
       .delete('/api/comments/999')
       .set('Cookie', 'sessionToken=valid-token')

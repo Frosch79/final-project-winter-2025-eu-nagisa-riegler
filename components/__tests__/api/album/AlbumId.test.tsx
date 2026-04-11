@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import {
@@ -94,9 +95,9 @@ describe('Album APIs (GET, PUT, DELETE)', () => {
   });
 
   describe('GET /api/albums/:albumId', () => {
-    it('returns album successfully', async () => {
-      (selectAlbumExists as jest.Mock).mockResolvedValue(true);
-      (getVisitUserAlbum as jest.Mock).mockResolvedValue(validBody);
+    test('returns album successfully', async () => {
+      (selectAlbumExists as jest.Mock<any>).mockResolvedValue(true);
+      (getVisitUserAlbum as jest.Mock<any>).mockResolvedValue(validBody);
 
       const res = await request(app)
         .get(`/api/albums/${albumId}`)
@@ -109,7 +110,7 @@ describe('Album APIs (GET, PUT, DELETE)', () => {
       expect(body.album).toMatchObject(validBody);
     });
 
-    it('returns 401 if no token', async () => {
+    test('returns 401 if no token', async () => {
       const res = await request(app).get(`/api/albums/${albumId}`).expect(401);
       const body = res.body as { error: AlbumResponseBodyGet };
       expect(body.error).toBe('No session token found');
@@ -117,9 +118,9 @@ describe('Album APIs (GET, PUT, DELETE)', () => {
   });
 
   describe('PUT /api/albums/:albumId', () => {
-    it('updates album successfully', async () => {
-      (selectAlbumExists as jest.Mock).mockResolvedValue(true);
-      (updateAlbum as jest.Mock).mockResolvedValue(validBody);
+    test('updates album successfully', async () => {
+      (selectAlbumExists as jest.Mock<any>).mockResolvedValue(true);
+      (updateAlbum as jest.Mock<any>).mockResolvedValue(validBody);
 
       const res = await request(app)
         .put(`/api/albums/${albumId}`)
@@ -131,7 +132,7 @@ describe('Album APIs (GET, PUT, DELETE)', () => {
       expect(body.album).toMatchObject(validBody);
     });
 
-    it('returns 400 on invalid body', async () => {
+    test('returns 400 on invalid body', async () => {
       const res = await request(app)
         .put(`/api/albums/${albumId}`)
         .set('Cookie', 'sessionToken=valid-token')
@@ -148,9 +149,9 @@ describe('Album APIs (GET, PUT, DELETE)', () => {
   });
 
   describe('DELETE /api/albums/:albumId', () => {
-    it('deletes album successfully', async () => {
-      (selectAlbumExists as jest.Mock).mockResolvedValue(true);
-      (deleteAlbum as jest.Mock).mockResolvedValue([{ title: 'Trip' }]);
+    test('deletes album successfully', async () => {
+      (selectAlbumExists as jest.Mock<any>).mockResolvedValue(true);
+      (deleteAlbum as jest.Mock<any>).mockResolvedValue([{ title: 'Trip' }]);
 
       const res = await request(app)
         .delete(`/api/albums/${albumId}`)
@@ -161,8 +162,8 @@ describe('Album APIs (GET, PUT, DELETE)', () => {
       expect(body.album).toEqual([{ title: 'Trip' }]);
     });
 
-    it('returns 404 if album does not exist', async () => {
-      (selectAlbumExists as jest.Mock).mockResolvedValue(false);
+    test('returns 404 if album does not exist', async () => {
+      (selectAlbumExists as jest.Mock<any>).mockResolvedValue(false);
 
       const res = await request(app)
         .delete(`/api/albums/${albumId}`)

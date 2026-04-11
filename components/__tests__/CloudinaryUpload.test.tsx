@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import * as CloudinaryUpload from '../CloudinaryUpload';
 
 jest.mock('react-native', () => ({
@@ -10,14 +11,31 @@ describe('uploadImage', () => {
   });
 
   test('uploads image and returns secure_url', async () => {
-    const mockUri = 'file://test.jpg';
+    const mockUri = 'file:///cloudinary/test.jpg';
 
     // fetch blob
-    (global.fetch as jest.Mock)
 
+    const mockedFetch = global.fetch as jest.Mock;
+
+    mockedFetch
+      .mockImplementationOnce(() =>
+        Promise.resolve({ blob: () => Promise.resolve(new Blob(['fake'])) }),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          json: () => Promise.resolve({ timestamp: '123', signature: 'sig' }),
+        }),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          json: () =>
+            Promise.resolve({ secure_url: 'https://cloudinary/test.jpg' }),
+        }),
+      );
+    /*     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({
         blob: () => new Blob(['fake'], { type: 'image/jpeg' }),
-      })
+      } as any)
       //  signature
       .mockResolvedValueOnce({
         json: () => ({
@@ -37,7 +55,7 @@ describe('uploadImage', () => {
           format: 'jpg',
         }),
       }) as any;
-
+ */
     // uploadImage mock
     const uploadImageSpy = jest
       .spyOn(CloudinaryUpload, 'uploadImage')

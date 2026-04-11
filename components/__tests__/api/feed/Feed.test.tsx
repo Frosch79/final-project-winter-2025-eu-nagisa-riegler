@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import {
@@ -37,8 +38,8 @@ describe('GET /api/feed', () => {
     jest.clearAllMocks();
   });
 
-  it('returns feed albums successfully', async () => {
-    (getAlbumsSwitchWithVisibility as jest.Mock).mockResolvedValue(
+  test('returns feed albums successfully', async () => {
+    (getAlbumsSwitchWithVisibility as jest.Mock<any>).mockResolvedValue(
       otherUserAlbums,
     );
 
@@ -61,15 +62,17 @@ describe('GET /api/feed', () => {
     );
   });
 
-  it('returns 401 if no token', async () => {
+  test('returns 401 if no token', async () => {
     const res = await request(app).get('/api/feed').expect(200);
     const body = res.body as { error: FeedResponseBodyGet };
 
     expect(body.error).toBe('No session token found');
   });
 
-  it('returns 500 if DB fails', async () => {
-    (getAlbumsSwitchWithVisibility as jest.Mock).mockResolvedValue(undefined);
+  test('returns 500 if DB fails', async () => {
+    (getAlbumsSwitchWithVisibility as jest.Mock<any>).mockResolvedValue(
+      undefined,
+    );
 
     const res = await request(app)
       .get('/api/feed')

@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import {
@@ -43,8 +44,8 @@ describe('GET /api/isFollowed/:userId', () => {
     jest.clearAllMocks();
   });
 
-  it('returns true if user is followed', async () => {
-    (getIsFollowed as jest.Mock).mockResolvedValue(true);
+  test('returns true if user is followed', async () => {
+    (getIsFollowed as jest.Mock<any>).mockResolvedValue(true);
 
     const res = await request(app)
       .get('/api/isFollowed/1')
@@ -56,8 +57,8 @@ describe('GET /api/isFollowed/:userId', () => {
     expect(body).toEqual({ result: true });
   });
 
-  it('returns false if user is not followed', async () => {
-    (getIsFollowed as jest.Mock).mockResolvedValue(false);
+  test('returns false if user is not followed', async () => {
+    (getIsFollowed as jest.Mock<any>).mockResolvedValue(false);
 
     const res = await request(app)
       .get('/api/isFollowed/1')
@@ -69,7 +70,7 @@ describe('GET /api/isFollowed/:userId', () => {
     expect(body).toEqual({ result: false });
   });
 
-  it('returns 401 if no token', async () => {
+  test('returns 401 if no token', async () => {
     const res = await request(app).get('/api/isFollowed/1').expect(401);
 
     const body = res.body as IsFollowedResponseBodyGet;

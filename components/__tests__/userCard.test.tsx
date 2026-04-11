@@ -1,4 +1,4 @@
-import { expect, jest } from '@jest/globals';
+import { describe, expect, jest, test } from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react-native';
 import { Text } from 'react-native';
 import * as Paper from 'react-native-paper';
@@ -54,6 +54,7 @@ export const baseProps = {
   isFollow: false,
   followedUsersItem: [mockFollowUser1, mockFollowUser2],
   followerUsersItem: [mockFollowUser1],
+  myId: 1,
 };
 
 export const edgeProps = {
@@ -66,6 +67,7 @@ export const edgeProps = {
   isFollow: true,
   followedUsersItem: [],
   followerUsersItem: [],
+  myId: 1,
 };
 
 export const failProps = {
@@ -78,6 +80,7 @@ export const failProps = {
   isFollow: false,
   followedUsersItem: [],
   followerUsersItem: [],
+  myId: 1,
 };
 
 describe('UserCard', () => {

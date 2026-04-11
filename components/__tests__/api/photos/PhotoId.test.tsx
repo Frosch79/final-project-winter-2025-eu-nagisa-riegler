@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import {
@@ -98,9 +99,9 @@ describe('Photo Detail API', () => {
   });
 
   describe('GET /api/photos/:photoId', () => {
-    it('returns photo successfully', async () => {
-      (selectPhotoExists as jest.Mock).mockResolvedValue(true);
-      (getPhoto as jest.Mock).mockResolvedValue(mockUserPhoto);
+    test('returns photo successfully', async () => {
+      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(true);
+      (getPhoto as jest.Mock<any>).mockResolvedValue(mockUserPhoto);
 
       const res = await request(app).get(`/api/photos/${photoId}`).expect(200);
 
@@ -112,17 +113,17 @@ describe('Photo Detail API', () => {
       });
     });
 
-    it('returns 404 if photo not exists', async () => {
-      (selectPhotoExists as jest.Mock).mockResolvedValue(false);
+    test('returns 404 if photo not exists', async () => {
+      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(false);
 
       const res = await request(app).get(`/api/photos/${photoId}`).expect(404);
       const body = res.body as { error: PhotoResponseBodyGet };
       expect(body.error).toBeDefined();
     });
 
-    it('returns 403 if no access', async () => {
-      (selectPhotoExists as jest.Mock).mockResolvedValue(true);
-      (getPhoto as jest.Mock).mockResolvedValue(undefined);
+    test('returns 403 if no access', async () => {
+      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(true);
+      (getPhoto as jest.Mock<any>).mockResolvedValue(undefined);
 
       const res = await request(app).get(`/api/photos/${photoId}`).expect(403);
       const body = res.body as { error: PhotoResponseBodyGet };
@@ -131,9 +132,9 @@ describe('Photo Detail API', () => {
   });
 
   describe('PUT /api/photos/:photoId', () => {
-    it('updates photo successfully', async () => {
-      (selectPhotoExists as jest.Mock).mockResolvedValue(true);
-      (updatePhoto as jest.Mock).mockResolvedValue([mockUserPhoto]);
+    test('updates photo successfully', async () => {
+      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(true);
+      (updatePhoto as jest.Mock<any>).mockResolvedValue([mockUserPhoto]);
 
       const res = await request(app)
         .put(`/api/photos/${photoId}`)
@@ -151,7 +152,7 @@ describe('Photo Detail API', () => {
       ]);
     });
 
-    it('returns 400 if invalid body', async () => {
+    test('returns 400 if invalid body', async () => {
       const res = await request(app)
         .put(`/api/photos/${photoId}`)
         .set('Cookie', 'sessionToken=valid-token')
@@ -161,7 +162,7 @@ describe('Photo Detail API', () => {
       expect(body.error).toBeDefined();
     });
 
-    it('returns 401 if no token', async () => {
+    test('returns 401 if no token', async () => {
       const res = await request(app)
         .put(`/api/photos/${photoId}`)
         .send(mockUserPhoto)
@@ -170,8 +171,8 @@ describe('Photo Detail API', () => {
       expect(body.error).toBe('No session token found');
     });
 
-    it('returns 404 if photo not exists', async () => {
-      (selectPhotoExists as jest.Mock).mockResolvedValue(false);
+    test('returns 404 if photo not exists', async () => {
+      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(false);
 
       const res = await request(app)
         .put(`/api/photos/${photoId}`)
@@ -184,9 +185,9 @@ describe('Photo Detail API', () => {
   });
 
   describe('DELETE /api/photos/:photoId', () => {
-    it('deletes photo successfully', async () => {
-      (selectPhotoExists as jest.Mock).mockResolvedValue(true);
-      (deletePhoto as jest.Mock).mockResolvedValue([mockUserPhoto]);
+    test('deletes photo successfully', async () => {
+      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(true);
+      (deletePhoto as jest.Mock<any>).mockResolvedValue([mockUserPhoto]);
 
       const res = await request(app)
         .delete(`/api/photos/${photoId}`)
@@ -203,7 +204,7 @@ describe('Photo Detail API', () => {
       ]);
     });
 
-    it('returns 401 if no token', async () => {
+    test('returns 401 if no token', async () => {
       const res = await request(app)
         .delete(`/api/photos/${photoId}`)
         .expect(401);
@@ -211,8 +212,8 @@ describe('Photo Detail API', () => {
       expect(body.error).toBe('No session token found');
     });
 
-    it('returns 404 if photo not exists', async () => {
-      (selectPhotoExists as jest.Mock).mockResolvedValue(false);
+    test('returns 404 if photo not exists', async () => {
+      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(false);
 
       const res = await request(app)
         .delete(`/api/photos/${photoId}`)

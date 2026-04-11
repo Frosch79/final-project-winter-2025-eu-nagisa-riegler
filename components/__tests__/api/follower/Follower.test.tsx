@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import {
@@ -43,8 +44,8 @@ describe('GET /api/follower', () => {
     jest.clearAllMocks();
   });
 
-  it('returns follower users', async () => {
-    (getUserAllFollowersInsecure as jest.Mock).mockResolvedValue(
+  test('returns follower users', async () => {
+    (getUserAllFollowersInsecure as jest.Mock<any>).mockResolvedValue(
       followersOfUser1,
     );
 
@@ -63,8 +64,10 @@ describe('GET /api/follower', () => {
     );
   });
 
-  it('returns 500 if DB returns undefined', async () => {
-    (getUserAllFollowersInsecure as jest.Mock).mockResolvedValue(undefined);
+  test('returns 500 if DB returns undefined', async () => {
+    (getUserAllFollowersInsecure as jest.Mock<any>).mockResolvedValue(
+      undefined,
+    );
 
     const res = await request(app)
       .get('/api/follower')

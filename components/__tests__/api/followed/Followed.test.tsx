@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import {
@@ -90,8 +91,8 @@ describe('Followed API', () => {
   });
 
   describe('GET /api/followed', () => {
-    it('returns followed users', async () => {
-      (getUserAllFollowedInsecure as jest.Mock).mockResolvedValue(
+    test('returns followed users', async () => {
+      (getUserAllFollowedInsecure as jest.Mock<any>).mockResolvedValue(
         followersOfUser1,
       );
 
@@ -106,8 +107,10 @@ describe('Followed API', () => {
       );
     });
 
-    it('returns 500 if DB returns undefined', async () => {
-      (getUserAllFollowedInsecure as jest.Mock).mockResolvedValue(undefined);
+    test('returns 500 if DB returns undefined', async () => {
+      (getUserAllFollowedInsecure as jest.Mock<any>).mockResolvedValue(
+        undefined,
+      );
 
       const res = await request(app).get('/api/followed').expect(500);
       const body = res.body as { error: FollowedUserResponseBodyGet };
@@ -116,9 +119,9 @@ describe('Followed API', () => {
   });
 
   describe('POST /api/followed', () => {
-    it('creates follow successfully', async () => {
-      (getIsFollowed as jest.Mock).mockResolvedValue(false);
-      (createFollow as jest.Mock).mockResolvedValue(mockFollowUser1);
+    test('creates follow successfully', async () => {
+      (getIsFollowed as jest.Mock<any>).mockResolvedValue(false);
+      (createFollow as jest.Mock<any>).mockResolvedValue(mockFollowUser1);
 
       const res = await request(app)
         .post('/api/followed')
@@ -133,7 +136,7 @@ describe('Followed API', () => {
       });
     });
 
-    it('returns 401 if no token', async () => {
+    test('returns 401 if no token', async () => {
       const res = await request(app)
         .post('/api/followed')
         .send({ followedId: mockFollowUser1.followerUserId });
@@ -141,8 +144,8 @@ describe('Followed API', () => {
       expect(body.error).toBe('No session token found');
     });
 
-    it('returns 404 if already followed', async () => {
-      (getIsFollowed as jest.Mock).mockResolvedValue(true);
+    test('returns 404 if already followed', async () => {
+      (getIsFollowed as jest.Mock<any>).mockResolvedValue(true);
 
       const res = await request(app)
         .post('/api/followed')
@@ -153,7 +156,7 @@ describe('Followed API', () => {
       expect(body.error).toContain('No user with id');
     });
 
-    it('returns 400 on invalid body', async () => {
+    test('returns 400 on invalid body', async () => {
       const res = await request(app)
         .post('/api/followed')
         .set('Cookie', 'sessionToken=valid-token')
@@ -167,9 +170,9 @@ describe('Followed API', () => {
       expect(Array.isArray(body.errorIssues)).toBe(true);
     });
 
-    it('returns 500 if createFollow fails', async () => {
-      (getIsFollowed as jest.Mock).mockResolvedValue(false);
-      (createFollow as jest.Mock).mockResolvedValue(undefined);
+    test('returns 500 if createFollow fails', async () => {
+      (getIsFollowed as jest.Mock<any>).mockResolvedValue(false);
+      (createFollow as jest.Mock<any>).mockResolvedValue(undefined);
 
       const res = await request(app)
         .post('/api/followed')
@@ -182,9 +185,9 @@ describe('Followed API', () => {
   });
 
   describe('DELETE /api/followed', () => {
-    it('unfollows user successfully', async () => {
-      (getIsFollowed as jest.Mock).mockResolvedValue(true);
-      (deleteFollow as jest.Mock).mockResolvedValue(mockFollowUser1);
+    test('unfollows user successfully', async () => {
+      (getIsFollowed as jest.Mock<any>).mockResolvedValue(true);
+      (deleteFollow as jest.Mock<any>).mockResolvedValue(mockFollowUser1);
 
       const res = await request(app)
         .delete('/api/followed')
@@ -199,7 +202,7 @@ describe('Followed API', () => {
       });
     });
 
-    it('returns 401 if no token', async () => {
+    test('returns 401 if no token', async () => {
       const res = await request(app)
         .delete('/api/followed')
         .send({ followedId: mockFollowUser1.followedUserId });
@@ -207,8 +210,8 @@ describe('Followed API', () => {
       expect(body.error).toBe('No session token found');
     });
 
-    it('returns 404 if not followed', async () => {
-      (getIsFollowed as jest.Mock).mockResolvedValue(false);
+    test('returns 404 if not followed', async () => {
+      (getIsFollowed as jest.Mock<any>).mockResolvedValue(false);
 
       const res = await request(app)
         .delete('/api/followed')
@@ -219,7 +222,7 @@ describe('Followed API', () => {
       expect(body.error).toContain('No user with id');
     });
 
-    it('returns 400 on invalid body', async () => {
+    test('returns 400 on invalid body', async () => {
       const res = await request(app)
         .delete('/api/followed')
         .set('Cookie', 'sessionToken=valid-token')
@@ -233,9 +236,9 @@ describe('Followed API', () => {
       expect(Array.isArray(body.errorIssues)).toBe(true);
     });
 
-    it('returns 403 if deleteFollow fails', async () => {
-      (getIsFollowed as jest.Mock).mockResolvedValue(true);
-      (deleteFollow as jest.Mock).mockResolvedValue(undefined);
+    test('returns 403 if deleteFollow fails', async () => {
+      (getIsFollowed as jest.Mock<any>).mockResolvedValue(true);
+      (deleteFollow as jest.Mock<any>).mockResolvedValue(undefined);
 
       const res = await request(app)
         .delete('/api/followed')

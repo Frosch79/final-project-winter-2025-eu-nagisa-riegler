@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import bcrypt from 'bcryptjs';
 import express from 'express';
 import request from 'supertest';
@@ -45,13 +46,13 @@ describe('Login API', () => {
     jest.clearAllMocks();
   });
 
-  it('logs in successfully with valid credentials', async () => {
-    (getUserWithPasswordHashInsecure as jest.Mock).mockResolvedValue({
+  test('logs in successfully with valid credentials', async () => {
+    (getUserWithPasswordHashInsecure as jest.Mock<any>).mockResolvedValue({
       id: 1,
       name: 'Totoro',
       passwordHash: await bcrypt.hash(loginUserSuccess.password, 10),
     });
-    (createSessionInsecure as jest.Mock).mockResolvedValue({
+    (createSessionInsecure as jest.Mock<any>).mockResolvedValue({
       token: 'session-token',
       userId: 1,
     });
@@ -66,7 +67,7 @@ describe('Login API', () => {
     expect(res.headers['set-cookie']).toBeDefined();
   });
 
-  it('returns 400 if request body invalid', async () => {
+  test('returns 400 if request body invalid', async () => {
     const res = await request(app)
       .post('/api/login')
       .send({ wrong: 'data' })
@@ -75,8 +76,8 @@ describe('Login API', () => {
     expect(body.error).toBe('Request does not contain user object');
   });
 
-  it('returns 401 if user not found', async () => {
-    (getUserWithPasswordHashInsecure as jest.Mock).mockResolvedValue(null);
+  test('returns 401 if user not found', async () => {
+    (getUserWithPasswordHashInsecure as jest.Mock<any>).mockResolvedValue(null);
 
     const res = await request(app)
       .post('/api/login')
@@ -86,8 +87,8 @@ describe('Login API', () => {
     expect(body.error).toBe('Email or password not valid');
   });
 
-  it('returns 401 if password incorrect', async () => {
-    (getUserWithPasswordHashInsecure as jest.Mock).mockResolvedValue({
+  test('returns 401 if password incorrect', async () => {
+    (getUserWithPasswordHashInsecure as jest.Mock<any>).mockResolvedValue({
       id: 1,
       name: 'Totoro',
       passwordHash: await bcrypt.hash('correct-password', 10),
@@ -101,13 +102,13 @@ describe('Login API', () => {
     expect(body.error).toBe('Email or password not valid');
   });
 
-  it('returns 401 if session creation fails', async () => {
-    (getUserWithPasswordHashInsecure as jest.Mock).mockResolvedValue({
+  test('returns 401 if session creation fails', async () => {
+    (getUserWithPasswordHashInsecure as jest.Mock<any>).mockResolvedValue({
       id: 1,
       name: 'Totoro',
       passwordHash: await bcrypt.hash(loginUserSuccess.password, 10),
     });
-    (createSessionInsecure as jest.Mock).mockResolvedValue(null);
+    (createSessionInsecure as jest.Mock<any>).mockResolvedValue(null);
 
     const res = await request(app)
       .post('/api/login')

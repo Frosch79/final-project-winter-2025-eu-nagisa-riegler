@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import { createSessionInsecure } from '../../../database/sessions';
@@ -44,15 +45,15 @@ describe('Register API', () => {
     jest.clearAllMocks();
   });
 
-  it('registers successfully', async () => {
-    (getUserInsecure as jest.Mock).mockResolvedValue(null);
+  test('registers successfully', async () => {
+    (getUserInsecure as jest.Mock<any>).mockResolvedValue(null);
 
-    (createUserInsecure as jest.Mock).mockResolvedValue({
+    (createUserInsecure as jest.Mock<any>).mockResolvedValue({
       id: 1,
       name: 'Totoro',
     });
 
-    (createSessionInsecure as jest.Mock).mockResolvedValue({
+    (createSessionInsecure as jest.Mock<any>).mockResolvedValue({
       token: 'session-token',
       userId: 1,
     });
@@ -68,7 +69,7 @@ describe('Register API', () => {
     expect(res.headers['set-cookie']).toBeDefined();
   });
 
-  it('returns 400 if invalid body', async () => {
+  test('returns 400 if invalid body', async () => {
     const res = await request(app)
       .post('/api/register')
       .send({ wrong: 'data' })
@@ -77,8 +78,8 @@ describe('Register API', () => {
     expect(body.error).toBe('Request does not contain user object');
   });
 
-  it('returns 401 if email already taken', async () => {
-    (getUserInsecure as jest.Mock).mockResolvedValue({
+  test('returns 401 if email already taken', async () => {
+    (getUserInsecure as jest.Mock<any>).mockResolvedValue({
       id: 1,
       email: registerUserSuccess.email,
     });
@@ -91,9 +92,9 @@ describe('Register API', () => {
     expect(body.error).toBe('Email already taken');
   });
 
-  it('returns 500 if user creation fails', async () => {
-    (getUserInsecure as jest.Mock).mockResolvedValue(null);
-    (createUserInsecure as jest.Mock).mockResolvedValue(null);
+  test('returns 500 if user creation fails', async () => {
+    (getUserInsecure as jest.Mock<any>).mockResolvedValue(null);
+    (createUserInsecure as jest.Mock<any>).mockResolvedValue(null);
 
     const res = await request(app)
       .post('/api/register')
@@ -103,15 +104,15 @@ describe('Register API', () => {
     expect(body.error).toBe('Registration failed');
   });
 
-  it('returns 401 if session creation fails', async () => {
-    (getUserInsecure as jest.Mock).mockResolvedValue(null);
+  test('returns 401 if session creation fails', async () => {
+    (getUserInsecure as jest.Mock<any>).mockResolvedValue(null);
 
-    (createUserInsecure as jest.Mock).mockResolvedValue({
+    (createUserInsecure as jest.Mock<any>).mockResolvedValue({
       id: 1,
       name: 'Totoro',
     });
 
-    (createSessionInsecure as jest.Mock).mockResolvedValue(null);
+    (createSessionInsecure as jest.Mock<any>).mockResolvedValue(null);
 
     const res = await request(app)
       .post('/api/register')

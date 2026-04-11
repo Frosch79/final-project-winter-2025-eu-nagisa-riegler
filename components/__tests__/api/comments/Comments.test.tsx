@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import {
@@ -69,8 +70,8 @@ describe('Album Comments API', () => {
   });
 
   describe('GET /api/comments', () => {
-    it('returns all comments for album', async () => {
-      (getAllAlbumComments as jest.Mock).mockResolvedValue([mockComment]);
+    test('returns all comments for album', async () => {
+      (getAllAlbumComments as jest.Mock<any>).mockResolvedValue([mockComment]);
 
       const res = await request(app)
         .get('/api/comments')
@@ -86,8 +87,8 @@ describe('Album Comments API', () => {
   });
 
   describe('POST /api/comments', () => {
-    it('creates comment successfully', async () => {
-      (createComment as jest.Mock).mockResolvedValue([
+    test('creates comment successfully', async () => {
+      (createComment as jest.Mock<any>).mockResolvedValue([
         { ...mockComment, createdDate: mockComment.createdDate.toISOString() },
       ]);
 
@@ -104,7 +105,7 @@ describe('Album Comments API', () => {
       ]);
     });
 
-    it('returns 400 on invalid body', async () => {
+    test('returns 400 on invalid body', async () => {
       const res = await request(app)
         .post('/api/comments')
         .set('Cookie', 'sessionToken=valid-token')
@@ -119,7 +120,7 @@ describe('Album Comments API', () => {
       expect(Array.isArray(body.errorIssues)).toBe(true);
     });
 
-    it('returns 401 if no token', async () => {
+    test('returns 401 if no token', async () => {
       const res = await request(app)
         .post('/api/comments')
         .send({ albumId: albumId, content: 'Test' })
@@ -129,8 +130,8 @@ describe('Album Comments API', () => {
       expect(body.error).toBe('No session token found');
     });
 
-    it('returns 500 if createComment fails', async () => {
-      (createComment as jest.Mock).mockResolvedValue(undefined);
+    test('returns 500 if createComment fails', async () => {
+      (createComment as jest.Mock<any>).mockResolvedValue(undefined);
 
       const res = await request(app)
         .post('/api/comments')

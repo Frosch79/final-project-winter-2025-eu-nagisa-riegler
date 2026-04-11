@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import {
@@ -79,8 +80,8 @@ describe('Photo API', () => {
   });
 
   describe('GET /api/photos', () => {
-    it('returns photo successfully', async () => {
-      (getAlbumPhotos as jest.Mock).mockResolvedValue(mockUserPhoto);
+    test('returns photo successfully', async () => {
+      (getAlbumPhotos as jest.Mock<any>).mockResolvedValue(mockUserPhoto);
 
       const res = await request(app)
         .get('/api/photos')
@@ -96,15 +97,15 @@ describe('Photo API', () => {
       });
     });
 
-    it('returns 401 if no token', async () => {
+    test('returns 401 if no token', async () => {
       const res = await request(app).get('/api/photos').expect(401);
 
       const body = res.body as { error: string };
       expect(body.error).toBe('No session token found');
     });
 
-    it('returns 403 if no photo found', async () => {
-      (getAlbumPhotos as jest.Mock).mockResolvedValue(undefined);
+    test('returns 403 if no photo found', async () => {
+      (getAlbumPhotos as jest.Mock<any>).mockResolvedValue(undefined);
 
       const res = await request(app)
         .get('/api/photos')
@@ -119,8 +120,8 @@ describe('Photo API', () => {
   });
 
   describe('POST /api/photos', () => {
-    it('creates photo successfully', async () => {
-      (createPhotoInAlbum as jest.Mock).mockResolvedValue(mockUserPhoto);
+    test('creates photo successfully', async () => {
+      (createPhotoInAlbum as jest.Mock<any>).mockResolvedValue(mockUserPhoto);
 
       const res = await request(app)
         .post('/api/photos')
@@ -136,7 +137,7 @@ describe('Photo API', () => {
       });
     });
 
-    it('returns 400 if invalid body', async () => {
+    test('returns 400 if invalid body', async () => {
       const res = await request(app)
         .post('/api/photos')
         .set('Cookie', 'sessionToken=valid-token')
@@ -152,7 +153,7 @@ describe('Photo API', () => {
       expect(Array.isArray(body.errorIssues)).toBe(true);
     });
 
-    it('returns error if no token', async () => {
+    test('returns error if no token', async () => {
       const res = await request(app)
         .post('/api/photos')
         .send(mockUserPhoto)
@@ -162,8 +163,8 @@ describe('Photo API', () => {
       expect(body.error).toBe('No session token found');
     });
 
-    it('returns 500 if create fails', async () => {
-      (createPhotoInAlbum as jest.Mock).mockResolvedValue(undefined);
+    test('returns 500 if create fails', async () => {
+      (createPhotoInAlbum as jest.Mock<any>).mockResolvedValue(undefined);
 
       const res = await request(app)
         .post('/api/photos')

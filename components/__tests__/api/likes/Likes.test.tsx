@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import {
@@ -99,8 +100,8 @@ describe('Album Likes API', () => {
   });
 
   describe('GET /api/likes', () => {
-    it('returns all likes', async () => {
-      (getAllAlbumLikesInsecure as jest.Mock).mockResolvedValue(likes);
+    test('returns all likes', async () => {
+      (getAllAlbumLikesInsecure as jest.Mock<any>).mockResolvedValue(likes);
 
       const res = await request(app)
         .get('/api/likes')
@@ -117,8 +118,8 @@ describe('Album Likes API', () => {
       );
     });
 
-    it('returns 500 if undefined', async () => {
-      (getAllAlbumLikesInsecure as jest.Mock).mockResolvedValue(undefined);
+    test('returns 500 if undefined', async () => {
+      (getAllAlbumLikesInsecure as jest.Mock<any>).mockResolvedValue(undefined);
 
       const res = await request(app).get('/api/likes').expect(500);
 
@@ -128,9 +129,9 @@ describe('Album Likes API', () => {
   });
 
   describe('POST /api/likes', () => {
-    it('creates like successfully', async () => {
-      (selectLikeExists as jest.Mock).mockResolvedValue(false);
-      (createLike as jest.Mock).mockResolvedValue(likesEmpty);
+    test('creates like successfully', async () => {
+      (selectLikeExists as jest.Mock<any>).mockResolvedValue(false);
+      (createLike as jest.Mock<any>).mockResolvedValue(likesEmpty);
 
       const res = await request(app)
         .post('/api/likes')
@@ -143,7 +144,7 @@ describe('Album Likes API', () => {
       expect(body.like).toBeDefined();
     });
 
-    it('returns 400 if invalid body', async () => {
+    test('returns 400 if invalid body', async () => {
       const res = await request(app)
         .post('/api/likes')
         .set('Cookie', 'sessionToken=valid-token')
@@ -159,7 +160,7 @@ describe('Album Likes API', () => {
       expect(Array.isArray(body.errorIssues)).toBe(true);
     });
 
-    it('returns error if no token', async () => {
+    test('returns error if no token', async () => {
       const res = await request(app)
         .post('/api/likes')
         .send({ albumId })
@@ -170,8 +171,8 @@ describe('Album Likes API', () => {
       expect(body.error).toBe('No session token found');
     });
 
-    it('returns 404 if already liked', async () => {
-      (selectLikeExists as jest.Mock).mockResolvedValue(true);
+    test('returns 404 if already liked', async () => {
+      (selectLikeExists as jest.Mock<any>).mockResolvedValue(true);
 
       const res = await request(app)
         .post('/api/likes')
@@ -183,9 +184,9 @@ describe('Album Likes API', () => {
       expect(body.error).toBeDefined();
     });
 
-    it('returns 500 if createLike fails', async () => {
-      (selectLikeExists as jest.Mock).mockResolvedValue(false);
-      (createLike as jest.Mock).mockResolvedValue(undefined);
+    test('returns 500 if createLike fails', async () => {
+      (selectLikeExists as jest.Mock<any>).mockResolvedValue(false);
+      (createLike as jest.Mock<any>).mockResolvedValue(undefined);
 
       const res = await request(app)
         .post('/api/likes')
@@ -199,9 +200,9 @@ describe('Album Likes API', () => {
   });
 
   describe('DELETE /api/likes', () => {
-    it('deletes like successfully', async () => {
-      (selectLikeExists as jest.Mock).mockResolvedValue(true);
-      (deleteLike as jest.Mock).mockResolvedValue(likesEmpty);
+    test('deletes like successfully', async () => {
+      (selectLikeExists as jest.Mock<any>).mockResolvedValue(true);
+      (deleteLike as jest.Mock<any>).mockResolvedValue(likesEmpty);
 
       const res = await request(app)
         .delete('/api/likes')
@@ -213,7 +214,7 @@ describe('Album Likes API', () => {
       expect(body.like).toBeDefined();
     });
 
-    it('returns 400 if invalid body', async () => {
+    test('returns 400 if invalid body', async () => {
       const res = await request(app)
         .delete('/api/likes')
         .set('Cookie', 'sessionToken=valid-token')
@@ -224,7 +225,7 @@ describe('Album Likes API', () => {
       expect(body.error).toBeDefined();
     });
 
-    it('returns 401 if no token', async () => {
+    test('returns 401 if no token', async () => {
       const res = await request(app)
         .delete('/api/likes')
         .send({ albumId })
@@ -234,8 +235,8 @@ describe('Album Likes API', () => {
       expect(body.error).toBe('No session token found');
     });
 
-    it('returns 404 if like does not exist', async () => {
-      (selectLikeExists as jest.Mock).mockResolvedValue(false);
+    test('returns 404 if like does not exist', async () => {
+      (selectLikeExists as jest.Mock<any>).mockResolvedValue(false);
 
       const res = await request(app)
         .delete('/api/likes')
@@ -247,9 +248,9 @@ describe('Album Likes API', () => {
       expect(body.error).toBeDefined();
     });
 
-    it('returns 403 if delete fails', async () => {
-      (selectLikeExists as jest.Mock).mockResolvedValue(true);
-      (deleteLike as jest.Mock).mockResolvedValue(undefined);
+    test('returns 403 if delete fails', async () => {
+      (selectLikeExists as jest.Mock<any>).mockResolvedValue(true);
+      (deleteLike as jest.Mock<any>).mockResolvedValue(undefined);
 
       const res = await request(app)
         .delete('/api/likes')

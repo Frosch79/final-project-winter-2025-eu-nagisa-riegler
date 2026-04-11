@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import {
@@ -45,9 +46,9 @@ describe('GET /api/feed/:feedId', () => {
     jest.clearAllMocks();
   });
 
-  it('returns user albums successfully', async () => {
-    (selectAlbumExists as jest.Mock).mockResolvedValue(true);
-    (getVisitUserAlbums as jest.Mock).mockResolvedValue(mockFeedMyAlbums);
+  test('returns user albums successfully', async () => {
+    (selectAlbumExists as jest.Mock<any>).mockResolvedValue(true);
+    (getVisitUserAlbums as jest.Mock<any>).mockResolvedValue(mockFeedMyAlbums);
 
     const res = await request(app)
       .get(`/api/feed/${feedId}`)
@@ -67,14 +68,14 @@ describe('GET /api/feed/:feedId', () => {
     );
   });
 
-  it('returns 401 if no token', async () => {
+  test('returns 401 if no token', async () => {
     const res = await request(app).get(`/api/feed/${feedId}`).expect(401);
     const body = res.body as { error: UserFeedResponseBodyGet };
     expect(body.error).toBe('No session token found');
   });
 
-  it('returns 404 if album does not exist', async () => {
-    (selectAlbumExists as jest.Mock).mockResolvedValue(false);
+  test('returns 404 if album does not exist', async () => {
+    (selectAlbumExists as jest.Mock<any>).mockResolvedValue(false);
 
     const res = await request(app)
       .get(`/api/feed/${feedId}`)

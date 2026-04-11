@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import {
@@ -64,8 +65,8 @@ describe('User API', () => {
   });
 
   describe('GET /api/user', () => {
-    it('returns user successfully', async () => {
-      (getUser as jest.Mock).mockResolvedValue(mockFullUser);
+    test('returns user successfully', async () => {
+      (getUser as jest.Mock<any>).mockResolvedValue(mockFullUser);
 
       const res = await request(app)
         .get('/api/user')
@@ -80,14 +81,14 @@ describe('User API', () => {
       });
     });
 
-    it('returns 401 if no token', async () => {
+    test('returns 401 if no token', async () => {
       const res = await request(app).get('/api/user').expect(401);
       const body = res.body as { error: UserResponseBodyGet };
       expect(body.error).toBe('No session token found');
     });
 
-    it('returns error if user not found', async () => {
-      (getUser as jest.Mock).mockResolvedValue(undefined);
+    test('returns error if user not found', async () => {
+      (getUser as jest.Mock<any>).mockResolvedValue(undefined);
 
       const res = await request(app)
         .get('/api/user')
@@ -99,8 +100,8 @@ describe('User API', () => {
   });
 
   describe('PUT /api/user', () => {
-    it('updates user successfully', async () => {
-      (updateUser as jest.Mock).mockResolvedValue(mockUpdateUser);
+    test('updates user successfully', async () => {
+      (updateUser as jest.Mock<any>).mockResolvedValue(mockUpdateUser);
 
       const res = await request(app)
         .put('/api/user')
@@ -112,7 +113,7 @@ describe('User API', () => {
       expect(body.user).toEqual(mockUpdateUser);
     });
 
-    it('returns 400 if invalid body', async () => {
+    test('returns 400 if invalid body', async () => {
       const res = await request(app)
         .put('/api/user')
         .set('Cookie', 'sessionToken=valid-token')
@@ -126,7 +127,7 @@ describe('User API', () => {
       expect(Array.isArray(body.errorIssues)).toBe(true);
     });
 
-    it('returns 401 if no token', async () => {
+    test('returns 401 if no token', async () => {
       const res = await request(app)
         .put('/api/user')
         .send(mockUpdateUser)
@@ -135,8 +136,8 @@ describe('User API', () => {
       expect(body.error).toBe('No session token found');
     });
 
-    it('returns error if update fails', async () => {
-      (updateUser as jest.Mock).mockResolvedValue(undefined);
+    test('returns error if update fails', async () => {
+      (updateUser as jest.Mock<any>).mockResolvedValue(undefined);
 
       const res = await request(app)
         .put('/api/user')

@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import { deleteSession } from '../../../database/sessions';
@@ -33,8 +34,10 @@ describe('Logout API', () => {
     jest.clearAllMocks();
   });
 
-  it('logs out successfully when session exists', async () => {
-    (deleteSession as jest.Mock).mockResolvedValue({ token: 'session-token' });
+  test('logs out successfully when session exists', async () => {
+    (deleteSession as jest.Mock<any>).mockResolvedValue({
+      token: 'session-token',
+    });
 
     const res = await request(app)
       .get('/api/logout')
@@ -46,14 +49,14 @@ describe('Logout API', () => {
     expect(res.headers['set-cookie']).toBeDefined();
   });
 
-  it('returns 404 if no session token in cookie', async () => {
+  test('returns 404 if no session token in cookie', async () => {
     const res = await request(app).get('/api/logout').expect(404);
     const body = res.body as { error: LogoutResponseBodyGet };
     expect(body.error).toBe('No session token found');
   });
 
-  it('returns 404 if session not found', async () => {
-    (deleteSession as jest.Mock).mockResolvedValue(null);
+  test('returns 404 if session not found', async () => {
+    (deleteSession as jest.Mock<any>).mockResolvedValue(null);
 
     const res = await request(app)
       .get('/api/logout')
