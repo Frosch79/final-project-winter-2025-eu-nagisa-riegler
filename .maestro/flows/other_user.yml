@@ -3,13 +3,9 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - scrollUntilVisible:
     text: 'Pazu'
 - assertVisible:
-    text:
-      "Mining Town Views, Rustic mining towns that resemble my home., Tomonoura,\
-      \ Hiroshima, Japan"
+    text: 'Mining Town Views, Rustic mining towns that resemble my home., Tomonoura, Hiroshima, Japan'
 - tapOn:
-    text:
-      "Mining Town Views, Rustic mining towns that resemble my home., Tomonoura,\
-      \ Hiroshima, Japan"
+    text: 'Mining Town Views, Rustic mining towns that resemble my home., Tomonoura, Hiroshima, Japan'
 
 - tapOn:
     id: 'route-user-page'
