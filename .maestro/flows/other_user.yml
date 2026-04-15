@@ -2,8 +2,6 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 ---
 - scrollUntilVisible:
     text: 'Pazu'
-- scrollUntilVisible:
-    text: 'Pazu'
 - assertVisible: 'Mining Town Views.*'
 - tapOn: 'Mining Town Views.*'
 
