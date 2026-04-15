@@ -1,7 +1,8 @@
 appId: com.final_project_winter_2025_eu_nagisa_riegler
 ---
 - scrollUntilVisible: 'Mining Town Views'
-- tapOn: 'Mining Town Views'
+- tapOn:
+    id: 'album-4'
 - tapOn:
     id: 'route-user-page'
 - tapOn:

@@ -88,7 +88,10 @@ export default function UserFeed(props: Props) {
           />
           {/* album information */}
           <View style={{ flex: 1, marginRight: spacing.md }}>
-            <Text style={{ ...typography.title, marginBottom: spacing.xs }}>
+            <Text
+              style={{ ...typography.title, marginBottom: spacing.xs }}
+              testID={`album-${albumId}`}
+            >
               {albumTitle}
             </Text>
             {albumDescription && (
