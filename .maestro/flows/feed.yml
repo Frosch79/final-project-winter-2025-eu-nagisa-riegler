@@ -1,9 +1,11 @@
 appId: com.final_project_winter_2025_eu_nagisa_riegler
 ---
 - scrollUntilVisible:
-    text: 'Edit User'
+    element:
+      text: 'Edit User'
 - scrollUntilVisible:
-    text: 'Edit title'
+    element:
+      text: 'Edit title'
 - scrollUntilVisible:
     text: 'Sheeta'
 - scrollUntilVisible:
