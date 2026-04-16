@@ -3,39 +3,39 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - scrollUntilVisible:
     id: 'album-4'
 - tapOn:
-    id: 'album-4'
+    id: album-4
 - tapOn:
-    id: 'route-user-page'
+    id: route-user-page
 - tapOn:
-    id: 'follow-button'
+    id: follow-button
 - assertVisible: 'FOLLOWED'
 - tapOn:
-    id: 'follow-button'
+    id: follow-button
 - assertVisible: 'FOLLOW'
 - tapOn:
-    id: 'follow-button'
+    id: follow-button
 - tapOn:
-    id: 'follower'
+    id: follower
 - assertVisible:
-    id: 'user-nav'
+    id: user-nav
     index: 0
 - assertVisible:
-    id: 'user-nav'
+    id: user-nav
     index: 1
 - assertVisible:
-    id: 'user-nav'
+    id: user-nav
     index: 2
 - tapOn:
-    id: 'user-nav'
+    id: user-nav
     index: 0
 - tapOn: 'FOLLOW'
 - assertVisible: 'Follower (4)'
 - tapOn:
-    id: 'follower'
+    id: follower
 
 # my page
 - tapOn: 'Edit User'
 - assertVisible:
-    id: 'edit'
+    id: edit
 - tapOn:
-    id: 'write-album'
+    id: write-album
