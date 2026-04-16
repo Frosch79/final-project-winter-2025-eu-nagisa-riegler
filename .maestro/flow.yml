@@ -8,8 +8,8 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     file: flows/login.yml
 - runFlow:
     file: flows/user_page.yml
-##- runFlow:
-##    file: flows/album.yml
+- runFlow:
+    file: flows/album.yml
 ##- runFlow:
 ##    file: flows/photo_upload.yml
 ##- runFlow:
