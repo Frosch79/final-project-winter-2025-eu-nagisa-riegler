@@ -23,5 +23,5 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 #also test follow and unfollow
 - runFlow:
     file: flows/other_user.yml
-##- runFlow:
-##    file: flows/feed.yml
+- runFlow:
+    file: flows/feed.yml
