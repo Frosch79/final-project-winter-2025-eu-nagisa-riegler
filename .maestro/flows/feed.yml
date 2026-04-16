@@ -1,27 +1,46 @@
 appId: com.final_project_winter_2025_eu_nagisa_riegler
 ---
-- scrollUntilVisible: 'Edit User'
-- scrollUntilVisible: 'Edit title'
-- scrollUntilVisible: 'Sheeta'
-- scrollUntilVisible: 'Laputa Inspirations'
-- scrollUntilVisible: 'Pazu'
-- scrollUntilVisible: 'Mining Town Views'
-- tapOn: 'public'
-- scrollUntilVisible: 'Edit User'
-- scrollUntilVisible: 'Edit title'
-- scrollUntilVisible: 'Pazu'
-- scrollUntilVisible: 'Mining Town Views'
-- scrollUntilVisible: 'Ashitaka'
-- scrollUntilVisible: 'Emishi Landscape'
-- scrollUntilVisible: 'Chihiro Ogino'
-- scrollUntilVisible: 'Spirited Journey'
-- scrollUntilVisible: 'Sophie Hatter'
-- scrollUntilVisible: 'Chipping Inspirations'
-- tapOn: 'Profile'
+- scrollUntilVisible:
+    text: 'Edit User'
+- scrollUntilVisible:
+    text: 'Edit title'
+- scrollUntilVisible:
+    text: 'Sheeta'
+- scrollUntilVisible:
+    text: 'Laputa Inspirations'
+- scrollUntilVisible:
+    text: 'Pazu'
+- scrollUntilVisible:
+    text: 'Mining Town Views'
+- tapOn:
+    text: 'public'
+- scrollUntilVisible:
+    text: 'Edit User'
+- scrollUntilVisible:
+    text: 'Edit title'
+- scrollUntilVisible:
+    text: 'Pazu'
+- scrollUntilVisible:
+    text: 'Mining Town Views'
+- scrollUntilVisible:
+    text: 'Ashitaka'
+- scrollUntilVisible:
+    text: 'Emishi Landscape'
+- scrollUntilVisible:
+    text: 'Chihiro Ogino'
+- scrollUntilVisible:
+    text: 'Spirited Journey'
+- scrollUntilVisible:
+    text: 'Sophie Hatter'
+- scrollUntilVisible:
+    text: 'Chipping Inspirations'
+- tapOn:
+    text: 'Profile'
 - assertVisible:
     text: 'Edit User'
     index: 0
 - assertVisible:
     text: 'Edit User'
     index: 1
-- scrollUntilVisible: 'Edit title'
+- scrollUntilVisible:
+    text: 'Edit title'
