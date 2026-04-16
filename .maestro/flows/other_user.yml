@@ -1,7 +1,8 @@
 appId: com.final_project_winter_2025_eu_nagisa_riegler
 ---
 - scrollUntilVisible:
-    id: 'album-4'
+    element:
+      id: 'album-4'
 - tapOn:
     id: album-4
 - tapOn:
