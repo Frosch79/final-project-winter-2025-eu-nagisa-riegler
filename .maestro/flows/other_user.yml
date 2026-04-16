@@ -38,5 +38,3 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - tapOn: 'Edit User'
 - assertVisible:
     id: 'edit'
-- tapOn:
-    id: 'write-album'

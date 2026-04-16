@@ -1,5 +1,7 @@
 appId: com.final_project_winter_2025_eu_nagisa_riegler
 ---
+- tapOn: 'Feed'
+## Follow Feed
 - scrollUntilVisible:
     element:
       text: 'Edit User'
@@ -18,6 +20,8 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - scrollUntilVisible:
     element:
       text: 'Mining Town Views'
+
+## Public Feed
 - tapOn: 'public'
 - scrollUntilVisible:
     element:
@@ -49,8 +53,8 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - scrollUntilVisible:
     element:
       text: 'Chipping Inspirations'
-- tapOn:
-    text: 'Profile'
+
+- tapOn: 'Profile'
 - assertVisible:
     text: 'Edit User'
     index: 0
