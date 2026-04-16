@@ -16,12 +16,12 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     file: flows/like_unlike.yml
 - runFlow:
     file: flows/comment.yml
-##- tapOn:
-##    id: 'exit-album'
-##- tapOn: 'Feed'
-##- tapOn: 'public'
+- tapOn:
+    id: 'exit-album'
+- tapOn: 'Feed'
+- tapOn: 'public'
 #also test follow and unfollow
-##- runFlow:
-##    file: flows/other_user.yml
+- runFlow:
+    file: flows/other_user.yml
 ##- runFlow:
 ##    file: flows/feed.yml
