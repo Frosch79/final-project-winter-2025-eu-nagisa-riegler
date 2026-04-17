@@ -1,41 +1,60 @@
 appId: com.final_project_winter_2025_eu_nagisa_riegler
 ---
+- tapOn: 'Feed'
+## Follow Feed
 - scrollUntilVisible:
-    text: 'Edit User'
+    element:
+      text: 'Edit User'
 - scrollUntilVisible:
-    text: 'Edit title'
+    element:
+      text: 'Edit title'
 - scrollUntilVisible:
-    text: 'Sheeta'
+    element:
+      text: 'Sheeta'
 - scrollUntilVisible:
-    text: 'Laputa Inspirations'
+    element:
+      text: 'Laputa Inspirations'
 - scrollUntilVisible:
-    text: 'Pazu'
+    element:
+      text: 'Pazu'
 - scrollUntilVisible:
-    text: 'Mining Town Views'
-- tapOn:
-    text: 'public'
+    element:
+      text: 'Mining Town Views'
+
+## Public Feed
+- tapOn: 'public'
 - scrollUntilVisible:
-    text: 'Edit User'
+    element:
+      text: 'Edit User'
 - scrollUntilVisible:
-    text: 'Edit title'
+    element:
+      text: 'Edit title'
 - scrollUntilVisible:
-    text: 'Pazu'
+    element:
+      text: 'Pazu'
 - scrollUntilVisible:
-    text: 'Mining Town Views'
+    element:
+      text: 'Mining Town Views'
 - scrollUntilVisible:
-    text: 'Ashitaka'
+    element:
+      text: 'Ashitaka'
 - scrollUntilVisible:
-    text: 'Emishi Landscape'
+    element:
+      text: 'Emishi Landscape'
 - scrollUntilVisible:
-    text: 'Chihiro Ogino'
+    element:
+      text: 'Chihiro Ogino'
 - scrollUntilVisible:
-    text: 'Spirited Journey'
+    element:
+      text: 'Spirited Journey'
 - scrollUntilVisible:
-    text: 'Sophie Hatter'
+    element:
+      text: 'Sophie Hatter'
 - scrollUntilVisible:
-    text: 'Chipping Inspirations'
-- tapOn:
-    text: 'Profile'
+    element:
+      text: 'Chipping Inspirations'
+
+- tapOn: 'Profile'
 - assertVisible:
     text: 'Edit User'
     index: 0
@@ -43,4 +62,5 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     text: 'Edit User'
     index: 1
 - scrollUntilVisible:
-    text: 'Edit title'
+    element:
+      text: 'Edit title'

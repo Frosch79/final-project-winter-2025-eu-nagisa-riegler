@@ -1,20 +1,18 @@
 appId: com.final_project_winter_2025_eu_nagisa_riegler
 ---
 - scrollUntilVisible:
-    text: 'Pazu'
-- assertVisible: 'Mining Town Views'
-- tapOn: 'Mining Town Views'
-
+    element:
+      id: 'album-4'
+- tapOn:
+    id: 'album-4'
 - tapOn:
     id: 'route-user-page'
 - tapOn:
     id: 'follow-button'
-- assertVisible:
-    text: 'FOLLOWED'
+- assertVisible: 'FOLLOWED'
 - tapOn:
     id: 'follow-button'
-- assertVisible:
-    text: 'FOLLOW'
+- assertVisible: 'FOLLOW'
 - tapOn:
     id: 'follow-button'
 - tapOn:
@@ -32,8 +30,7 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
     id: 'user-nav'
     index: 0
 - tapOn: 'FOLLOW'
-- assertVisible:
-    text: 'Follower (4)'
+- assertVisible: 'Follower (4)'
 - tapOn:
     id: 'follower'
 
@@ -41,5 +38,3 @@ appId: com.final_project_winter_2025_eu_nagisa_riegler
 - tapOn: 'Edit User'
 - assertVisible:
     id: 'edit'
-- tapOn:
-    id: 'write-album'
