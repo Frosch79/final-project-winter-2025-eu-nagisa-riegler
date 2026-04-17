@@ -44,6 +44,8 @@ export default function UserPage() {
   useFocusEffect(
     useCallback(() => {
       async function getUser() {
+        setIsLoading(true);
+
         const userResponse: UserResponseBodyGet = await fetch('/api/user').then(
           (response) => response.json(),
         );
@@ -52,28 +54,17 @@ export default function UserPage() {
           router.replace(`/(auth)/login?returnTo=/(tabs)/(user)/user`);
           return;
         }
-        if ('user' in userResponse) {
-          setUser(userResponse.user);
-        }
 
+        setUser(userResponse.user);
         const pageId = userResponse.user.id;
-
         setIsMyPage(true);
 
-        const userAlbumsResponse: UserFeedResponseBodyGet = await fetch(
-          `/api/feed/${pageId}`,
-        ).then((response) => response.json());
-
-        if ('error' in userAlbumsResponse) {
-          setAlbums([]);
-        }
-        if ('album' in userAlbumsResponse) {
-          setAlbums(userAlbumsResponse.album);
-        }
-        const [followerResponse, followedResponse]: [
+        const [userAlbumsResponse, followerResponse, followedResponse]: [
+          UserFeedResponseBodyGet,
           FollowerUserResponseBodyGet,
           FollowedUserResponseBodyGet,
         ] = await Promise.all([
+          fetch(`/api/feed/${pageId}`).then((response) => response.json()),
           fetch(`/api/follower?userId=${pageId}`).then((response) =>
             response.json(),
           ),
@@ -81,23 +72,34 @@ export default function UserPage() {
             response.json(),
           ),
         ]);
+
+        // set albums
+        if ('error' in userAlbumsResponse) {
+          setAlbums([]);
+        } else if ('album' in userAlbumsResponse) {
+          setAlbums(userAlbumsResponse.album);
+        }
+
+        // set follower
         if ('error' in followerResponse) {
           setFollower([]);
-        }
-        if ('error' in followedResponse) {
-          setFollowed([]);
-        }
-        if ('user' in followerResponse) {
+        } else if ('user' in followerResponse) {
           setFollower(followerResponse.user);
         }
 
-        if ('user' in followedResponse) {
+        // set followed
+        if ('error' in followedResponse) {
+          setFollowed([]);
+        } else if ('user' in followedResponse) {
           setFollowed(followedResponse.user);
         }
+
         setIsLoading(false);
       }
+
       getUser().catch((error) => {
-        console.log(error);
+        console.error(error);
+        setIsLoading(false);
       });
     }, [router]),
   );
