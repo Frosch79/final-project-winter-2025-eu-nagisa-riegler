@@ -56,7 +56,7 @@ export default function UserPage() {
         }
 
         setUser(userResponse.user);
-        const pageId = userResponse.user.id;
+        const pageId = userResponse.user.id.toString();
         setIsMyPage(true);
 
         const [userAlbumsResponse, followerResponse, followedResponse]: [
