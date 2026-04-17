@@ -1,6 +1,12 @@
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Dimensions, FlatList, Image, SafeAreaView, View } from 'react-native';
+import {
+  FlatList,
+  Image,
+  SafeAreaView,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import {
   Button,
   HelperText,
@@ -25,10 +31,6 @@ import { type AlbumLikesResponseBodyGet } from '../api/likes/index+api';
 import type { UserResponseBodyGet } from '../api/user+api';
 
 // styling
-const screenWidth = Dimensions.get('window').width;
-const numColumns = 3;
-const gridSpacing = spacing.sm * (numColumns + 1);
-const cardSize = (screenWidth - gridSpacing) / numColumns;
 
 export default function UserAlbum() {
   const [message, setMessage] = useState('');
@@ -40,6 +42,13 @@ export default function UserAlbum() {
     from?: string;
   }>();
   const router = useRouter();
+  const { width: windowWidth } = useWindowDimensions();
+  const numColumns = 3;
+
+  const contentWidth = windowWidth > 600 ? 600 : windowWidth;
+
+  const gridSpacing = spacing.sm * (numColumns + 1);
+  const cardSize = (contentWidth - gridSpacing) / numColumns;
 
   useFocusEffect(
     useCallback(() => {
@@ -119,9 +128,7 @@ export default function UserAlbum() {
   // photo render
   const renderUserPhotos = ({ item }: { item: Photo }) => {
     return (
-      <View
-        style={{ width: cardSize, height: cardSize, marginBottom: spacing.sm }}
-      >
+      <View style={{ width: cardSize, height: cardSize }}>
         <Button
           testID="photo"
           style={{ padding: 0, margin: 0, width: '100%', height: '100%' }}
@@ -134,8 +141,8 @@ export default function UserAlbum() {
         >
           <View
             style={{
-              width: '100%',
-              height: '100%',
+              width: cardSize,
+              height: cardSize,
               borderRadius: components.card.image.borderRadius,
               overflow: 'hidden',
             }}
@@ -195,7 +202,7 @@ export default function UserAlbum() {
           ListHeaderComponent={
             <>
               {/* album card */}
-              <View style={{ marginBottom: spacing.md }}>
+              <View style={{}}>
                 {album && user ? (
                   <UserAlbumCard
                     album={album}
@@ -258,9 +265,7 @@ export default function UserAlbum() {
             </>
           }
           ListEmptyComponent={
-            <Text style={{ ...typography.body, marginBottom: '10%' }}>
-              No Photos
-            </Text>
+            <Text style={{ ...typography.body }}>No Photos</Text>
           }
         />
       </SafeAreaView>
