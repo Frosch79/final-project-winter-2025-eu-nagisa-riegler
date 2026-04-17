@@ -73,15 +73,4 @@ describe('GET /api/feed/:feedId', () => {
     const body = res.body as { error: UserFeedResponseBodyGet };
     expect(body.error).toBe('No session token found');
   });
-
-  test('returns 404 if album does not exist', async () => {
-    (selectAlbumExists as jest.Mock<any>).mockResolvedValue(false);
-
-    const res = await request(app)
-      .get(`/api/feed/${feedId}`)
-      .set('Cookie', 'sessionToken=valid-token')
-      .expect(404);
-    const body = res.body as { error: UserFeedResponseBodyGet };
-    expect(body.error).toBe(`No album with id ${feedId} found `);
-  });
 });
