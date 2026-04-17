@@ -1,8 +1,5 @@
 import { parse } from 'cookie';
-import {
-  getVisitUserAlbums,
-  selectAlbumExists,
-} from '../../../database/albums';
+import { getVisitUserAlbums } from '../../../database/albums';
 import { ExpoApiResponse } from '../../../ExpoApiResponse';
 import type { FeedAlbum } from '../../../migrations/00006-createTableAlbums';
 
@@ -32,7 +29,9 @@ export async function GET(
     );
   }
 
-  if (!(await selectAlbumExists(Number(feedId)))) {
+  if (
+    typeof (await getVisitUserAlbums(token, Number(feedId))) === 'undefined'
+  ) {
     return ExpoApiResponse.json(
       {
         error: `No album with id ${feedId} found `,
