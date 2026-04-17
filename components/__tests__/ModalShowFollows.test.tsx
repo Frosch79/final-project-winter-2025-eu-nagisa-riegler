@@ -1,4 +1,4 @@
-import { expect, jest } from '@jest/globals';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react-native';
 import * as Paper from 'react-native-paper';
 import { mockNavigate } from '../../jest.setup';
@@ -25,7 +25,7 @@ describe('ModalShowFollows', () => {
   });
 
   test('renders modal with items', () => {
-    const { getByTestId, getByText } = render(
+    const { getByText } = render(
       <Paper.PaperProvider>
         <ModalShowFollows {...baseProps} />
       </Paper.PaperProvider>,
@@ -34,10 +34,7 @@ describe('ModalShowFollows', () => {
     expect(getByText('Follower')).toBeTruthy();
 
     for (const user of baseProps.items) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(getByTestId(`user-name-${user.userName}`).props.children).toBe(
-        user.userName,
-      );
+      expect(getByText(user.userName)).toBeTruthy();
     }
   });
 

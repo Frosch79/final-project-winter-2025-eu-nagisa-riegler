@@ -82,7 +82,6 @@ export default function UserPage() {
           ),
         ]);
         if ('error' in followerResponse) {
-          /* console.log(followerResponse.error); */
           setFollower([]);
         }
         if ('error' in followedResponse) {
@@ -107,7 +106,7 @@ export default function UserPage() {
     <Provider theme={theme}>
       <SafeAreaView style={{ flex: 1 }}>
         {!isLoading ? (
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1 }} testID="user-page">
             {user ? (
               <UserCard
                 userData={user}
@@ -121,6 +120,7 @@ export default function UserPage() {
                 editMyAccount={() =>
                   router.navigate('/(tabs)/(user)/(editAccount)/editAccount')
                 }
+                myId={user.id}
               />
             ) : null}
 

@@ -1,0 +1,27 @@
+appId: com.final_project_winter_2025_eu_nagisa_riegler
+---
+- runFlow:
+    file: flows/registration.yml
+- runFlow:
+    file: flows/logout.yml
+- runFlow:
+    file: flows/login.yml
+- runFlow:
+    file: flows/user_page.yml
+- runFlow:
+    file: flows/album.yml
+- runFlow:
+    file: flows/photo_upload.yml
+- runFlow:
+    file: flows/like_unlike.yml
+- runFlow:
+    file: flows/comment.yml
+- tapOn:
+    id: 'exit-album'
+- tapOn: 'Feed'
+- tapOn: 'public'
+#also test follow and unfollow
+- runFlow:
+    file: flows/other_user.yml
+- runFlow:
+    file: flows/feed.yml

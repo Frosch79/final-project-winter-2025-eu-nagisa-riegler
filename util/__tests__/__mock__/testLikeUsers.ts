@@ -20,4 +20,12 @@ export const likes: LikeUsers[] = [
 
 // variations
 export const likesEmpty: LikeUsers[] = [];
-export const likesByTotoro: LikeUsers[] = [likes[0] as LikeUsers];
+export const likesByTotoro: LikeUsers[] = [
+  {
+    id: 2,
+    albumId: 100,
+    userId: kiki.id,
+    name: kiki.name,
+    createdDate: new Date('2023-01-02'),
+  } as LikeUsers,
+];

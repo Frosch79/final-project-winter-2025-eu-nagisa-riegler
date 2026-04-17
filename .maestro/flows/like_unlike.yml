@@ -1,0 +1,17 @@
+appId: com.final_project_winter_2025_eu_nagisa_riegler
+---
+- tapOn:
+    id: likes-icon-button
+- assertVisible:
+    text: '1'
+    index: 0
+- tapOn:
+    id: likes-modal
+- assertVisible:
+    id: user-route
+- tapOn: Close
+- tapOn:
+    id: likes-icon-button
+- assertVisible:
+    text: '0'
+    index: 0

@@ -24,15 +24,11 @@ export async function up(sql: Sql) {
   for (const like of likes) {
     await sql`
       INSERT INTO
-        likes(
-        album_id,
-        user_id
-    )
+        likes (album_id, user_id)
       VALUES
         (
           ${like.albumId},
           ${like.userId}
-
         )
     `;
   }

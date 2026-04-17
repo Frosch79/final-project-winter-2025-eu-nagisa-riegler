@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import * as CloudinaryUpload from '../CloudinaryUpload';
-
-/* eslint-disable @typescript-eslint/require-await */
 
 jest.mock('react-native', () => ({
   Platform: { OS: 'web' },
@@ -14,17 +11,34 @@ describe('uploadImage', () => {
   });
 
   test('uploads image and returns secure_url', async () => {
-    const mockUri = 'file://test.jpg';
+    const mockUri = 'file:///cloudinary/test.jpg';
 
     // fetch blob
-    (global.fetch as jest.Mock)
 
+    const mockedFetch = global.fetch as jest.Mock;
+
+    mockedFetch
+      .mockImplementationOnce(() =>
+        Promise.resolve({ blob: () => Promise.resolve(new Blob(['fake'])) }),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          json: () => Promise.resolve({ timestamp: '123', signature: 'sig' }),
+        }),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          json: () =>
+            Promise.resolve({ secure_url: 'https://cloudinary/test.jpg' }),
+        }),
+      );
+    /*     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({
-        blob: async () => new Blob(['fake'], { type: 'image/jpeg' }),
-      })
+        blob: () => new Blob(['fake'], { type: 'image/jpeg' }),
+      } as any)
       //  signature
       .mockResolvedValueOnce({
-        json: async () => ({
+        json: () => ({
           timestamp: '123',
           signature: 'sig',
           cloudName: 'demo',
@@ -33,7 +47,7 @@ describe('uploadImage', () => {
       })
       // Cloudinary upload
       .mockResolvedValueOnce({
-        json: async () => ({
+        json: () => ({
           secure_url: 'https://cloudinary/test.jpg',
           public_id: '123',
           width: 800,
@@ -41,7 +55,7 @@ describe('uploadImage', () => {
           format: 'jpg',
         }),
       }) as any;
-
+ */
     // uploadImage mock
     const uploadImageSpy = jest
       .spyOn(CloudinaryUpload, 'uploadImage')
@@ -63,7 +77,7 @@ describe('uploadImage', () => {
             body: formData,
           },
         );
-        const data = await uploadRes.json();
+        const data = (await uploadRes.json()) as { secure_url: string };
         return data.secure_url;
       });
 

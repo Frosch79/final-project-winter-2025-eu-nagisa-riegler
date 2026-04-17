@@ -122,53 +122,49 @@ export default function ModalComment({
       visible={visible}
       onDismiss={onDismiss}
       style={{
+        justifyContent: 'center',
         alignItems: 'center',
-        alignSelf: 'center',
-        paddingHorizontal: 16,
-        borderRadius: 30,
       }}
       contentContainerStyle={{
-        padding: spacing.md,
-        margin: spacing.md,
+        width: '90%',
+        height: '80%',
+        padding: spacing.xl,
         borderRadius: 8,
         backgroundColor: colors.background,
       }}
     >
-      <View
-        style={{
-          alignItems: 'center',
-          paddingHorizontal: 16,
-          borderRadius: 30,
-          flex: 1,
-        }}
-      >
+      <View style={{ flex: 1, width: '100%', justifyContent: 'space-between' }}>
         <Text style={{ ...typography.title, marginBottom: spacing.sm }}>
           Comments
         </Text>
-        {comments.length > 0 ? (
-          <FlatList
-            testID="comment-list"
-            data={comments}
-            renderItem={renderUserComments}
-          />
-        ) : (
-          <Text testID="no-comments">No comments</Text>
-        )}
+        <View style={{ flex: 1, marginBottom: spacing.sm }}>
+          {comments.length > 0 ? (
+            <FlatList
+              testID="comment-list"
+              data={comments}
+              renderItem={renderUserComments}
+            />
+          ) : (
+            <Text testID="no-comments">No comments</Text>
+          )}
+        </View>
 
-        <TextInput
-          testID="comment-input"
-          label=""
-          placeholder="comment here"
-          value={content}
-          onChangeText={(text) => setContent(text)}
-        />
-        <Button
-          testID="send-button"
-          mode="contained"
-          onPress={async () => await commentHandle()}
-        >
-          <Text> send comment</Text>
-        </Button>
+        <View style={{ marginTop: spacing.sm }}>
+          <TextInput
+            testID="comment-input"
+            label=""
+            placeholder="comment here"
+            value={content}
+            onChangeText={(text) => setContent(text)}
+          />
+          <Button
+            testID="send-button"
+            mode="contained"
+            onPress={async () => await commentHandle()}
+          >
+            <Text> send comment</Text>
+          </Button>
+        </View>
         {isError ? (
           <HelperText testID="error-message" type="error">
             {message}

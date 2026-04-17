@@ -17,28 +17,27 @@ export async function GET(
   request: Request,
   { userId }: { userId: string },
 ): Promise<ExpoApiResponse<UserPageResponseBodyGet>> {
-  if (!(await selectUserExists(Number(userId)))) {
+  const numericId = Number(userId);
+
+  if (isNaN(numericId)) {
+    return ExpoApiResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+  }
+
+  if (!(await selectUserExists(numericId))) {
     return ExpoApiResponse.json(
-      {
-        error: `No album with id ${userId} found `,
-      },
-      {
-        status: 404,
-      },
+      { error: `No user with id ${numericId} found` },
+      { status: 404 },
     );
   }
-  const user = await getUserPageInsecure(Number(userId));
+
+  const user = await getUserPageInsecure(numericId);
 
   if (!user) {
     return ExpoApiResponse.json(
-      {
-        error: `Access denied to album with id ${userId}`,
-      },
-      {
-        status: 403,
-      },
+      { error: `Access denied to user with id ${numericId}` },
+      { status: 403 },
     );
   }
 
-  return ExpoApiResponse.json({ user: user });
+  return ExpoApiResponse.json({ user });
 }

@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { RadioButton, Text } from 'react-native-paper';
 import { spacing } from '../constants/Spacing';
 
@@ -17,7 +17,7 @@ export default function VisibilitySelector({
         { key: 'private', label: 'Private' },
       ].map((item) => (
         <View
-          testID="button-text"
+          testID={`button-text-${item.key}`}
           key={`key-${item.key}`}
           style={{
             flexDirection: 'row',
@@ -25,13 +25,24 @@ export default function VisibilitySelector({
             marginBottom: spacing.sm,
           }}
         >
-          <RadioButton
-            testID="button"
-            value={item.key}
-            status={value === item.key ? 'checked' : 'unchecked'}
+          <TouchableOpacity
+            testID={`button-container-${item.key}`}
+            key={`key-${item.key}`}
             onPress={() => onChange(item.key)}
-          />
-          <Text>{item.label}</Text>
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: spacing.sm,
+            }}
+          >
+            <RadioButton
+              testID={`button-${item.key}`}
+              value={item.key}
+              status={value === item.key ? 'checked' : 'unchecked'}
+              onPress={() => onChange(item.key)}
+            />
+            <Text>{item.label}</Text>
+          </TouchableOpacity>
         </View>
       ))}
     </View>

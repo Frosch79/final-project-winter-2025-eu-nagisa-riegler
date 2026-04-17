@@ -182,7 +182,7 @@ export default function EditAlbum() {
               setVisibility('');
               router.replace({
                 pathname: '/album/[albumId]',
-                params: { albumId: albumId.toString() },
+                params: { albumId: albumId.toString(), from: 'editAlbum' },
               });
             }}
           >

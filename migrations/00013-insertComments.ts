@@ -126,18 +126,12 @@ export async function up(sql: Sql) {
   for (const comment of comments) {
     await sql`
       INSERT INTO
-        comments(
-        album_id,
-        user_id,
-        content
-    )
+        comments (album_id, user_id, content)
       VALUES
         (
           ${comment.albumId},
           ${comment.userId},
           ${comment.content}
-
-
         )
     `;
   }

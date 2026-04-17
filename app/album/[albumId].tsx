@@ -1,6 +1,12 @@
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Dimensions, FlatList, Image, SafeAreaView, View } from 'react-native';
+import {
+  FlatList,
+  Image,
+  SafeAreaView,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import {
   Button,
   HelperText,
@@ -25,18 +31,24 @@ import { type AlbumLikesResponseBodyGet } from '../api/likes/index+api';
 import type { UserResponseBodyGet } from '../api/user+api';
 
 // styling
-const screenWidth = Dimensions.get('window').width;
-const numColumns = 3;
-const gridSpacing = spacing.sm * (numColumns + 1);
-const cardSize = (screenWidth - gridSpacing) / numColumns;
 
 export default function UserAlbum() {
   const [message, setMessage] = useState('');
   const [user, setUser] = useState<FullUser>();
   const [album, setAlbum] = useState<AlbumByUser>();
   const [photos, setPhotos] = useState<Photo[]>([]);
-  const { albumId } = useLocalSearchParams<{ albumId: string }>();
+  const { albumId, from } = useLocalSearchParams<{
+    albumId: string;
+    from?: string;
+  }>();
   const router = useRouter();
+  const { width: windowWidth } = useWindowDimensions();
+  const numColumns = 3;
+
+  const contentWidth = windowWidth > 600 ? 600 : windowWidth;
+
+  const gridSpacing = spacing.sm * (numColumns + 1);
+  const cardSize = (contentWidth - gridSpacing) / numColumns;
 
   useFocusEffect(
     useCallback(() => {
@@ -116,31 +128,32 @@ export default function UserAlbum() {
   // photo render
   const renderUserPhotos = ({ item }: { item: Photo }) => {
     return (
-      <Button
-        style={{ padding: spacing.xs }}
-        onPress={() =>
-          router.navigate({
-            pathname: '/photos/[photoId]',
-            params: { photoId: Number(item.id) },
-          })
-        }
-      >
-        <View
-          style={{
-            width: cardSize,
-            height: cardSize,
-            borderRadius: components.card.image.borderRadius,
-            overflow: 'hidden',
-          }}
+      <View style={{ width: cardSize, height: cardSize }}>
+        <Button
+          testID="photo"
+          style={{ padding: 0, margin: 0, width: '100%', height: '100%' }}
+          onPress={() =>
+            router.navigate({
+              pathname: '/photos/[photoId]',
+              params: { photoId: Number(item.id) },
+            })
+          }
         >
-          <Image
-            style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
-            source={{
-              uri: item.cloudinaryDataPath,
+          <View
+            style={{
+              width: cardSize,
+              height: cardSize,
+              borderRadius: components.card.image.borderRadius,
+              overflow: 'hidden',
             }}
-          />
-        </View>
-      </Button>
+          >
+            <Image
+              style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
+              source={{ uri: item.cloudinaryDataPath }}
+            />
+          </View>
+        </Button>
+      </View>
     );
   };
   // reload Likes / Comments
@@ -167,9 +180,20 @@ export default function UserAlbum() {
       setUserLikes([]);
     }
   };
+
+  const handleBack = () => {
+    if (from === 'editAlbum') {
+      router.replace('/(user)/user');
+    } else {
+      router.back();
+    }
+  };
+
   return (
     <Provider theme={theme}>
-      <SafeAreaView style={{ ...layout.container, flex: 1 }}>
+      <SafeAreaView
+        style={{ ...layout.container, flex: 1, marginBottom: '10%' }}
+      >
         <FlatList
           data={photos}
           renderItem={renderUserPhotos}
@@ -178,7 +202,7 @@ export default function UserAlbum() {
           ListHeaderComponent={
             <>
               {/* album card */}
-              <View style={{ marginBottom: spacing.md }}>
+              <View style={{}}>
                 {album && user ? (
                   <UserAlbumCard
                     album={album}
@@ -202,15 +226,17 @@ export default function UserAlbum() {
                 }}
               >
                 <IconButton
+                  testID="exit-album"
                   mode="contained-tonal"
                   icon="close-thick"
                   size={30}
-                  onPress={() => router.replace('/(tabs)/(user)/user')}
+                  onPress={handleBack}
                 />
 
                 {user && album && user.id === album.userId && (
                   <>
                     <IconButton
+                      testID="album-edit"
                       mode="contained-tonal"
                       icon="file-edit"
                       size={30}
@@ -222,6 +248,7 @@ export default function UserAlbum() {
                       }
                     />
                     <IconButton
+                      testID="photo-create"
                       mode="contained-tonal"
                       icon="camera"
                       size={30}

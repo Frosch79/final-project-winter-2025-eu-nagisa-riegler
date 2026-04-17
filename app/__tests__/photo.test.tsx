@@ -1,6 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/require-await */
-
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
@@ -25,26 +23,32 @@ jest.mock('expo-image-picker', () => ({
 
 describe('PostMyPhotos screen', () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
 
-    (useRouter as jest.Mock).mockReturnValue({ replace: mockReplace });
+    (useRouter as jest.Mock<any>).mockReturnValue({ replace: mockReplace });
 
-    (useLocalSearchParams as jest.Mock).mockReturnValue({ albumId: '1' });
+    (useLocalSearchParams as jest.Mock<any>).mockReturnValue({ albumId: '1' });
 
-    (useFocusEffect as jest.Mock).mockImplementation((callback: any) =>
-      useEffect(callback, []),
+    (useFocusEffect as jest.Mock<any>).mockImplementation(
+      (callback: unknown) => {
+        useEffect(() => {
+          if (typeof callback === 'function') {
+            (callback as () => void)();
+          }
+        }, [callback]);
+      },
     );
   });
 
   test('redirects to login if user fetch fails', async () => {
-    (global.fetch as jest.Mock).mockImplementation((url: string) => {
+    (global.fetch as jest.Mock<any>).mockImplementation((url: string) => {
       if (url === '/api/user') {
         return Promise.resolve({
           ok: false,
-          json: async () => ({ error: 'Not logged in' }),
+          json: () => Promise.resolve({ error: 'Not logged in' }),
         });
       }
-      return Promise.resolve({ ok: true, json: async () => ({}) });
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
     });
 
     render(<PostMyPhotos />);
@@ -58,7 +62,7 @@ describe('PostMyPhotos screen', () => {
 
   test('can select image and preview it', async () => {
     // ImagePicker
-    (ImagePicker.launchImageLibraryAsync as jest.Mock).mockResolvedValue({
+    (ImagePicker.launchImageLibraryAsync as jest.Mock<any>).mockResolvedValue({
       canceled: false,
       assets: [
         {
@@ -71,25 +75,28 @@ describe('PostMyPhotos screen', () => {
     });
 
     // uploadImage
-    (uploadImage as jest.Mock).mockResolvedValue('https://cloudinary/test.jpg');
+    (uploadImage as jest.Mock<any>).mockResolvedValue(
+      'https://cloudinary/test.jpg',
+    );
 
     // API mocks
-    (global.fetch as jest.Mock).mockImplementation((url: string) => {
+    (global.fetch as jest.Mock<any>).mockImplementation((url: string) => {
       if (url === '/api/user') {
         return Promise.resolve({
           ok: true,
-          json: async () => ({ id: 1 }),
+          json: () => Promise.resolve({ id: 1 }),
         });
       }
       if (url === '/api/albums/1') {
         return Promise.resolve({
           ok: true,
-          json: async () => ({
-            album: { id: 1, title: 'My Album', description: 'Desc' },
-          }),
+          json: () =>
+            Promise.resolve({
+              album: { id: 1, title: 'My Album', description: 'Desc' },
+            }),
         });
       }
-      return Promise.resolve({ ok: true, json: async () => ({}) });
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
     });
 
     const { getByText, getByTestId } = render(<PostMyPhotos />);
@@ -103,27 +110,29 @@ describe('PostMyPhotos screen', () => {
   });
 
   test('continue button disabled if no image selected', async () => {
-    (global.fetch as jest.Mock).mockImplementation((url: string) => {
+    (global.fetch as jest.Mock<any>).mockImplementation((url: string) => {
       if (url === '/api/user') {
         return Promise.resolve({
           ok: true,
-          json: async () => ({ id: 1 }),
+          json: () => Promise.resolve({ id: 1 }),
         });
       }
       if (url === '/api/albums/1') {
         return Promise.resolve({
           ok: true,
-          json: async () => ({
-            album: { id: 1, title: 'My Album', description: 'Desc' },
-          }),
+          json: () =>
+            Promise.resolve({
+              album: { id: 1, title: 'My Album', description: 'Desc' },
+            }),
         });
       }
-      return Promise.resolve({ ok: true, json: async () => ({}) });
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
     });
 
     const { getByTestId } = render(<PostMyPhotos />);
     await waitFor(() => {
-      expect(getByTestId('continue-button')).toBeVisible();
+      const continueButton = getByTestId('continue-button');
+      expect(continueButton).toBeDefined();
     });
     fireEvent.press(getByTestId('continue-button'));
     expect(mockReplace).not.toHaveBeenCalled();

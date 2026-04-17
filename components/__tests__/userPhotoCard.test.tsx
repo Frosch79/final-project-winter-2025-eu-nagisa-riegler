@@ -1,4 +1,4 @@
-import { expect, jest } from '@jest/globals';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { render } from '@testing-library/react-native';
 import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
@@ -120,9 +120,11 @@ describe('userPhotoCard with edge data', () => {
   test('render photo uri', () => {
     const { getByTestId } = render(<UserPhotoCard {...failProps} />);
 
-    const image = getByTestId('photo-image');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(image.props.source.uri).toBe('https://example.com/fallback.jpg');
+    const image = getByTestId('photo-image') as unknown as {
+      props: { source?: { uri?: string } };
+    };
+
+    expect(image.props.source?.uri).toBe('https://example.com/fallback.jpg');
   });
 
   test('renders formatted created date', () => {

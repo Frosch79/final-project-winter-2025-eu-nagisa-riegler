@@ -24,15 +24,18 @@ export async function GET(
   const token = cookies.sessionToken;
 
   if (!token) {
-    return ExpoApiResponse.json({
-      error: 'No session token found',
-    });
+    return ExpoApiResponse.json(
+      {
+        error: 'No session token found',
+      },
+      { status: 401 },
+    );
   }
 
   const user = token && (await getUser(token));
 
   if (!user) {
-    return ExpoApiResponse.json({ error: 'User not found' });
+    return ExpoApiResponse.json({ error: 'User not found' }, { status: 402 });
   }
 
   return ExpoApiResponse.json({ user: user });
@@ -68,15 +71,18 @@ export async function PUT(
   const token = cookies.sessionToken;
 
   if (!token) {
-    return ExpoApiResponse.json({
-      error: 'No session token found',
-    });
+    return ExpoApiResponse.json(
+      {
+        error: 'No session token found',
+      },
+      { status: 401 },
+    );
   }
 
   const user = token && (await updateUser(token, result.data));
 
   if (!user) {
-    return ExpoApiResponse.json({ error: 'User not found' });
+    return ExpoApiResponse.json({ error: 'User not found' }, { status: 403 });
   }
 
   return ExpoApiResponse.json({ user: user });

@@ -9,11 +9,18 @@ const config: ExpoConfig = {
   scheme: 'myapp',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
+  updates: {
+    url: 'https://u.expo.dev/e2cda16f-21b8-40e6-83bb-58958c5867ca',
+  },
   ios: {
     supportsTablet: true,
+    runtimeVersion: {
+      policy: 'appVersion',
+    },
   },
   android: {
-    package: 'com.final_projectwinter_2025_eu_nagisa_riegler',
+    runtimeVersion: '1.0.0',
+    package: 'com.final_project_winter_2025_eu_nagisa_riegler',
     adaptiveIcon: {
       foregroundImage: './assets/images/icon-shutter.png',
       backgroundColor: '#ffffff',
@@ -28,7 +35,7 @@ const config: ExpoConfig = {
     [
       'expo-router',
       {
-        origin: 'https://final-project-winter-2025-eu-nagisa.vercel.app/',
+        origin: process.env.EXPO_PUBLIC_API_URL,
       },
     ],
 

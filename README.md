@@ -23,18 +23,21 @@ sharing the same backend and database as the web version.
 
 > 📸 Screenshots from the deployed application
 
-**Feed / Homepage**
-![Feed Screenshot](./assets/feed.png)
+**Feed**
+
+![Feed Screenshot](assets/images/readme-image/screenshot_browser2.png)
 
 **Album View & Photos**
-![Album Screenshot](./assets/album.png)
+![Album Screenshot](assets/images/readme-image/screenshot_browser4.png)
+![Photo Screenshot](assets/images/readme-image/screenshot_browser5.png)
 
 **User Profile**
-![Profile Screenshot](./assets/profile.png)
+![Profile Screenshot](assets/images/readme-image/screenshot_browser1.png)
+![Follow Screenshot](assets/images/readme-image/screenshot_browser3.png)
 
 **Mobile Preview (Expo / Android Emulator)**  
-![Mobile Feed Screenshot](./assets/mobile-feed.png)
-![Mobile Album Screenshot](./assets/mobile-album.png)
+![Mobile Feed Screenshot](assets/images/readme-image/screenshot_mobile1.png)
+![Mobile Album Screenshot](assets/images/readme-image/screenshot_mobile2.png)
 
 ---
 
@@ -145,8 +148,15 @@ as the web version, deployed on Vercel with Neon.
 
 ### Expo Preview Build
 
-A preview build is available for testing the mobile app
-in a production-like environment.
+A preview build is available for testing the mobile app in a production-like environment.
+
+**📥 Download & Install:**
+[Download PixVault Android APK (Preview)](https://expo.dev/accounts/frosch79/projects/final-project-winter-2025-eu-nagisa-riegler/builds/8517fe26-a53d-4844-a82a-4fa804034f0b)
+
+**How to install:**
+
+1. Download the APK file on your Android device.
+2. Open the file and allow "Install from unknown sources" if prompted.
 
 **Key points:**
 
@@ -215,10 +225,36 @@ pnpm install
 
 ### Environment Variables
 
+Create a `.env` file based on the following required variables:
+
+#### Database (PostgreSQL / Neon)
+
+```env
+PGHOST=xxxxxxxxxxxx
+PGDATABASE=xxxxxxxxxxxx
+PGUSERNAME=xxxxxxxxxxxx
+PGPASSWORD=xxxxxxxxxxxx
+
+```
+
+#### Image Storage (Cloudinary)
+
 ```env
 CLOUDINARY_API_KEY=your_key
 CLOUDINARY_API_SECRET=your_secret
 CLOUDINARY_CLOUD_NAME=your_cloud
+
+```
+
+#### API Configuration
+
+```env
+# For Web
+NEXT_PUBLIC_API_URL=http://localhost:3000
+
+# For Mobile (Use your local IP address for physical devices)
+EXPO_PUBLIC_API_URL=http://192.168.x.x:3000
+
 ```
 
 ### Run Migrations

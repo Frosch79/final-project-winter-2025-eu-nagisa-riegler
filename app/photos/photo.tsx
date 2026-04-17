@@ -219,7 +219,7 @@ export default function PostMyPhotos() {
                   if ('photo' in createdPhotoResponse) {
                     router.replace({
                       pathname: '/album/[albumId]',
-                      params: { albumId: album.id },
+                      params: { albumId: album.id, from: 'editAlbum' },
                     });
                   }
                 }}

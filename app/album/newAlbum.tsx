@@ -124,7 +124,7 @@ export default function PostMyAlbum() {
               setVisibility('');
               router.navigate({
                 pathname: '/album/[albumId]',
-                params: { albumId: newAlbumId.toString() },
+                params: { albumId: newAlbumId.toString(), from: 'editAlbum' },
               });
             }}
           >

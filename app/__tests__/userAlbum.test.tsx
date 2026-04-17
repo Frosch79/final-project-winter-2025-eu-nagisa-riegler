@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { render, waitFor } from '@testing-library/react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import UserAlbumCard from '../../components/UserAlbumCard';
 import { mockReplace } from '../../jest.setup';
 import { paperMock } from '../../util/__tests__/__mock__/paperMock';
@@ -33,8 +33,12 @@ describe('UserAlbum screen', () => {
       replace: mockReplace,
     });
 
-    (useFocusEffect as jest.Mock).mockImplementation((callback: any) => {
-      callback();
+    (useFocusEffect as jest.Mock).mockImplementation((callback: unknown) => {
+      useEffect(() => {
+        if (typeof callback === 'function') {
+          (callback as () => void)();
+        }
+      }, [callback]);
     });
   });
 
@@ -43,15 +47,15 @@ describe('UserAlbum screen', () => {
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ error: 'Not logged in' }),
+
+          json: () => Promise.resolve({ error: 'Not logged in' }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({}),
+
+          json: () => Promise.resolve({}),
         } as Response),
       );
 
@@ -69,29 +73,29 @@ describe('UserAlbum screen', () => {
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ user: mockFullUser }),
+
+          json: () => Promise.resolve({ user: mockFullUser }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ album: mockAlbumByUser }),
+
+          json: () => Promise.resolve({ album: mockAlbumByUser }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ like: likes }),
+
+          json: () => Promise.resolve({ like: likes }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ comment: comments }),
+
+          json: () => Promise.resolve({ comment: comments }),
         } as Response),
       );
 
@@ -119,15 +123,15 @@ describe('UserAlbum screen', () => {
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ user: mockFullUser }),
+
+          json: () => Promise.resolve({ user: mockFullUser }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ error: 'Album not found' }),
+
+          json: () => Promise.resolve({ error: 'Album not found' }),
         } as Response),
       );
 
@@ -145,15 +149,15 @@ describe('UserAlbum screen', () => {
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ user: mockFullUser }),
+
+          json: () => Promise.resolve({ user: mockFullUser }),
         } as Response),
       )
       .mockImplementationOnce(() =>
         Promise.resolve({
           ok: true,
-          // eslint-disable-next-line @typescript-eslint/require-await
-          json: async () => ({ album: albumWithoutPhotos }),
+
+          json: () => Promise.resolve({ album: albumWithoutPhotos }),
         } as Response),
       );
 

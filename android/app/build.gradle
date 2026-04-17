@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.final_projectwinter_2025_eu_nagisa_riegler'
+    namespace 'com.final_project_winter_2025_eu_nagisa_riegler'
     defaultConfig {
-        applicationId 'com.final_projectwinter_2025_eu_nagisa_riegler'
+        applicationId 'com.final_project_winter_2025_eu_nagisa_riegler'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

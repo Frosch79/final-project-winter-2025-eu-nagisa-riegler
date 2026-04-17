@@ -1,0 +1,66 @@
+appId: com.final_project_winter_2025_eu_nagisa_riegler
+---
+- tapOn: 'Feed'
+## Follow Feed
+- scrollUntilVisible:
+    element:
+      text: 'Edit User'
+- scrollUntilVisible:
+    element:
+      text: 'Edit title'
+- scrollUntilVisible:
+    element:
+      text: 'Sheeta'
+- scrollUntilVisible:
+    element:
+      text: 'Laputa Inspirations'
+- scrollUntilVisible:
+    element:
+      text: 'Pazu'
+- scrollUntilVisible:
+    element:
+      text: 'Mining Town Views'
+
+## Public Feed
+- tapOn: 'public'
+- scrollUntilVisible:
+    element:
+      text: 'Edit User'
+- scrollUntilVisible:
+    element:
+      text: 'Edit title'
+- scrollUntilVisible:
+    element:
+      text: 'Pazu'
+- scrollUntilVisible:
+    element:
+      text: 'Mining Town Views'
+- scrollUntilVisible:
+    element:
+      text: 'Ashitaka'
+- scrollUntilVisible:
+    element:
+      text: 'Emishi Landscape'
+- scrollUntilVisible:
+    element:
+      text: 'Chihiro Ogino'
+- scrollUntilVisible:
+    element:
+      text: 'Spirited Journey'
+- scrollUntilVisible:
+    element:
+      text: 'Sophie Hatter'
+- scrollUntilVisible:
+    element:
+      text: 'Chipping Inspirations'
+
+- tapOn: 'Profile'
+- assertVisible:
+    text: 'Edit User'
+    index: 0
+- assertVisible:
+    text: 'Edit User'
+    index: 1
+- scrollUntilVisible:
+    element:
+      text: 'Edit title'

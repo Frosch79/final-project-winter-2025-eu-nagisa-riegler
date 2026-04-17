@@ -1,8 +1,15 @@
 import type { FullUser, UpdateUser } from '../../../database/users';
 import type { User } from '../../../migrations/00000-createTableUsers';
 
-// 基本の User
-
+// User
+export const user: User = {
+  id: 1,
+  name: 'Totoro',
+  birthday: new Date('1958-04-16'),
+  country: 'Japan',
+  accountDescription: 'Forest spirit',
+  email: 'totoro@ghibli.test',
+};
 export const users: User[] = [
   {
     id: 1,

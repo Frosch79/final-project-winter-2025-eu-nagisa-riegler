@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/require-await */
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -19,22 +17,25 @@ jest.mock('expo-router', () => ({
 
 describe('Register screen', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     (useRouter as jest.Mock).mockReturnValue({
       replace: mockReplace,
     });
 
-    (useFocusEffect as jest.Mock).mockImplementation((callback: any) => {
-      useEffect(callback, []);
+    (useFocusEffect as jest.Mock).mockImplementation((callback: unknown) => {
+      useEffect(() => {
+        if (typeof callback === 'function') {
+          (callback as () => void)();
+        }
+      }, [callback]);
     });
-
-    jest.clearAllMocks();
   });
 
   test('redirects to user page if already logged in', async () => {
     (global.fetch as jest.Mock).mockImplementation(() =>
       Promise.resolve({
         ok: true,
-        json: async () => ({ user: { id: 1 } }),
+        json: () => Promise.resolve({ user: { id: 1 } }),
       }),
     );
 
@@ -48,12 +49,13 @@ describe('Register screen', () => {
   test('successfully registers a new user', async () => {
     (global.fetch as jest.Mock).mockImplementation((url: any) => {
       if (url === '/api/user') {
-        return Promise.resolve({ ok: true, json: async () => ({}) });
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
       }
       if (url === '/api/register') {
         return Promise.resolve({
           ok: true,
-          json: async () => ({ user: { id: 2, ...registerUserSuccess } }),
+          json: () =>
+            Promise.resolve({ user: { id: 2, ...registerUserSuccess } }),
         });
       }
     });
@@ -95,11 +97,11 @@ describe('Register screen', () => {
       if (url === '/api/register') {
         return Promise.resolve({
           ok: false,
-          json: async () => ({ error: 'Email already exists' }),
+          json: () => Promise.resolve({ error: 'Email already exists' }),
         });
       }
       if (url === '/api/user') {
-        return Promise.resolve({ ok: true, json: async () => ({}) });
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
       }
     });
 
@@ -132,7 +134,7 @@ describe('Register screen', () => {
     });
   });
 
-  test('register button cannot be pressed when required fields are empty', async () => {
+  test('register button cannot be pressed when required fields are empty', () => {
     const { getByTestId } = render(<Register />);
     const registerButton = getByTestId('register');
 
@@ -141,7 +143,7 @@ describe('Register screen', () => {
     expect(mockReplace).not.toHaveBeenCalled();
   });
 
-  test('register button cannot be pressed when password and confirm password do not match', async () => {
+  test('register button cannot be pressed when password and confirm password do not match', () => {
     const { getByTestId } = render(<Register />);
     const registerButton = getByTestId('register');
 
@@ -175,7 +177,7 @@ describe('Register screen', () => {
     (global.fetch as jest.Mock) = jest.fn(() =>
       Promise.resolve({
         ok: true,
-        json: async () => ({ user: { id: 1, ...registerUser } }),
+        json: () => Promise.resolve({ user: { id: 1, ...registerUser } }),
       }),
     );
 

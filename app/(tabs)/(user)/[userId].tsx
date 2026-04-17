@@ -22,6 +22,7 @@ export default function UserPage() {
   const [isFollowed, setIsFollowed] = useState<boolean>(false);
   const [albums, setAlbums] = useState<FeedAlbum[]>([]);
   const [user, setUser] = useState<FullUser>();
+  const [myId, setMyId] = useState<number>();
   const [follower, setFollower] = useState<FollowUser[]>([]);
   const [followed, setFollowed] = useState<FollowUser[]>([]);
   const [isError, setIsError] = useState(false);
@@ -30,89 +31,102 @@ export default function UserPage() {
   const [isLoading, setIsLoading] = useState(true);
   const { userId } = useLocalSearchParams<{ userId: string }>();
 
+  const fetchUserData = useCallback(() => {
+    async function getUser() {
+      const [
+        userResponse,
+        userPageResponse,
+        userAlbumsResponse,
+        isFollowResponse,
+      ]: [
+        UserResponseBodyGet,
+        UserPageResponseBodyGet,
+        UserFeedResponseBodyGet,
+        IsFollowedResponseBodyGet,
+      ] = await Promise.all([
+        fetch('/api/user').then((response) => response.json()),
+        fetch(`/api/users/${userId}`).then((response) => response.json()),
+        fetch(`/api/feed/${userId}`).then((response) => response.json()),
+        fetch(`/api/followed/${userId}`).then((response) => response.json()),
+      ]);
+      if ('error' in userResponse) {
+        router.replace(`/(auth)/login?returnTo=/(tabs)/(user)/[userId]`);
+        return;
+      }
+      setIsMyPage(Number(userId) === Number(userResponse.user.id));
+      if ('error' in userResponse) {
+        return;
+      }
+
+      if ('user' in userResponse) {
+        const myData = userResponse.user;
+        if (!myData.id) return;
+        setMyId(myData.id);
+      }
+      if ('error' in userPageResponse) {
+        setMessage(userPageResponse.error);
+        setIsError(true);
+        return;
+      }
+      if ('user' in userPageResponse) {
+        setUser(userPageResponse.user);
+      }
+
+      if ('error' in userAlbumsResponse) {
+        setIsError(true);
+        setMessage(userAlbumsResponse.error);
+        setAlbums([]);
+      }
+      if ('album' in userAlbumsResponse) {
+        setAlbums(userAlbumsResponse.album);
+      }
+
+      if ('error' in isFollowResponse) {
+        setIsError(true);
+        setMessage(isFollowResponse.error);
+      }
+      if ('result' in isFollowResponse) {
+        setIsFollowed(isFollowResponse.result.valueOf());
+      }
+
+      const [followerResponse, followedResponse]: [
+        FollowerUserResponseBodyGet,
+        FollowedUserResponseBodyGet,
+      ] = await Promise.all([
+        fetch(`/api/follower?userId=${userId}`).then((response) =>
+          response.json(),
+        ),
+        fetch(`/api/followed?userId=${userId}`).then((response) =>
+          response.json(),
+        ),
+      ]);
+      if ('error' in followerResponse) {
+        setIsError(true);
+        setMessage(followerResponse.error);
+        setFollower([]);
+      }
+      if ('error' in followedResponse) {
+        setIsError(true);
+        setMessage(followedResponse.error);
+        setFollowed([]);
+      }
+      if ('user' in followerResponse) {
+        setFollower(followerResponse.user);
+      }
+      if ('user' in followedResponse) {
+        setFollowed(followedResponse.user);
+      }
+
+      setIsLoading(false);
+    }
+
+    getUser().catch((error) => console.log(error));
+  }, [router, userId]);
+
   useFocusEffect(
     useCallback(() => {
-      async function getUser() {
-        const [
-          userResponse,
-          userPageResponse,
-          userAlbumsResponse,
-          isFollowResponse,
-        ]: [
-          UserResponseBodyGet,
-          UserPageResponseBodyGet,
-          UserFeedResponseBodyGet,
-          IsFollowedResponseBodyGet,
-        ] = await Promise.all([
-          fetch('/api/user').then((response) => response.json()),
-          fetch(`/api/users/${userId}`).then((response) => response.json()),
-          fetch(`/api/feed/${userId}`).then((response) => response.json()),
-          fetch(`/api/followed/${userId}`).then((response) => response.json()),
-        ]);
-        if ('error' in userResponse) {
-          router.replace(`/(auth)/login?returnTo=/(tabs)/(user)/[userId]`);
-          return;
-        }
-        setIsMyPage(Number(userId) === Number(userResponse.user.id));
-
-        if ('error' in userPageResponse) {
-          setMessage(userPageResponse.error);
-          setIsError(true);
-          return;
-        }
-        if ('user' in userPageResponse) {
-          setUser(userPageResponse.user);
-        }
-
-        if ('error' in userAlbumsResponse) {
-          setIsError(true);
-          setMessage(userAlbumsResponse.error);
-          setAlbums([]);
-        }
-        if ('album' in userAlbumsResponse) {
-          setAlbums(userAlbumsResponse.album);
-        }
-
-        if ('error' in isFollowResponse) {
-          setIsError(true);
-          setMessage(isFollowResponse.error);
-        }
-        if ('result' in isFollowResponse) {
-          setIsFollowed(isFollowResponse.result.valueOf());
-        }
-
-        const [followerResponse, followedResponse]: [
-          FollowerUserResponseBodyGet,
-          FollowedUserResponseBodyGet,
-        ] = await Promise.all([
-          fetch(`/api/follower?userId=${userId}`).then((response) =>
-            response.json(),
-          ),
-          fetch(`/api/followed?userId=${userId}`).then((response) =>
-            response.json(),
-          ),
-        ]);
-        if ('error' in followerResponse) {
-          setIsError(true);
-          setMessage(followerResponse.error);
-          setFollower([]);
-        }
-        if ('error' in followedResponse) {
-          setIsError(true);
-          setMessage(followedResponse.error);
-          setFollowed([]);
-        }
-        if ('user' in followerResponse) {
-          setFollower(followerResponse.user);
-        }
-        if ('user' in followedResponse) {
-          setFollowed(followedResponse.user);
-        }
-
-        setIsLoading(false);
-      }
-      getUser().catch((error) => console.log(error));
-    }, [router, userId]),
+      fetchUserData();
+    }, [fetchUserData]),
   );
 
   // album render
@@ -139,6 +153,7 @@ export default function UserPage() {
       method,
       body: JSON.stringify({ followedId: Number(userId) }),
     });
+
     const data = await response.json();
 
     if (!response.ok || 'error' in data) {
@@ -146,8 +161,7 @@ export default function UserPage() {
       setMessage(data ?? 'Error updating follow');
       return;
     }
-
-    setIsFollowed(!isFollowed);
+    fetchUserData();
   };
 
   return (
@@ -158,6 +172,7 @@ export default function UserPage() {
             {user ? (
               <UserCard
                 userData={user}
+                myId={Number(myId)}
                 onSwitch={isMyPage}
                 editOnPress={() => router.replace('/album/newAlbum')}
                 homeOnPress={() => router.navigate('/(tabs)/(user)/user')}

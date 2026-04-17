@@ -1,0 +1,48 @@
+appId: com.final_project_winter_2025_eu_nagisa_riegler
+---
+- scrollUntilVisible:
+    element:
+      id: 'photo-create'
+- tapOn:
+    id: 'photo-create'
+- tapOn:
+    id: 'select-photo'
+
+- waitForAnimationToEnd
+
+- tapOn:
+    id: 'com.google.android.documentsui:id/icon_thumb'
+    index: 0
+- stopApp: 'com.google.android.documentsui'
+- waitForAnimationToEnd
+- assertVisible:
+    id: 'upload-photo'
+
+- tapOn: Photo title
+- inputText:
+    text: Photo title
+- hideKeyboard
+- tapOn: Description
+- inputText:
+    text: Photo description
+- hideKeyboard
+- tapOn: Location
+- inputText:
+    text: Photo location
+- hideKeyboard
+- tapOn:
+    id: continue-button
+- scrollUntilVisible:
+    element:
+      id: 'photo'
+- assertVisible:
+    id: 'photo'
+    index: 0
+- tapOn:
+    id: 'photo'
+    index: 0
+- assertVisible:
+    id: photo-image
+- tapOn:
+    id: back-button
+- assertVisible: Album

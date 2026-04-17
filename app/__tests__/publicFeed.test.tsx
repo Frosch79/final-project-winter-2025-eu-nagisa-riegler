@@ -1,8 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { render, waitFor } from '@testing-library/react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -18,29 +13,34 @@ jest.mock('expo-router', () => ({
 
 describe('Feed screen', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     (useRouter as jest.Mock).mockReturnValue({
       replace: mockReplace,
       navigate: mockNavigate,
       push: mockPush,
     });
-    (useFocusEffect as jest.Mock).mockImplementation((callback: any) => {
-      useEffect(callback, []);
+    (useFocusEffect as jest.Mock).mockImplementation((callback: unknown) => {
+      useEffect(() => {
+        if (typeof callback === 'function') {
+          (callback as () => void)();
+        }
+      }, [callback]);
     });
-    jest.clearAllMocks();
   });
 
   test('redirects to login when /api/user returns error', async () => {
-    (global.fetch as jest.Mock).mockImplementation((url: any) => {
+    (global.fetch as jest.Mock).mockImplementation((input: unknown) => {
+      const url = typeof input === 'string' ? input : '';
       if (url === '/api/user') {
         return Promise.resolve({
           ok: false,
-          json: async () => ({ error: 'Not logged in' }),
+          json: () => Promise.resolve({ error: 'Not logged in' }),
         });
       }
 
       if (url.includes('/api/feed')) {
         return Promise.resolve({
-          json: async () => ({}),
+          json: () => Promise.resolve({}),
         });
       }
     });
@@ -55,16 +55,17 @@ describe('Feed screen', () => {
   });
 
   test('renders feed albums when API succeeds', async () => {
-    (global.fetch as jest.Mock).mockImplementation((url: any) => {
+    (global.fetch as jest.Mock).mockImplementation((input: unknown) => {
+      const url = typeof input === 'string' ? input : '';
       if (url === '/api/user') {
         return Promise.resolve({
-          json: async () => ({ user: { id: 1 } }),
+          json: () => Promise.resolve({ user: { id: 1 } }),
         });
       }
 
       if (url.includes('/api/feed')) {
         return Promise.resolve({
-          json: async () => ({ feedAlbum: otherUserAlbums }),
+          json: () => Promise.resolve({ feedAlbum: otherUserAlbums }),
         });
       }
     });
@@ -79,16 +80,17 @@ describe('Feed screen', () => {
   });
 
   test('shows "No Albums" when feed API returns error', async () => {
-    (global.fetch as jest.Mock).mockImplementation((url: any) => {
+    (global.fetch as jest.Mock).mockImplementation((input: unknown) => {
+      const url = typeof input === 'string' ? input : '';
       if (url === '/api/user') {
         return Promise.resolve({
-          json: async () => ({ user: { id: 1 } }),
+          json: () => Promise.resolve({ user: { id: 1 } }),
         });
       }
 
       if (url.includes('/api/feed')) {
         return Promise.resolve({
-          json: async () => ({ error: 'Feed error' }),
+          json: () => Promise.resolve({ error: 'Feed error' }),
         });
       }
     });
@@ -101,16 +103,17 @@ describe('Feed screen', () => {
   });
 
   test('shows "No Albums" when feed is empty', async () => {
-    (global.fetch as jest.Mock).mockImplementation((url: any) => {
+    (global.fetch as jest.Mock).mockImplementation((input: unknown) => {
+      const url = typeof input === 'string' ? input : '';
       if (url === '/api/user') {
         return Promise.resolve({
-          json: async () => ({ user: { id: 1 } }),
+          json: () => Promise.resolve({ user: { id: 1 } }),
         });
       }
 
       if (url.includes('/api/feed')) {
         return Promise.resolve({
-          json: async () => ({ feedAlbum: [] }),
+          json: () => Promise.resolve({ feedAlbum: [] }),
         });
       }
     });

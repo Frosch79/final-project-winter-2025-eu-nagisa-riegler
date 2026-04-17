@@ -14,12 +14,13 @@ export type Follow = {
 
 export async function up(sql: Sql) {
   await sql`
-  CREATE TABLE follows(
-id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-follower_user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-followed_user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-created_date timestamp NOT NULL DEFAULT now()
-  )`;
+    CREATE TABLE follows (
+      id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+      follower_user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+      followed_user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+      created_date timestamp NOT NULL DEFAULT now()
+    )
+  `;
 }
 
 export async function down(sql: Sql) {
