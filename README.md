@@ -22,22 +22,24 @@ sharing the same backend and database as the web version.
 ## Demo / Screenshots
 
 > 📸 Screenshots from the deployed application
+> **Feed**
 
-**Feed**
-
-![Feed Screenshot](assets/images/readme-image/screenshot_browser2.png)
+<img src="assets/images/readme-image/screenshot_browser2.png" width="400" alt="Feed Screenshot">
 
 **Album View & Photos**
-![Album Screenshot](assets/images/readme-image/screenshot_browser4.png)
-![Photo Screenshot](assets/images/readme-image/screenshot_browser5.png)
+
+<img src="assets/images/readme-image/screenshot_browser4.png" width="400" alt="Album Screenshot">
+<img src="assets/images/readme-image/screenshot_browser5.png" width="400" alt="Photo Screenshot">
 
 **User Profile**
-![Profile Screenshot](assets/images/readme-image/screenshot_browser1.png)
-![Follow Screenshot](assets/images/readme-image/screenshot_browser3.png)
 
-**Mobile Preview (Expo / Android Emulator)**  
-![Mobile Feed Screenshot](assets/images/readme-image/screenshot_mobile1.png)
-![Mobile Album Screenshot](assets/images/readme-image/screenshot_mobile2.png)
+<img src="assets/images/readme-image/screenshot_browser1.png" width="400" alt="Profile Screenshot">
+<img src="assets/images/readme-image/screenshot_browser3.png" width="400" alt="Follow Screenshot">
+
+**Mobile Preview (Expo / Android Emulator)**
+
+<img src="assets/images/readme-image/screenshot_mobile1.png" width="250" alt="Mobile Feed Screenshot">
+<img src="assets/images/readme-image/screenshot_mobile2.png" width="250" alt="Mobile Album Screenshot">
 
 ---
 
