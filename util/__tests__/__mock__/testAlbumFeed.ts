@@ -13,6 +13,8 @@ export const mockFeedMyAlbum: FeedAlbum = {
   name: mockFullUser.name,
   commentCount: 5,
   likeCount: 10,
+  albumPhoto:
+    'https://res.cloudinary.com/dvvu2bciu/image/upload/v1787835712/my_app/ussbpbw8dnvk01bsi2xl.jpg',
 };
 
 export const mockFeedMyAlbums: FeedAlbum[] = [
@@ -28,6 +30,8 @@ export const mockFeedMyAlbums: FeedAlbum[] = [
     name: mockFullUser.name,
     commentCount: 3,
     likeCount: 7,
+    albumPhoto:
+      'https://res.cloudinary.com/dvvu2bciu/image/upload/v1787835712/my_app/ussbpbw8dnvk01bsi2xl.jpg',
   },
   {
     ...mockAlbum,
@@ -41,6 +45,8 @@ export const mockFeedMyAlbums: FeedAlbum[] = [
     name: mockFullUser.name,
     commentCount: 8,
     likeCount: 15,
+    albumPhoto:
+      'https://res.cloudinary.com/dvvu2bciu/image/upload/v1787835712/my_app/ussbpbw8dnvk01bsi2xl.jpg',
   },
   {
     ...mockAlbum,
@@ -54,6 +60,8 @@ export const mockFeedMyAlbums: FeedAlbum[] = [
     name: mockFullUser.name,
     commentCount: 2,
     likeCount: 5,
+    albumPhoto:
+      'https://res.cloudinary.com/dvvu2bciu/image/upload/v1787835712/my_app/ussbpbw8dnvk01bsi2xl.jpg',
   },
   {
     ...mockAlbum,
@@ -67,6 +75,8 @@ export const mockFeedMyAlbums: FeedAlbum[] = [
     name: mockFullUser.name,
     commentCount: 6,
     likeCount: 12,
+    albumPhoto:
+      'https://res.cloudinary.com/dvvu2bciu/image/upload/v1787835712/my_app/ussbpbw8dnvk01bsi2xl.jpg',
   },
 ];
 // Edge / Fail pattern
@@ -90,6 +100,8 @@ export const otherUserAlbums: FeedAlbum[] = [
     name: 'Totoro',
     commentCount: 6,
     likeCount: 15,
+    albumPhoto:
+      'https://res.cloudinary.com/dvvu2bciu/image/upload/v1787835712/my_app/ussbpbw8dnvk01bsi2xl.jpg',
   },
   {
     id: 202,
@@ -102,6 +114,8 @@ export const otherUserAlbums: FeedAlbum[] = [
     name: 'Kiki',
     commentCount: 3,
     likeCount: 9,
+    albumPhoto:
+      'https://res.cloudinary.com/dvvu2bciu/image/upload/v1787835712/my_app/ussbpbw8dnvk01bsi2xl.jpg',
   },
   {
     id: 203,
@@ -114,6 +128,8 @@ export const otherUserAlbums: FeedAlbum[] = [
     name: 'Howl',
     commentCount: 7,
     likeCount: 18,
+    albumPhoto:
+      'https://res.cloudinary.com/dvvu2bciu/image/upload/v1787835712/my_app/ussbpbw8dnvk01bsi2xl.jpg',
   },
   {
     id: 204,
@@ -126,5 +142,7 @@ export const otherUserAlbums: FeedAlbum[] = [
     name: 'Porco',
     commentCount: 5,
     likeCount: 12,
+    albumPhoto:
+      'https://res.cloudinary.com/dvvu2bciu/image/upload/v1787835712/my_app/ussbpbw8dnvk01bsi2xl.jpg',
   },
 ];
