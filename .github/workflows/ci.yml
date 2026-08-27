@@ -78,22 +78,19 @@ jobs:
           node-version: lts/*
           cache: pnpm
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-        env:
-          NODE_ENV: development
+      - run: pnpm install --frozen-lockfile
+
       - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: temurin
           cache: gradle
-      - name: Expo Prebuild
-        run: pnpm expo prebuild --platform android --no-install
+
       - run: chmod +x android/gradlew
+
       - name: Build Release APK
         working-directory: android
         run: ./gradlew assembleRelease
-
         env:
           EXPO_PUBLIC_API_URL: http://10.0.2.2:8081
           EXPO_PUBLIC_CI: true
