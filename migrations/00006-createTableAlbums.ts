@@ -36,6 +36,7 @@ export type FeedAlbum = {
   name: string;
   commentCount: number;
   likeCount: number;
+  albumPhoto: string | null;
 };
 
 export async function up(sql: Sql) {

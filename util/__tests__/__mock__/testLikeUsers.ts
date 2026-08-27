@@ -27,5 +27,5 @@ export const likesByTotoro: LikeUsers[] = [
     userId: kiki.id,
     name: kiki.name,
     createdDate: new Date('2023-01-02'),
-  } as LikeUsers,
+  },
 ];

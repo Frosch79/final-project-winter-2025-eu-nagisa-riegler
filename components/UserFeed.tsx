@@ -13,7 +13,7 @@ export type Props = {
   albumDescription: string | null;
   albumLocation: string | null;
   createdDate: Date;
-  albumCover: string;
+  albumCover: string | null;
   albumComment: number;
   albumLike: number;
   albumId: number;
@@ -77,7 +77,11 @@ export default function UserFeed(props: Props) {
           {/* cover */}
           <Card.Cover
             testID="photo-image"
-            source={{ uri: albumCover || 'https://picsum.photos/700' }}
+            source={{
+              uri:
+                albumCover ||
+                'https://res.cloudinary.com/dvvu2bciu/image/upload/v1787834342/no-image-icon-23485_br7vpw.png',
+            }}
             style={{
               width: 140,
               aspectRatio: 2 / 3,

@@ -31,7 +31,7 @@ export default function UserAlbumCard(props: Props) {
 
   const { album, userId, albumLikes, albumComments } = props;
   const albumCover = !album.photos[0]
-    ? 'https://picsum.photos/700'
+    ? 'https://res.cloudinary.com/dvvu2bciu/image/upload/v1787834342/no-image-icon-23485_br7vpw.png'
     : (album.photos[0].cloudinaryDataPath as string);
 
   useFocusEffect(

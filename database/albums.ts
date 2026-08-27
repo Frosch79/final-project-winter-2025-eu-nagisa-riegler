@@ -146,6 +146,7 @@ export async function getAlbumsSwitchWithVisibility(
     SELECT
       albums.*,
       users.name,
+      photos.cloudinary_data_path AS album_photo,
       count(DISTINCT comments.id)::integer AS comment_count,
       count(DISTINCT likes.id)::integer AS like_count
     FROM
@@ -153,6 +154,14 @@ export async function getAlbumsSwitchWithVisibility(
       INNER JOIN users ON users.id = albums.user_id
       INNER JOIN visibilities ON visibilities.id = albums.visibility_id
       LEFT JOIN photos ON photos.album_id = albums.id
+      AND photos.id = (
+        SELECT
+          min(id)
+        FROM
+          photos
+        WHERE
+          album_id = albums.id
+      )
       LEFT JOIN comments ON comments.album_id = albums.id
       LEFT JOIN likes ON likes.album_id = albums.id
       LEFT JOIN follows ON follows.followed_user_id = albums.user_id
@@ -179,7 +188,8 @@ export async function getAlbumsSwitchWithVisibility(
       )
     GROUP BY
       albums.id,
-      users.name
+      users.name,
+      photos.cloudinary_data_path
     ORDER BY
       albums.created_date DESC;
   `;
@@ -207,6 +217,7 @@ export async function getVisitUserAlbums(
     SELECT DISTINCT
       albums.*,
       users.name,
+      photos.cloudinary_data_path AS album_photo,
       count(DISTINCT comments.id)::integer AS comment_count,
       count(DISTINCT likes.id)::integer AS like_count
     FROM
@@ -215,6 +226,15 @@ export async function getVisitUserAlbums(
       LEFT JOIN follows ON follower_user_id = albums.user_id
       LEFT JOIN comments ON comments.album_id = albums.id
       LEFT JOIN likes ON likes.album_id = albums.id
+      LEFT JOIN photos ON photos.album_id = albums.id
+      AND photos.id = (
+        SELECT
+          min(id)
+        FROM
+          photos
+        WHERE
+          album_id = albums.id
+      )
       CROSS JOIN safe_user
     WHERE
       users.id = ${userId}
@@ -231,7 +251,8 @@ export async function getVisitUserAlbums(
       )
     GROUP BY
       albums.id,
-      users.name
+      users.name,
+      photos.cloudinary_data_path
     ORDER BY
       albums.created_date DESC
   `;

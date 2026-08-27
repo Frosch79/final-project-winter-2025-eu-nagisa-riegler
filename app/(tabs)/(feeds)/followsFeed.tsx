@@ -18,7 +18,7 @@ export default function Feed() {
         albumDescription={item.description}
         albumLocation={item.location}
         createdDate={item.createdDate}
-        albumCover=""
+        albumCover={item.albumPhoto}
         albumComment={item.commentCount}
         albumLike={item.likeCount}
         albumId={item.id}
