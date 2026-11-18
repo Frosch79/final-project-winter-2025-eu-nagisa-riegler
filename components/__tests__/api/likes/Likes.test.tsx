@@ -101,7 +101,9 @@ describe('Album Likes API', () => {
 
   describe('GET /api/likes', () => {
     test('returns all likes', async () => {
-      (getAllAlbumLikesInsecure as jest.Mock<any>).mockResolvedValue(likes);
+      (getAllAlbumLikesInsecure as jest.Mock<any>).mockResolvedValue(
+        likes as never,
+      );
 
       const res = await request(app)
         .get('/api/likes')
@@ -119,7 +121,9 @@ describe('Album Likes API', () => {
     });
 
     test('returns 500 if undefined', async () => {
-      (getAllAlbumLikesInsecure as jest.Mock<any>).mockResolvedValue(undefined);
+      (getAllAlbumLikesInsecure as jest.Mock<any>).mockResolvedValue(
+        undefined as never,
+      );
 
       const res = await request(app).get('/api/likes').expect(500);
 
@@ -130,8 +134,8 @@ describe('Album Likes API', () => {
 
   describe('POST /api/likes', () => {
     test('creates like successfully', async () => {
-      (selectLikeExists as jest.Mock<any>).mockResolvedValue(false);
-      (createLike as jest.Mock<any>).mockResolvedValue(likesEmpty);
+      (selectLikeExists as jest.Mock<any>).mockResolvedValue(false as never);
+      (createLike as jest.Mock<any>).mockResolvedValue(likesEmpty as never);
 
       const res = await request(app)
         .post('/api/likes')
@@ -172,7 +176,7 @@ describe('Album Likes API', () => {
     });
 
     test('returns 404 if already liked', async () => {
-      (selectLikeExists as jest.Mock<any>).mockResolvedValue(true);
+      (selectLikeExists as jest.Mock<any>).mockResolvedValue(true as never);
 
       const res = await request(app)
         .post('/api/likes')
@@ -185,8 +189,8 @@ describe('Album Likes API', () => {
     });
 
     test('returns 500 if createLike fails', async () => {
-      (selectLikeExists as jest.Mock<any>).mockResolvedValue(false);
-      (createLike as jest.Mock<any>).mockResolvedValue(undefined);
+      (selectLikeExists as jest.Mock<any>).mockResolvedValue(false as never);
+      (createLike as jest.Mock<any>).mockResolvedValue(undefined as never);
 
       const res = await request(app)
         .post('/api/likes')
@@ -201,8 +205,8 @@ describe('Album Likes API', () => {
 
   describe('DELETE /api/likes', () => {
     test('deletes like successfully', async () => {
-      (selectLikeExists as jest.Mock<any>).mockResolvedValue(true);
-      (deleteLike as jest.Mock<any>).mockResolvedValue(likesEmpty);
+      (selectLikeExists as jest.Mock<any>).mockResolvedValue(true as never);
+      (deleteLike as jest.Mock<any>).mockResolvedValue(likesEmpty as never);
 
       const res = await request(app)
         .delete('/api/likes')
@@ -236,7 +240,7 @@ describe('Album Likes API', () => {
     });
 
     test('returns 404 if like does not exist', async () => {
-      (selectLikeExists as jest.Mock<any>).mockResolvedValue(false);
+      (selectLikeExists as jest.Mock<any>).mockResolvedValue(false as never);
 
       const res = await request(app)
         .delete('/api/likes')
@@ -249,8 +253,8 @@ describe('Album Likes API', () => {
     });
 
     test('returns 403 if delete fails', async () => {
-      (selectLikeExists as jest.Mock<any>).mockResolvedValue(true);
-      (deleteLike as jest.Mock<any>).mockResolvedValue(undefined);
+      (selectLikeExists as jest.Mock<any>).mockResolvedValue(true as never);
+      (deleteLike as jest.Mock<any>).mockResolvedValue(undefined as never);
 
       const res = await request(app)
         .delete('/api/likes')

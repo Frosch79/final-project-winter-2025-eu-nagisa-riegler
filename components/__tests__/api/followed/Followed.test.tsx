@@ -92,8 +92,14 @@ describe('Followed API', () => {
 
   describe('GET /api/followed', () => {
     test('returns followed users', async () => {
-      (getUserAllFollowedInsecure as jest.Mock<any>).mockResolvedValue(
-        followersOfUser1,
+      (
+        getUserAllFollowedInsecure as jest.MockedFunction<
+          typeof getUserAllFollowedInsecure
+        >
+      ).mockResolvedValue(
+        followersOfUser1 as unknown as Awaited<
+          ReturnType<typeof getUserAllFollowedInsecure>
+        >,
       );
 
       const res = await request(app).get('/api/followed').expect(200);
@@ -109,7 +115,7 @@ describe('Followed API', () => {
 
     test('returns 500 if DB returns undefined', async () => {
       (getUserAllFollowedInsecure as jest.Mock<any>).mockResolvedValue(
-        undefined,
+        undefined as never,
       );
 
       const res = await request(app).get('/api/followed').expect(500);
@@ -120,8 +126,10 @@ describe('Followed API', () => {
 
   describe('POST /api/followed', () => {
     test('creates follow successfully', async () => {
-      (getIsFollowed as jest.Mock<any>).mockResolvedValue(false);
-      (createFollow as jest.Mock<any>).mockResolvedValue(mockFollowUser1);
+      (getIsFollowed as jest.Mock<any>).mockResolvedValue(false as never);
+      (createFollow as jest.Mock<any>).mockResolvedValue(
+        mockFollowUser1 as never,
+      );
 
       const res = await request(app)
         .post('/api/followed')
@@ -145,7 +153,7 @@ describe('Followed API', () => {
     });
 
     test('returns 404 if already followed', async () => {
-      (getIsFollowed as jest.Mock<any>).mockResolvedValue(true);
+      (getIsFollowed as jest.Mock<any>).mockResolvedValue(true as never);
 
       const res = await request(app)
         .post('/api/followed')
@@ -171,8 +179,8 @@ describe('Followed API', () => {
     });
 
     test('returns 500 if createFollow fails', async () => {
-      (getIsFollowed as jest.Mock<any>).mockResolvedValue(false);
-      (createFollow as jest.Mock<any>).mockResolvedValue(undefined);
+      (getIsFollowed as jest.Mock<any>).mockResolvedValue(false as never);
+      (createFollow as jest.Mock<any>).mockResolvedValue(undefined as never);
 
       const res = await request(app)
         .post('/api/followed')
@@ -186,8 +194,10 @@ describe('Followed API', () => {
 
   describe('DELETE /api/followed', () => {
     test('unfollows user successfully', async () => {
-      (getIsFollowed as jest.Mock<any>).mockResolvedValue(true);
-      (deleteFollow as jest.Mock<any>).mockResolvedValue(mockFollowUser1);
+      (getIsFollowed as jest.Mock<any>).mockResolvedValue(true as never);
+      (deleteFollow as jest.Mock<any>).mockResolvedValue(
+        mockFollowUser1 as never,
+      );
 
       const res = await request(app)
         .delete('/api/followed')
@@ -211,7 +221,7 @@ describe('Followed API', () => {
     });
 
     test('returns 404 if not followed', async () => {
-      (getIsFollowed as jest.Mock<any>).mockResolvedValue(false);
+      (getIsFollowed as jest.Mock<any>).mockResolvedValue(false as never);
 
       const res = await request(app)
         .delete('/api/followed')
@@ -237,8 +247,8 @@ describe('Followed API', () => {
     });
 
     test('returns 403 if deleteFollow fails', async () => {
-      (getIsFollowed as jest.Mock<any>).mockResolvedValue(true);
-      (deleteFollow as jest.Mock<any>).mockResolvedValue(undefined);
+      (getIsFollowed as jest.Mock<any>).mockResolvedValue(true as never);
+      (deleteFollow as jest.Mock<any>).mockResolvedValue(undefined as never);
 
       const res = await request(app)
         .delete('/api/followed')

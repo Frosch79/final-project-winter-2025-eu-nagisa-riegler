@@ -66,7 +66,7 @@ describe('User API', () => {
 
   describe('GET /api/user', () => {
     test('returns user successfully', async () => {
-      (getUser as jest.Mock<any>).mockResolvedValue(mockFullUser);
+      (getUser as jest.Mock<any>).mockResolvedValue(mockFullUser as never);
 
       const res = await request(app)
         .get('/api/user')
@@ -88,7 +88,7 @@ describe('User API', () => {
     });
 
     test('returns error if user not found', async () => {
-      (getUser as jest.Mock<any>).mockResolvedValue(undefined);
+      (getUser as jest.Mock<any>).mockResolvedValue(undefined as never);
 
       const res = await request(app)
         .get('/api/user')
@@ -101,7 +101,7 @@ describe('User API', () => {
 
   describe('PUT /api/user', () => {
     test('updates user successfully', async () => {
-      (updateUser as jest.Mock<any>).mockResolvedValue(mockUpdateUser);
+      (updateUser as jest.Mock<any>).mockResolvedValue(mockUpdateUser as never);
 
       const res = await request(app)
         .put('/api/user')
@@ -137,7 +137,7 @@ describe('User API', () => {
     });
 
     test('returns error if update fails', async () => {
-      (updateUser as jest.Mock<any>).mockResolvedValue(undefined);
+      (updateUser as jest.Mock<any>).mockResolvedValue(undefined as never);
 
       const res = await request(app)
         .put('/api/user')

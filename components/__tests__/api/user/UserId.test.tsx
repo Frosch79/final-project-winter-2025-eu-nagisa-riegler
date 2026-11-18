@@ -44,8 +44,10 @@ describe('User API', () => {
   });
 
   test('returns user successfully', async () => {
-    (selectUserExists as jest.Mock<any>).mockResolvedValue(true);
-    (getUserPageInsecure as jest.Mock<any>).mockResolvedValue(mockFullUser);
+    (selectUserExists as jest.Mock<any>).mockResolvedValue(true as never);
+    (getUserPageInsecure as jest.Mock<any>).mockResolvedValue(
+      mockFullUser as never,
+    );
 
     const res = await request(app)
       .get(`/api/users/${mockFullUser.id}`)
@@ -62,7 +64,7 @@ describe('User API', () => {
   });
 
   test('returns 404 if user does not exist', async () => {
-    (selectUserExists as jest.Mock<any>).mockResolvedValue(false);
+    (selectUserExists as jest.Mock<any>).mockResolvedValue(false as never);
 
     const res = await request(app).get('/api/users/999').expect(404);
 
@@ -71,8 +73,8 @@ describe('User API', () => {
   });
 
   test('returns 403 if access denied', async () => {
-    (selectUserExists as jest.Mock<any>).mockResolvedValue(true);
-    (getUserPageInsecure as jest.Mock<any>).mockResolvedValue(null);
+    (selectUserExists as jest.Mock<any>).mockResolvedValue(true as never);
+    (getUserPageInsecure as jest.Mock<any>).mockResolvedValue(null as never);
 
     const res = await request(app)
       .get(`/api/users/${mockFullUser.id}`)

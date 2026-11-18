@@ -47,8 +47,8 @@ describe('GET /api/feed/:feedId', () => {
   });
 
   test('returns user albums successfully', async () => {
-    (selectAlbumExists as jest.Mock<any>).mockResolvedValue(true);
-    (getVisitUserAlbums as jest.Mock<any>).mockResolvedValue(mockFeedMyAlbums);
+    (selectAlbumExists as jest.Mock<any>).mockResolvedValue(true as never);
+    (getVisitUserAlbums as jest.Mock<any>).mockResolvedValue(mockFeedMyAlbums as never);
 
     const res = await request(app)
       .get(`/api/feed/${feedId}`)

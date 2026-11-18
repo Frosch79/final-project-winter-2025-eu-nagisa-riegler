@@ -71,7 +71,9 @@ describe('Album Comments API', () => {
 
   describe('GET /api/comments', () => {
     test('returns all comments for album', async () => {
-      (getAllAlbumComments as jest.Mock<any>).mockResolvedValue([mockComment]);
+      (getAllAlbumComments as jest.Mock<any>).mockResolvedValue([
+        mockComment,
+      ] as never);
 
       const res = await request(app)
         .get('/api/comments')
@@ -90,7 +92,7 @@ describe('Album Comments API', () => {
     test('creates comment successfully', async () => {
       (createComment as jest.Mock<any>).mockResolvedValue([
         { ...mockComment, createdDate: mockComment.createdDate.toISOString() },
-      ]);
+      ] as never);
 
       const res = await request(app)
         .post('/api/comments')
@@ -131,7 +133,7 @@ describe('Album Comments API', () => {
     });
 
     test('returns 500 if createComment fails', async () => {
-      (createComment as jest.Mock<any>).mockResolvedValue(undefined);
+      (createComment as jest.Mock<any>).mockResolvedValue(undefined as never);
 
       const res = await request(app)
         .post('/api/comments')

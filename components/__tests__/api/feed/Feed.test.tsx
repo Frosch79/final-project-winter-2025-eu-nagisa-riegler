@@ -39,9 +39,11 @@ describe('GET /api/feed', () => {
   });
 
   test('returns feed albums successfully', async () => {
-    (getAlbumsSwitchWithVisibility as jest.Mock<any>).mockResolvedValue(
-      otherUserAlbums,
-    );
+    (
+      getAlbumsSwitchWithVisibility as jest.MockedFunction<
+        typeof getAlbumsSwitchWithVisibility
+      >
+    ).mockResolvedValue(otherUserAlbums as never);
 
     const res = await request(app)
       .get('/api/feed')
@@ -70,9 +72,11 @@ describe('GET /api/feed', () => {
   });
 
   test('returns 500 if DB fails', async () => {
-    (getAlbumsSwitchWithVisibility as jest.Mock<any>).mockResolvedValue(
-      undefined,
-    );
+    (
+      getAlbumsSwitchWithVisibility as jest.MockedFunction<
+        typeof getAlbumsSwitchWithVisibility
+      >
+    ).mockResolvedValue(undefined as never);
 
     const res = await request(app)
       .get('/api/feed')

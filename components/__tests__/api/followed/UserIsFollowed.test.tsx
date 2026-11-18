@@ -45,7 +45,7 @@ describe('GET /api/isFollowed/:userId', () => {
   });
 
   test('returns true if user is followed', async () => {
-    (getIsFollowed as jest.Mock<any>).mockResolvedValue(true);
+    (getIsFollowed as jest.Mock<any>).mockResolvedValue(true as never);
 
     const res = await request(app)
       .get('/api/isFollowed/1')
@@ -58,7 +58,7 @@ describe('GET /api/isFollowed/:userId', () => {
   });
 
   test('returns false if user is not followed', async () => {
-    (getIsFollowed as jest.Mock<any>).mockResolvedValue(false);
+    (getIsFollowed as jest.Mock<any>).mockResolvedValue(false as never);
 
     const res = await request(app)
       .get('/api/isFollowed/1')

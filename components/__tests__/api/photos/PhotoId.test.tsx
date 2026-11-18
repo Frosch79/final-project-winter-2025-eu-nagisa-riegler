@@ -100,8 +100,8 @@ describe('Photo Detail API', () => {
 
   describe('GET /api/photos/:photoId', () => {
     test('returns photo successfully', async () => {
-      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(true);
-      (getPhoto as jest.Mock<any>).mockResolvedValue(mockUserPhoto);
+      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(true as never);
+      (getPhoto as jest.Mock<any>).mockResolvedValue(mockUserPhoto as never);
 
       const res = await request(app).get(`/api/photos/${photoId}`).expect(200);
 
@@ -114,7 +114,7 @@ describe('Photo Detail API', () => {
     });
 
     test('returns 404 if photo not exists', async () => {
-      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(false);
+      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(false as never);
 
       const res = await request(app).get(`/api/photos/${photoId}`).expect(404);
       const body = res.body as { error: PhotoResponseBodyGet };
@@ -122,8 +122,8 @@ describe('Photo Detail API', () => {
     });
 
     test('returns 403 if no access', async () => {
-      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(true);
-      (getPhoto as jest.Mock<any>).mockResolvedValue(undefined);
+      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(true as never);
+      (getPhoto as jest.Mock<any>).mockResolvedValue(undefined as never);
 
       const res = await request(app).get(`/api/photos/${photoId}`).expect(403);
       const body = res.body as { error: PhotoResponseBodyGet };
@@ -133,8 +133,10 @@ describe('Photo Detail API', () => {
 
   describe('PUT /api/photos/:photoId', () => {
     test('updates photo successfully', async () => {
-      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(true);
-      (updatePhoto as jest.Mock<any>).mockResolvedValue([mockUserPhoto]);
+      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(true as never);
+      (updatePhoto as jest.Mock<any>).mockResolvedValue([
+        mockUserPhoto,
+      ] as never);
 
       const res = await request(app)
         .put(`/api/photos/${photoId}`)
@@ -172,7 +174,7 @@ describe('Photo Detail API', () => {
     });
 
     test('returns 404 if photo not exists', async () => {
-      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(false);
+      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(false as never);
 
       const res = await request(app)
         .put(`/api/photos/${photoId}`)
@@ -186,8 +188,10 @@ describe('Photo Detail API', () => {
 
   describe('DELETE /api/photos/:photoId', () => {
     test('deletes photo successfully', async () => {
-      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(true);
-      (deletePhoto as jest.Mock<any>).mockResolvedValue([mockUserPhoto]);
+      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(true as never);
+      (deletePhoto as jest.Mock<any>).mockResolvedValue([
+        mockUserPhoto,
+      ] as never);
 
       const res = await request(app)
         .delete(`/api/photos/${photoId}`)
@@ -213,7 +217,7 @@ describe('Photo Detail API', () => {
     });
 
     test('returns 404 if photo not exists', async () => {
-      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(false);
+      (selectPhotoExists as jest.Mock<any>).mockResolvedValue(false as never);
 
       const res = await request(app)
         .delete(`/api/photos/${photoId}`)

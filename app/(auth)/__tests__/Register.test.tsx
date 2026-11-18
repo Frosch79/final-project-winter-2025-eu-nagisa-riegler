@@ -46,17 +46,17 @@ describe('Register API', () => {
   });
 
   test('registers successfully', async () => {
-    (getUserInsecure as jest.Mock<any>).mockResolvedValue(null);
+    (getUserInsecure as jest.Mock<any>).mockResolvedValue(null as never);
 
     (createUserInsecure as jest.Mock<any>).mockResolvedValue({
       id: 1,
       name: 'Totoro',
-    });
+    } as never);
 
     (createSessionInsecure as jest.Mock<any>).mockResolvedValue({
       token: 'session-token',
       userId: 1,
-    });
+    } as never);
 
     const res = await request(app)
       .post('/api/register')
@@ -82,7 +82,7 @@ describe('Register API', () => {
     (getUserInsecure as jest.Mock<any>).mockResolvedValue({
       id: 1,
       email: registerUserSuccess.email,
-    });
+    } as never);
 
     const res = await request(app)
       .post('/api/register')
@@ -93,8 +93,8 @@ describe('Register API', () => {
   });
 
   test('returns 500 if user creation fails', async () => {
-    (getUserInsecure as jest.Mock<any>).mockResolvedValue(null);
-    (createUserInsecure as jest.Mock<any>).mockResolvedValue(null);
+    (getUserInsecure as jest.Mock<any>).mockResolvedValue(null as never);
+    (createUserInsecure as jest.Mock<any>).mockResolvedValue(null as never);
 
     const res = await request(app)
       .post('/api/register')
@@ -105,14 +105,14 @@ describe('Register API', () => {
   });
 
   test('returns 401 if session creation fails', async () => {
-    (getUserInsecure as jest.Mock<any>).mockResolvedValue(null);
+    (getUserInsecure as jest.Mock<any>).mockResolvedValue(null as never);
 
     (createUserInsecure as jest.Mock<any>).mockResolvedValue({
       id: 1,
       name: 'Totoro',
-    });
+    } as never);
 
-    (createSessionInsecure as jest.Mock<any>).mockResolvedValue(null);
+    (createSessionInsecure as jest.Mock<any>).mockResolvedValue(null as never);
 
     const res = await request(app)
       .post('/api/register')

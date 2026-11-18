@@ -47,15 +47,15 @@ describe('Login API', () => {
   });
 
   test('logs in successfully with valid credentials', async () => {
-    (getUserWithPasswordHashInsecure as jest.Mock<any>).mockResolvedValue({
+    jest.mocked(getUserWithPasswordHashInsecure).mockResolvedValue({
       id: 1,
       name: 'Totoro',
       passwordHash: await bcrypt.hash(loginUserSuccess.password, 10),
-    });
-    (createSessionInsecure as jest.Mock<any>).mockResolvedValue({
+    } as any);
+    jest.mocked(createSessionInsecure).mockResolvedValue({
       token: 'session-token',
       userId: 1,
-    });
+    } as any);
 
     const res = await request(app)
       .post('/api/login')
@@ -77,7 +77,7 @@ describe('Login API', () => {
   });
 
   test('returns 401 if user not found', async () => {
-    (getUserWithPasswordHashInsecure as jest.Mock<any>).mockResolvedValue(null);
+    jest.mocked(getUserWithPasswordHashInsecure).mockResolvedValue(null as any);
 
     const res = await request(app)
       .post('/api/login')
@@ -88,11 +88,11 @@ describe('Login API', () => {
   });
 
   test('returns 401 if password incorrect', async () => {
-    (getUserWithPasswordHashInsecure as jest.Mock<any>).mockResolvedValue({
+    jest.mocked(getUserWithPasswordHashInsecure).mockResolvedValue({
       id: 1,
       name: 'Totoro',
       passwordHash: await bcrypt.hash('correct-password', 10),
-    });
+    } as any);
 
     const res = await request(app)
       .post('/api/login')
@@ -103,12 +103,12 @@ describe('Login API', () => {
   });
 
   test('returns 401 if session creation fails', async () => {
-    (getUserWithPasswordHashInsecure as jest.Mock<any>).mockResolvedValue({
+    jest.mocked(getUserWithPasswordHashInsecure).mockResolvedValue({
       id: 1,
       name: 'Totoro',
       passwordHash: await bcrypt.hash(loginUserSuccess.password, 10),
-    });
-    (createSessionInsecure as jest.Mock<any>).mockResolvedValue(null);
+    } as any);
+    jest.mocked(createSessionInsecure).mockResolvedValue(undefined);
 
     const res = await request(app)
       .post('/api/login')

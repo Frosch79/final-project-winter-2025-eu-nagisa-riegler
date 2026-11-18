@@ -81,7 +81,9 @@ describe('Photo API', () => {
 
   describe('GET /api/photos', () => {
     test('returns photo successfully', async () => {
-      (getAlbumPhotos as jest.Mock<any>).mockResolvedValue(mockUserPhoto);
+      (getAlbumPhotos as jest.Mock<any>).mockResolvedValue(
+        mockUserPhoto as never,
+      );
 
       const res = await request(app)
         .get('/api/photos')
@@ -105,7 +107,7 @@ describe('Photo API', () => {
     });
 
     test('returns 403 if no photo found', async () => {
-      (getAlbumPhotos as jest.Mock<any>).mockResolvedValue(undefined);
+      (getAlbumPhotos as jest.Mock<any>).mockResolvedValue(undefined as never);
 
       const res = await request(app)
         .get('/api/photos')
@@ -121,7 +123,9 @@ describe('Photo API', () => {
 
   describe('POST /api/photos', () => {
     test('creates photo successfully', async () => {
-      (createPhotoInAlbum as jest.Mock<any>).mockResolvedValue(mockUserPhoto);
+      (createPhotoInAlbum as jest.Mock<any>).mockResolvedValue(
+        mockUserPhoto as never,
+      );
 
       const res = await request(app)
         .post('/api/photos')
@@ -164,7 +168,9 @@ describe('Photo API', () => {
     });
 
     test('returns 500 if create fails', async () => {
-      (createPhotoInAlbum as jest.Mock<any>).mockResolvedValue(undefined);
+      (createPhotoInAlbum as jest.Mock<any>).mockResolvedValue(
+        undefined as never,
+      );
 
       const res = await request(app)
         .post('/api/photos')

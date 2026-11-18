@@ -55,8 +55,8 @@ describe('DELETE /api/comments/:commentId', () => {
   });
 
   test('deletes a comment successfully', async () => {
-    (selectCommentExists as jest.Mock<any>).mockResolvedValue(true);
-    (deleteComment as jest.Mock<any>).mockResolvedValue([mockComment]);
+    (selectCommentExists as jest.Mock<any>).mockResolvedValue(true as never);
+    (deleteComment as jest.Mock<any>).mockResolvedValue([mockComment] as never);
 
     const res = await request(app)
       .delete('/api/comments/1')
@@ -78,7 +78,7 @@ describe('DELETE /api/comments/:commentId', () => {
   });
 
   test('returns 404 if comment does not exist', async () => {
-    (selectCommentExists as jest.Mock<any>).mockResolvedValue(false);
+    (selectCommentExists as jest.Mock<any>).mockResolvedValue(false as never);
     const res = await request(app)
       .delete('/api/comments/999')
       .set('Cookie', 'sessionToken=valid-token')

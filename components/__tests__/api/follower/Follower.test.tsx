@@ -46,7 +46,7 @@ describe('GET /api/follower', () => {
 
   test('returns follower users', async () => {
     (getUserAllFollowersInsecure as jest.Mock<any>).mockResolvedValue(
-      followersOfUser1,
+      followersOfUser1 as never,
     );
 
     const res = await request(app)
@@ -66,7 +66,7 @@ describe('GET /api/follower', () => {
 
   test('returns 500 if DB returns undefined', async () => {
     (getUserAllFollowersInsecure as jest.Mock<any>).mockResolvedValue(
-      undefined,
+      undefined as never,
     );
 
     const res = await request(app)

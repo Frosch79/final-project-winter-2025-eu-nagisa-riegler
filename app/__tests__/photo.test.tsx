@@ -62,21 +62,24 @@ describe('PostMyPhotos screen', () => {
 
   test('can select image and preview it', async () => {
     // ImagePicker
-    (ImagePicker.launchImageLibraryAsync as jest.Mock<any>).mockResolvedValue({
-      canceled: false,
-      assets: [
-        {
-          uri: 'file://test.jpg',
-          width: 100,
-          height: 100,
-          mimeType: 'image/jpeg',
-        },
-      ],
-    });
+    (ImagePicker.launchImageLibraryAsync as jest.Mock<any>).mockImplementation(
+      () =>
+        Promise.resolve({
+          canceled: false,
+          assets: [
+            {
+              uri: 'file://test.jpg',
+              width: 100,
+              height: 100,
+              mimeType: 'image/jpeg',
+            },
+          ],
+        } as ImagePicker.ImagePickerResult),
+    );
 
     // uploadImage
-    (uploadImage as jest.Mock<any>).mockResolvedValue(
-      'https://cloudinary/test.jpg',
+    (uploadImage as jest.Mock<any>).mockImplementation(() =>
+      Promise.resolve('https://cloudinary/test.jpg'),
     );
 
     // API mocks

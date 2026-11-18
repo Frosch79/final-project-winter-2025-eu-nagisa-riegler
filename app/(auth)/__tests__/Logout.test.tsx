@@ -37,7 +37,7 @@ describe('Logout API', () => {
   test('logs out successfully when session exists', async () => {
     (deleteSession as jest.Mock<any>).mockResolvedValue({
       token: 'session-token',
-    });
+    } as never);
 
     const res = await request(app)
       .get('/api/logout')
@@ -56,7 +56,7 @@ describe('Logout API', () => {
   });
 
   test('returns 404 if session not found', async () => {
-    (deleteSession as jest.Mock<any>).mockResolvedValue(null);
+    jest.mocked(deleteSession).mockResolvedValue(undefined);
 
     const res = await request(app)
       .get('/api/logout')

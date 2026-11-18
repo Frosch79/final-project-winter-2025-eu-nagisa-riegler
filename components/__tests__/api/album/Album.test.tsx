@@ -57,13 +57,14 @@ describe('POST /api/albums', () => {
   });
 
   test('creates album successfully', async () => {
-    (createAlbum as jest.Mock<any>).mockResolvedValue({
+    (createAlbum as jest.MockedFunction<typeof createAlbum>).mockResolvedValue({
       id: 1,
       userId: 1,
       title: 'trip',
       description: 'vienna trip',
       location: 'vienna',
       visibilityId: 1,
+      createdDate: new Date(),
     });
 
     const res = await request(app)
@@ -108,7 +109,7 @@ describe('POST /api/albums', () => {
   });
 
   test('returns 500 if DB fails', async () => {
-    (createAlbum as jest.Mock<any>).mockResolvedValue(undefined);
+    (createAlbum as jest.MockedFunction<typeof createAlbum>).mockResolvedValue(undefined);
 
     const res = await request(app)
       .post('/api/albums')

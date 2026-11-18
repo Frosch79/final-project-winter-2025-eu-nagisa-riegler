@@ -96,8 +96,10 @@ describe('Album APIs (GET, PUT, DELETE)', () => {
 
   describe('GET /api/albums/:albumId', () => {
     test('returns album successfully', async () => {
-      (selectAlbumExists as jest.Mock<any>).mockResolvedValue(true);
-      (getVisitUserAlbum as jest.Mock<any>).mockResolvedValue(validBody);
+      (selectAlbumExists as jest.Mock<any>).mockResolvedValue(true as never);
+      (getVisitUserAlbum as jest.Mock<any>).mockResolvedValue(
+        validBody as never,
+      );
 
       const res = await request(app)
         .get(`/api/albums/${albumId}`)
@@ -119,8 +121,8 @@ describe('Album APIs (GET, PUT, DELETE)', () => {
 
   describe('PUT /api/albums/:albumId', () => {
     test('updates album successfully', async () => {
-      (selectAlbumExists as jest.Mock<any>).mockResolvedValue(true);
-      (updateAlbum as jest.Mock<any>).mockResolvedValue(validBody);
+      (selectAlbumExists as jest.Mock<any>).mockResolvedValue(true as never);
+      (updateAlbum as jest.Mock<any>).mockResolvedValue(validBody as never);
 
       const res = await request(app)
         .put(`/api/albums/${albumId}`)
@@ -150,8 +152,10 @@ describe('Album APIs (GET, PUT, DELETE)', () => {
 
   describe('DELETE /api/albums/:albumId', () => {
     test('deletes album successfully', async () => {
-      (selectAlbumExists as jest.Mock<any>).mockResolvedValue(true);
-      (deleteAlbum as jest.Mock<any>).mockResolvedValue([{ title: 'Trip' }]);
+      (selectAlbumExists as jest.Mock<any>).mockResolvedValue(true as never);
+      (deleteAlbum as jest.Mock<any>).mockResolvedValue(
+        [{ title: 'Trip' }] as never,
+      );
 
       const res = await request(app)
         .delete(`/api/albums/${albumId}`)
@@ -163,7 +167,7 @@ describe('Album APIs (GET, PUT, DELETE)', () => {
     });
 
     test('returns 404 if album does not exist', async () => {
-      (selectAlbumExists as jest.Mock<any>).mockResolvedValue(false);
+      (selectAlbumExists as jest.Mock<any>).mockResolvedValue(false as never);
 
       const res = await request(app)
         .delete(`/api/albums/${albumId}`)
