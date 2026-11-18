@@ -60,7 +60,7 @@ The schema is designed to ensure:
 - Scalability for social features
 
 **Diagram (click to view full version on DrawSQL):**
-[![Database Schema for PixVault](https://drawsql.app/teams/nagisa/diagrams/database-schema-for-photosns)](https://drawsql.app/teams/nagisa/diagrams/database-schema-for-photosns)
+[Database Schema for PixVault](https://drawsql.app/teams/nagisa/diagrams/database-schema-for-photosns)
 
 ---
 
@@ -153,7 +153,7 @@ as the web version, deployed on Vercel with Neon.
 A preview build is available for testing the mobile app in a production-like environment.
 
 **📥 Download & Install:**
-[Download PixVault Android APK (Preview)](https://expo.dev/accounts/frosch79/projects/final-project-winter-2025-eu-nagisa-riegler/builds/8517fe26-a53d-4844-a82a-4fa804034f0b)
+[Download PixVault Android APK (Preview)](https://expo.dev/accounts/frosch79/projects/final-project-winter-2025-eu-nagisa-riegler/builds/679f6a8c-9164-47ad-96e5-894f8def3c29)
 
 **How to install:**
 
